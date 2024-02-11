@@ -1,33 +1,70 @@
-// redux/slices/authSlice.ts
+// authSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { AppThunk } from '../store';
+import { auth_fire} from '../../firebase';
+import { createUserWithEmailAndPassword, signInWithEmailAndPassword } from 'firebase/auth';
 
 interface AuthState {
-  user: any;
-  isLoggedIn: boolean;
+  loggedIn: boolean;
+  user: any | null;
+  error: string | null;
 }
 
 const initialState: AuthState = {
+  loggedIn: false,
   user: null,
-  isLoggedIn: false,
+  error: null
 };
 
 const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    login(state, action: PayloadAction<any>) {
+    loginSuccess: (state, action: PayloadAction<string>) => {
+      state.loggedIn = true;
       state.user = action.payload;
-      state.isLoggedIn = true;
+      state.error = null;
     },
-    logout(state) {
+    loginFailure: (state, action: PayloadAction<string>) => {
+      state.loggedIn = false;
       state.user = null;
-      state.isLoggedIn = false;
+      state.error = action.payload;
     },
-    setUser(state, action: PayloadAction<any>) {
+    signupSuccess: (state, action: PayloadAction<string>) => {
+      state.loggedIn = true;
       state.user = action.payload;
+      state.error = null;
     },
-  },
+    signupFailure: (state, action: PayloadAction<string>) => {
+      state.loggedIn = false;
+      state.user = null;
+      state.error = action.payload;
+    },
+  }
 });
 
-export const { login, logout, setUser } = authSlice.actions;
+
+export const { loginSuccess, loginFailure, signupSuccess, signupFailure} = authSlice.actions;
 export default authSlice.reducer;
+
+export const login = (email: string, password: string): AppThunk => async dispatch => {
+  try {
+    const userCredential = await signInWithEmailAndPassword(auth_fire, email, password);
+    dispatch(loginSuccess(userCredential.user.email!));
+  } catch (error:any) {
+    const msg = error.message.replace('Firebase: ', '');
+    dispatch(loginFailure(msg));
+  }
+};
+
+export const signup = (email: string, password: string): AppThunk => async dispatch => {
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth_fire, email, password);
+    console.log(userCredential.user.email)
+    dispatch(signupSuccess(userCredential.user.email!));
+  } catch (error:any) {
+    //console.log(error.message)
+    const msg = error.message.replace('Firebase: ', '');
+    dispatch(signupFailure(msg));
+  }
+};
