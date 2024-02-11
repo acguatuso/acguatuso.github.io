@@ -6,6 +6,7 @@ import { Provider } from 'react-redux'; // Importa Provider desde react-redux
 import store from './redux/store.ts'; // Importa el store de Redux
 import { BrowserRouter as Router, Route, Routes} from 'react-router-dom';
 import CreateAccountForm from './components/CreateAccForm.tsx';
+import LoginAccountForm from './components/LoginAccForm.tsx';
 
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
@@ -13,6 +14,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
       <Router>
         <Routes>
           <Route path="/" element={<App/>} />
+          <Route path="/iniciar-sesion" element={<LoginAccountForm />} />
           <Route path="/crear-cuenta" element={<CreateAccountForm />} />
           {/* Otras rutas */}
         </Routes>

@@ -1,4 +1,8 @@
 // redux/slice.ts
+
+// EJEMPLO BASICO DE REDUX 
+
+
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 
 interface CounterState {
