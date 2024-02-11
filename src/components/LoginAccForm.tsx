@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { logOut, signup } from '../redux/reducers/authSlice';
+import { logOut, login} from '../redux/reducers/authSlice';
 import { RootState } from '../redux/store';
 
-const CreateAccountForm: React.FC = () => {
+const LoginAccountForm: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const dispatch = useDispatch();
@@ -11,9 +11,9 @@ const CreateAccountForm: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
   const error = useSelector((state: RootState) => state.auth.error);
 
-  const handleSignUp = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Evita que se envíe la solicitud HTTP predeterminada
-    dispatch(signup(email, password) as any); // Usa dispatch para llamar a la acción signup
+    dispatch(login(email, password) as any); // Usa dispatch para llamar a la acción login
   };
 
   const handleLogOut = () => {
@@ -32,7 +32,7 @@ const CreateAccountForm: React.FC = () => {
     <>
       <div className="card">
         <div className="card-body">
-          <h2 className="card-title">Crear Cuenta</h2>
+          <h2 className="card-title">Iniciar Sesión</h2>
           {loggedIn && user &&
             <div>
                 <p>Bievenido! : {user}</p>
@@ -47,7 +47,7 @@ const CreateAccountForm: React.FC = () => {
             </div>
           )}
           {!user && ( 
-            <form onSubmit={handleSignUp}>
+            <form onSubmit={handleLogin}>
               <div className="mb-3">
                 <label htmlFor="email" className="form-label">Email:</label>
                 <input type="email" id="email" className="form-control" value={email} onChange={handleEmailChange} />
@@ -56,7 +56,7 @@ const CreateAccountForm: React.FC = () => {
                 <label htmlFor="password" className="form-label">Contraseña:</label>
                 <input type="password" id="password" className="form-control" value={password} onChange={handlePasswordChange} />
               </div>
-              <button type="submit" className="btn btn-primary">Crear Cuenta</button>
+              <button type="submit" className="btn btn-primary">Iniciar Sesión</button>
             </form>
           )}
         </div>
@@ -65,4 +65,4 @@ const CreateAccountForm: React.FC = () => {
   );
 };
 
-export default CreateAccountForm;
+export default LoginAccountForm;
