@@ -18,7 +18,12 @@ function App() {
       </div>
       <h1>Vite + React</h1>
       <div className="card">
-        <Link to="/crear-cuenta">Crear Cuenta</Link>
+        <li>
+          <Link to="/iniciar-sesion">Iniciar Sesión</Link>
+        </li>
+        <li>
+          <Link to="/crear-cuenta">Crear Cuenta</Link>
+        </li>
       </div>
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more
