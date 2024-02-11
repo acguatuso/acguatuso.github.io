@@ -1,7 +1,8 @@
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
-import CreateAccountForm from './components/CreateAccForm'
+import { Link } from 'react-router-dom'
+
 
 function App() {
 
@@ -17,7 +18,7 @@ function App() {
       </div>
       <h1>Vite + React</h1>
       <div className="card">
-        <CreateAccountForm/>
+        <Link to="/crear-cuenta">Crear Cuenta</Link>
       </div>
       <p className="read-the-docs">
         Click on the Vite and React logos to learn more

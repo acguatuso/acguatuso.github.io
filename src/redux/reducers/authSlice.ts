@@ -20,7 +20,7 @@ const authSlice = createSlice({
   name: 'auth',
   initialState,
   reducers: {
-    loginSuccess: (state, action: PayloadAction<any>) => {
+    loginSuccess: (state, action: PayloadAction<string>) => {
       state.loggedIn = true;
       state.user = action.payload;
       state.error = null;
@@ -30,7 +30,7 @@ const authSlice = createSlice({
       state.user = null;
       state.error = action.payload;
     },
-    signupSuccess: (state, action: PayloadAction<any>) => {
+    signupSuccess: (state, action: PayloadAction<string>) => {
       state.loggedIn = true;
       state.user = action.payload;
       state.error = null;
@@ -44,23 +44,27 @@ const authSlice = createSlice({
 });
 
 
-export const { loginSuccess, loginFailure, signupSuccess, signupFailure } = authSlice.actions;
+export const { loginSuccess, loginFailure, signupSuccess, signupFailure} = authSlice.actions;
 export default authSlice.reducer;
 
 export const login = (email: string, password: string): AppThunk => async dispatch => {
   try {
     const userCredential = await signInWithEmailAndPassword(auth_fire, email, password);
-    dispatch(loginSuccess(userCredential.user!));
+    dispatch(loginSuccess(userCredential.user.email!));
   } catch (error:any) {
-    dispatch(loginFailure(error.message));
+    const msg = error.message.replace('Firebase: ', '');
+    dispatch(loginFailure(msg));
   }
 };
 
 export const signup = (email: string, password: string): AppThunk => async dispatch => {
   try {
     const userCredential = await createUserWithEmailAndPassword(auth_fire, email, password);
-    dispatch(signupSuccess(userCredential.user!));
+    console.log(userCredential.user.email)
+    dispatch(signupSuccess(userCredential.user.email!));
   } catch (error:any) {
-    dispatch(signupFailure(error.message));
+    //console.log(error.message)
+    const msg = error.message.replace('Firebase: ', '');
+    dispatch(signupFailure(msg));
   }
 };
