@@ -1,0 +1,52 @@
+.signup-form {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+}
+
+.column {
+  flex: 1 1 calc(33.33% - 20px);
+  margin-bottom: 20px;
+}
+
+.select-container,
+.input-container {
+  margin-bottom: 15px;
+}
+
+select,
+input {
+  width: calc(100% - 22px); /* Restamos 22px para compensar el padding y el borde de los inputs */
+  padding: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+  box-sizing: border-box; /* Hace que el ancho incluya el padding y el borde */
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+}
+
+button {
+  border: none;
+  background-color:blueviolet;
+  color: white;
+  border-radius: 5px;
+  cursor: pointer;
+  margin: auto;
+  display: block;
+}
+
+button:hover {
+  background-color: #0056b3;
+}
+
+h2{
+  padding-top: 5%;
+  color: rgb(82, 15, 121);
+}
+
+.card{
+  background-color:whitesmoke;
+}

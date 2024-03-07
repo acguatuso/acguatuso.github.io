@@ -10,6 +10,7 @@ const LoginAccountForm: React.FC = () => {
   const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
   const user = useSelector((state: RootState) => state.auth.user);
   const error = useSelector((state: RootState) => state.auth.error);
+  const emailVerified = useSelector((state: RootState) => state.auth.emailVerified);
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Evita que se envíe la solicitud HTTP predeterminada
@@ -30,13 +31,12 @@ const LoginAccountForm: React.FC = () => {
 
   return (
     <>
-      <div className="card">
-        <div className="card-body">
-          <h2 className="card-title">Iniciar Sesión</h2>
-          {loggedIn && user &&
+      <div>
+        <div>
+          {loggedIn && user && emailVerified &&
             <div>
                 <p>Bievenido! : {user}</p>
-                <button onClick={handleLogOut} className="btn btn-primary">Cerrar Sesión</button>
+                <button onClick={handleLogOut}>Cerrar Sesión</button>
             </div>
            }
           {error && (
@@ -48,15 +48,16 @@ const LoginAccountForm: React.FC = () => {
           )}
           {!user && ( 
             <form onSubmit={handleLogin}>
-              <div className="mb-3">
-                <label htmlFor="email" className="form-label">Email:</label>
-                <input type="email" id="email" className="form-control" value={email} onChange={handleEmailChange} />
+              <h2 >Iniciar Sesión</h2>
+              <div>
+                <label htmlFor="email" >Email:</label>
+                <input type="email" id="email" value={email} onChange={handleEmailChange} />
               </div>
-              <div className="mb-3">
-                <label htmlFor="password" className="form-label">Contraseña:</label>
-                <input type="password" id="password" className="form-control" value={password} onChange={handlePasswordChange} />
+              <div >
+                <label htmlFor="password" >Contraseña:</label>
+                <input type="password" id="password" value={password} onChange={handlePasswordChange} />
               </div>
-              <button type="submit" className="btn btn-primary">Iniciar Sesión</button>
+              <button type="submit" >Iniciar Sesión</button>
             </form>
           )}
         </div>
