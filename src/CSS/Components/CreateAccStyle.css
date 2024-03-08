@@ -1,3 +1,4 @@
+/* Estilos CSS adicionales */
 .signup-form {
   display: flex;
   flex-wrap: wrap;
@@ -6,31 +7,26 @@
 
 .column {
   flex: 1 1 calc(33.33% - 20px);
-  margin-bottom: 20px;
-}
-
-.select-container,
-.input-container {
-  margin-bottom: 15px;
 }
 
 select,
 input {
   width: calc(100% - 22px); /* Restamos 22px para compensar el padding y el borde de los inputs */
-  padding: 10px;
+  padding: 15px;
   border-radius: 5px;
   border: 1px solid #ccc;
   box-sizing: border-box; /* Hace que el ancho incluya el padding y el borde */
 }
 
 label {
-  display: block;
-  margin-bottom: 5px;
+  margin-top: 10px; /* Puedes ajustar este valor según sea necesario */
+  margin-bottom: 0;
+  padding: 0%;
 }
 
 button {
   border: none;
-  background-color:blueviolet;
+  background-color: blueviolet;
   color: white;
   border-radius: 5px;
   cursor: pointer;
@@ -42,11 +38,11 @@ button:hover {
   background-color: #0056b3;
 }
 
-h2{
+h2 {
   padding-top: 5%;
   color: rgb(82, 15, 121);
 }
 
-.card{
-  background-color:whitesmoke;
+.card {
+  background-color: whitesmoke;
 }

@@ -1,14 +1,15 @@
 // authSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk } from '../store';
-import { auth_fire} from '../../firebase';
+import { auth_fire, data_base} from '../../firebase';
+import { Timestamp, collection, addDoc } from "firebase/firestore"; 
 import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword } from 'firebase/auth';
 
 interface AuthState {
   notification : string | null;
   emailVerified: boolean;
   loggedIn: boolean;
-  user: string | null;
+  user: any | null;
   error: string | null;
 }
 
@@ -73,20 +74,47 @@ export const login = (email: string, password: string): AppThunk => async dispat
   }
 };
 
-export const signup = (email: string, password: string): AppThunk => async dispatch => {
-  try {
-    const userCredential = await createUserWithEmailAndPassword(auth_fire, email, password);
-    console.log(userCredential.user.email)
+export const signup = (formData: any): AppThunk => async dispatch => {
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth_fire, formData.email, formData.password);
+      console.log(userCredential.user.email)
 
-    // Envía el correo de verificación
-    await sendEmailVerification(userCredential.user);
+      // Datos del nuevo documento
+      const nuevoDocumento = {
+        nombre: formData.name,
+        correo: formData.email,
+        cedula: formData.cedula,
+        telefono: formData.telefono,
+        provincia: formData.provincia,
+        canton: formData.canton,
+        distrito: formData.distrito,
+        direccion: formData.direccion,
+        fechaNacimiento: Timestamp.fromDate(new Date(formData.fechaNacimiento)),
+        genero: formData.genero,
+        user_type: parseInt(formData.userType,10)
+      };
 
-    const texto = 'Cuenta creada con éxtio!'
-    
-    dispatch(signupSuccess({msg: texto!,emailVerified: userCredential.user.emailVerified }));
-  } catch (error:any) {
-    //console.log(error.message)
-    const msg = error.message.replace('Firebase: ', '');
-    dispatch(signupFailure(msg));
-  }
+      // Referencia a la coleccion de 'Usuarios'
+      const users_collection_ref = collection(data_base, "Usuarios"); 
+
+      // Agrega el nuevo documento a la colección 'Usuarios'
+      try {
+        
+        const documentoRef = await addDoc(users_collection_ref, nuevoDocumento);
+        console.log("Documento agregado con ID: ", documentoRef.id);
+      } catch (error) {
+        console.error("Error al agregar documento: ", error);
+      }
+
+      // Envía el correo de verificación
+      await sendEmailVerification(userCredential.user);
+
+      const texto = 'Cuenta creada con éxtio!'
+      dispatch(signupSuccess({msg: texto!,emailVerified: userCredential.user.emailVerified }));
+
+    } catch (error:any) {
+      //console.log(error.message)
+      const msg = error.message.replace('Firebase: ', '');
+      dispatch(signupFailure(msg));
+    }
 };
