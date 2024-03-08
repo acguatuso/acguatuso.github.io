@@ -1,7 +1,17 @@
-import { Link, NavLink } from 'react-router-dom';
-import './Navbar.css'; // Importa los estilos del Navbar
+import { Link, NavLink, useNavigate } from 'react-router-dom';
+import './Navbar.css'; 
 
 export const Navbar = () => {
+
+    const navigate = useNavigate();
+
+    const onLogout = () => {
+        navigate('/', {
+            replace: true,
+        });
+    }
+
+
     return (
         <div className="navbar-container">
             <nav className="navbar navbar-expand-sm text-dark bg-dark p-2">
@@ -22,20 +32,6 @@ export const Navbar = () => {
                             <div className="navbar-collapse">
                                 <div className="navbar-nav">
         
-
-                                <NavLink 
-                                        className={ ({isActive}) => `nav-item nav-link ${ isActive ? 'active': '' } navbar-text-white`}
-                                        to="/iniciar-sesion"
-                                    >
-                                        Iniciar Sesion
-                                    </NavLink>
-                                    <NavLink 
-                                        className={ ({isActive}) => `nav-item nav-link ${ isActive ? 'active': '' } navbar-text-white`}
-                                        to="/crear-cuenta"
-                                    >
-                                        Crear Cuenta
-                                    </NavLink>
-
                                     <NavLink 
                                         className={ ({isActive}) => `nav-item nav-link ${ isActive ? 'active': '' } navbar-text-white`} 
                                         to="/home"
@@ -86,12 +82,13 @@ export const Navbar = () => {
                             <div className="navbar-collapse collapse w-100 order-3 dual-collapse2 d-flex justify-content-end">
                                 <ul className="navbar-nav ml-auto">
                                     
-                                    <span className="nav-item nav-link testprimary navbar-text-white">
-                                        NombreAdmin
+                                    <span className="nav-item nav-link text-info navbar-text-white">
+                                        UsuarioAdmin
                                     </span>
         
                                     <button
                                         className="nav-item nav-link btn navbar-text-white"
+                                        onClick={ onLogout }
                                     >
                                         Cerrar Sesión
                                     </button>
