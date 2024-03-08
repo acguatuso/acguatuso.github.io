@@ -8,7 +8,7 @@ import ToolbarHeader from '../components/header/ToolbarHeader';
 export const AppRouter = () => {
   return (
     <>
-      <ToolbarHeader />
+      {/* <ToolbarHeader /> */}
 
         <Routes>
           <Route path="/" element={<App/>} />

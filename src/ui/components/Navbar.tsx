@@ -1,4 +1,4 @@
-import { Link, NavLink, useNavigate } from 'react-router-dom';
+import { NavLink, useNavigate } from 'react-router-dom';
 import './Navbar.css'; 
 
 export const Navbar = () => {
@@ -52,7 +52,7 @@ export const Navbar = () => {
                                     >
                                         Cursos
                                     </NavLink>
-        
+
         
                                     <NavLink 
                                         className={ ({isActive}) => `nav-item nav-link ${ isActive ? 'active': '' } navbar-text-white`}

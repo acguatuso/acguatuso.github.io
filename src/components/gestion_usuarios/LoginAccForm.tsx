@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { logOut, login} from '../../redux/reducers/authSlice';
 import { RootState } from '../../redux/store';
-import { useNavigate } from 'react-router-dom';
 
 const LoginAccountForm: React.FC = () => {
   const [email, setEmail] = useState<string>('');
@@ -12,12 +11,10 @@ const LoginAccountForm: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
   const error = useSelector((state: RootState) => state.auth.error);
 
-  const navigate = useNavigate();
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Evita que se envíe la solicitud HTTP predeterminada
     dispatch(login(email, password) as any); // Usa dispatch para llamar a la acción login
-    onLogin();
   };
 
   const handleLogOut = () => {
@@ -32,11 +29,6 @@ const LoginAccountForm: React.FC = () => {
     setPassword(e.target.value);
   };
 
-  const onLogin = () => {
-    navigate('/about', {
-      replace: true,
-    });
-  }
 
   return (
     <>
