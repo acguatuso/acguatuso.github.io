@@ -1,0 +1,16 @@
+.navbar-container {
+    width: 100%;
+    position: fixed;
+    top: 0;
+    left: 0;
+    z-index: 1000; /* Asegura que el navbar esté por encima de otros elementos */
+  }
+  
+  .navbar {
+    width: 100%;
+  }
+
+  .navbar-text-white {
+    color: white;
+  }
+  

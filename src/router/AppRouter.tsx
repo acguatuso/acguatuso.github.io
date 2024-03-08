@@ -3,9 +3,12 @@ import App from '../App';
 import LoginAccountForm from '../components/gestion_usuarios/LoginAccForm';
 import CreateAccountForm from '../components/gestion_usuarios/CreateAccForm';
 import About from '../pages/About/About'
+import { Navbar } from '../ui/components/Navbar';
 export const AppRouter = () => {
   return (
     <>
+
+        <Navbar />
     
         <Routes>
           <Route path="/" element={<App/>} />
