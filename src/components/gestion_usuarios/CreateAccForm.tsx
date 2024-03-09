@@ -38,10 +38,10 @@ const CreateAccountForm: React.FC = () => {
 
   const handleSignUp = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     // Verificar si todos los campos están llenos
     const isFormFilled = Object.values(formData).every(value => value.trim() !== '');
-    
+
     if (!isFormFilled) {
       alert("Por favor llene todos los campos");
       return;
@@ -79,7 +79,7 @@ const CreateAccountForm: React.FC = () => {
                     <label htmlFor="fechaNacimiento">Fecha de Nacimiento:</label>
                     <input type="date" id="fechaNacimiento" name="fechaNacimiento" value={formData.fechaNacimiento} onChange={handleChange} />
                   </div>
-                  <div> 
+                  <div>
                     <label htmlFor="provincia">Provincia:</label>
                     <select id="provincia" name="provincia" value={formData.provincia} onChange={handleChange}>
                       <option value="">Seleccione un provincia...</option>
@@ -107,7 +107,7 @@ const CreateAccountForm: React.FC = () => {
                       <option value="San Carlos">San Carlos</option>
                     </select>
                   </div>
-                  <div> 
+                  <div>
                     <label htmlFor="genero">Género:</label>
                     <select id="genero" name="genero" value={formData.genero} onChange={handleChange}>
                       <option value="">Seleccione un género...</option>
@@ -134,7 +134,7 @@ const CreateAccountForm: React.FC = () => {
                       <option value="Palmera">Palmera</option>
                     </select>
                   </div>
-                  <div> 
+                  <div>
                     <label htmlFor="user_type">Tipo de Usuario:</label>
                     <select id="user_type" name="user_type" value={formData.user_type} onChange={handleChange}>
                       <option value="">Seleccione tipo de usuario...</option>
@@ -142,9 +142,9 @@ const CreateAccountForm: React.FC = () => {
                       <option value="1">1. Usuario Administrador</option>
                     </select>
                   </div>
-                 </div>
-                  <button type="submit">Crear Cuenta</button>
-                </form>
+                </div>
+                <button type="submit">Crear Cuenta</button>
+              </form>
             </div>
           )}
         </div>

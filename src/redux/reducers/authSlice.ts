@@ -1,8 +1,8 @@
 // authSlice.ts
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk } from '../store';
-import { auth_fire, data_base} from '../../firebase';
-import { Timestamp, collection, addDoc, query, where, getDocs } from "firebase/firestore"; 
+import { auth_fire, data_base } from '../../firebase';
+import { Timestamp, collection, addDoc, query, where, getDocs } from "firebase/firestore";
 import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword } from 'firebase/auth';
 
 type UserData = {
@@ -21,7 +21,7 @@ type UserData = {
 }
 
 type AuthState = {
-  notification : string | null;
+  notification: string | null;
   emailVerified: boolean;
   loggedIn: boolean;
   user: UserData | null;
@@ -70,7 +70,7 @@ const authSlice = createSlice({
 });
 
 
-export const { loginSuccess, loginFailure, signupSuccess, signupFailure,logOut} = authSlice.actions;
+export const { loginSuccess, loginFailure, signupSuccess, signupFailure, logOut } = authSlice.actions;
 export default authSlice.reducer;
 
 export const login = (email: string, password: string): AppThunk => async dispatch => {
@@ -91,10 +91,10 @@ export const login = (email: string, password: string): AppThunk => async dispat
     } else {
       console.log("No se pudo obtener el usuario.");
     }
-    
+
     // Emitir orden de logueo de usuario satisfactorio
     dispatch(loginSuccess(usuarioObtenido!));
-  } catch (error:any) {
+  } catch (error: any) {
     const msg = error.message.replace('Firebase: ', '');
     dispatch(loginFailure(msg));
   }
@@ -107,17 +107,17 @@ const obtenerUsuario = async (userEmail: string): Promise<UserData | null> => {
   try {
     // Query consulta para buscar documentos con el correo electrónico proporcionado
     const db_query = query(usuariosCollectionRef, where("correo", "==", userEmail));
-    
+
     // Obtener el documento del usuario
     const usuarioDocSnap = await getDocs(db_query);
     // Obtener el primer documento en el QuerySnapshot
     const primerDocumento = usuarioDocSnap.docs[0];
-    
+
     // Verificar si el documento existe
     if (primerDocumento) {
       // Obtener los datos del documento
       const userData = primerDocumento.data() as UserData;
-      
+
       // Construir un objeto UserData a partir de los datos obtenidos de DB FIREBASE
       const userDataObject: UserData = {
         nombre: userData.nombre,
@@ -146,29 +146,29 @@ const obtenerUsuario = async (userEmail: string): Promise<UserData | null> => {
 }
 
 export const signup = (formData: any): AppThunk => async dispatch => {
-    try {
-      const userCredential = await createUserWithEmailAndPassword(auth_fire, formData.email, formData.password);
-      console.log(userCredential.user.email)
+  try {
+    const userCredential = await createUserWithEmailAndPassword(auth_fire, formData.email, formData.password);
+    console.log(userCredential.user.email)
 
-      // Agrega el documento a fibrease(Usuarios) collection
-      agregarDoc(formData);
+    // Agrega el documento a fibrease(Usuarios) collection
+    agregarDoc(formData);
 
-      // Envía el correo de verificación
-      await sendEmailVerification(userCredential.user);
+    // Envía el correo de verificación
+    await sendEmailVerification(userCredential.user);
 
-      const texto = 'Cuenta creada con éxtio!'
-      dispatch(signupSuccess({msg: texto!,emailVerified: userCredential.user.emailVerified }));
+    const texto = 'Cuenta creada con éxtio!'
+    dispatch(signupSuccess({ msg: texto!, emailVerified: userCredential.user.emailVerified }));
 
-    } catch (error:any) {
-      //console.log(error.message)
-      const msg = error.message.replace('Firebase: ', '');
-      dispatch(signupFailure(msg));
-    }
+  } catch (error: any) {
+    //console.log(error.message)
+    const msg = error.message.replace('Firebase: ', '');
+    dispatch(signupFailure(msg));
+  }
 };
 
 const agregarDoc = async (formData: any) => {
   // Datos del nuevo documento
-  const nuevoDocumento : UserData = {
+  const nuevoDocumento: UserData = {
     nombre: formData.name,
     correo: formData.email,
     cedula: formData.cedula,
@@ -179,16 +179,16 @@ const agregarDoc = async (formData: any) => {
     direccion: formData.direccion,
     fechaNacimiento: Timestamp.fromDate(new Date(formData.fechaNacimiento)),
     genero: formData.genero,
-    user_type: parseInt(formData.user_type,10),
+    user_type: parseInt(formData.user_type, 10),
     estado: 1  // toda cuenta se crea con estado ->   (1 : Activo)
   };
 
   // Referencia a la coleccion de 'Usuarios'
-  const users_collection_ref = collection(data_base, "Usuarios"); 
+  const users_collection_ref = collection(data_base, "Usuarios");
 
   // Agrega el nuevo documento a la colección 'Usuarios'
   try {
-    
+
     const documentoRef = await addDoc(users_collection_ref, nuevoDocumento);
     console.log("Documento agregado con ID: ", documentoRef.id);
   } catch (error) {

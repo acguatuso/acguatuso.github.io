@@ -1,12 +1,14 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { logOut, login} from '../../redux/reducers/authSlice';
+import { logOut, login } from '../../redux/reducers/authSlice';
 import { RootState } from '../../redux/store';
 
 const LoginAccountForm: React.FC = () => {
+  // Local States
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
 
+  // Redux Hooks & Access
   const dispatch = useDispatch();
   const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
   const user = useSelector((state: RootState) => state.auth.user);
@@ -26,7 +28,7 @@ const LoginAccountForm: React.FC = () => {
     setEmail(e.target.value);
   };
 
-  const handlePasswordChange = (e:any) => {
+  const handlePasswordChange = (e: any) => {
     setPassword(e.target.value);
   };
 
@@ -36,10 +38,10 @@ const LoginAccountForm: React.FC = () => {
         <div>
           {loggedIn && user && emailVerified &&
             <div>
-                <p>Bievenido! {user.nombre}</p>
-                <button onClick={handleLogOut}>Cerrar Sesión</button>
+              <p>Bievenido! {user.nombre}</p>
+              <button onClick={handleLogOut}>Cerrar Sesión</button>
             </div>
-           }
+          }
           {error && (
             <div className="alert-popup">
               <div className="alert-message">
@@ -47,7 +49,7 @@ const LoginAccountForm: React.FC = () => {
               </div>
             </div>
           )}
-          {!user && ( 
+          {!user && (
             <form onSubmit={handleLogin}>
               <h2 >Iniciar Sesión</h2>
               <div>
