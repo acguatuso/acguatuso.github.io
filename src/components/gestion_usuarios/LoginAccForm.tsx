@@ -6,6 +6,7 @@ import { RootState } from '../../redux/store';
 const LoginAccountForm: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+
   const dispatch = useDispatch();
   const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
   const user = useSelector((state: RootState) => state.auth.user);
@@ -35,7 +36,7 @@ const LoginAccountForm: React.FC = () => {
         <div>
           {loggedIn && user && emailVerified &&
             <div>
-                <p>Bievenido! : {user}</p>
+                <p>Bievenido! {user.nombre}</p>
                 <button onClick={handleLogOut}>Cerrar Sesión</button>
             </div>
            }
