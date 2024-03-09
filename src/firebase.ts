@@ -19,6 +19,9 @@ const firebaseConfig = {
 // Initialize Firebase
 const app = initializeApp(firebaseConfig);
 
+// Obtiene una instancia de Firestore si estás utilizando Firestore
+export const data_base = getFirestore(app); 
+
 // Obtener el objeto de autenticación de Firebase
 export const auth_fire = getAuth(app);
 

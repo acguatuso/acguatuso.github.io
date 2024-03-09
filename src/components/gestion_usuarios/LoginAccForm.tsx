@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { logOut, login} from '../../redux/reducers/authSlice';
+import { logOut, login } from '../../redux/reducers/authSlice';
 import { RootState } from '../../redux/store';
 
 const LoginAccountForm: React.FC = () => {
+  // Local States
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+
+  // Redux Hooks & Access
   const dispatch = useDispatch();
   const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
   const user = useSelector((state: RootState) => state.auth.user);
   const error = useSelector((state: RootState) => state.auth.error);
+  const emailVerified = useSelector((state: RootState) => state.auth.emailVerified);
 
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
@@ -25,22 +29,21 @@ const LoginAccountForm: React.FC = () => {
     setEmail(e.target.value);
   };
 
-  const handlePasswordChange = (e:any) => {
+  const handlePasswordChange = (e: any) => {
     setPassword(e.target.value);
   };
 
 
   return (
     <>
-      <div className="card">
-        <div className="card-body">
-          <h2 className="card-title">Iniciar Sesión</h2>
-          {loggedIn && user &&
+      <div>
+        <div className='card'>
+          {loggedIn && user && emailVerified &&
             <div>
-                <p>Bievenido! : {user}</p>
-                <button onClick={handleLogOut} className="btn btn-primary">Cerrar Sesión</button>
+              <p>Bievenido! {user.nombre}</p>
+              <button onClick={handleLogOut}>Cerrar Sesión</button>
             </div>
-           }
+          }
           {error && (
             <div className="alert-popup">
               <div className="alert-message">
@@ -48,17 +51,18 @@ const LoginAccountForm: React.FC = () => {
               </div>
             </div>
           )}
-          {!user && ( 
+          {!user && (
             <form onSubmit={handleLogin}>
-              <div className="mb-3">
-                <label htmlFor="email" className="form-label">Email:</label>
-                <input type="email" id="email" className="form-control" value={email} onChange={handleEmailChange} />
+              <h2 >Iniciar Sesión</h2>
+              <div>
+                <label htmlFor="email" >Email:</label>
+                <input type="email" id="email" value={email} onChange={handleEmailChange} />
               </div>
-              <div className="mb-3">
-                <label htmlFor="password" className="form-label">Contraseña:</label>
-                <input type="password" id="password" className="form-control" value={password} onChange={handlePasswordChange} />
+              <div >
+                <label htmlFor="password" >Contraseña:</label>
+                <input type="password" id="password" value={password} onChange={handlePasswordChange} />
               </div>
-              <button type="submit" className="btn btn-primary">Iniciar Sesión</button>
+              <button type="submit" >Iniciar Sesión</button>
             </form>
           )}
         </div>

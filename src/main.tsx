@@ -15,7 +15,7 @@ ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={store}> {/* Envuelve el componente Router(todos los componentes) con Provider y pasa el store */}
       <Router>
-        <ToolbarHeader />
+        <ToolbarHeader /> {/* Colocando tu ToolbarHeader aquí para que se renderice una unica vez*/}
         <AppRouter /> 
       </Router>
     </Provider>
