@@ -1,0 +1,16 @@
+.opciones-container {
+    background: -webkit-linear-gradient(top, #636363, rgba(255, 255, 255, 0.922));
+    border: 1px solid #80ffe1;
+    box-shadow: 0 0 10px #80ffe1;
+    margin: 5px auto;
+    padding: 20px;
+    width: 70%;
+    border-radius: 6px;
+    text-align: center;
+    display: flex;
+}
+
+.columna {
+    flex: 1; 
+    padding: 20px auto; 
+}

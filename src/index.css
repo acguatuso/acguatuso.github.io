@@ -109,7 +109,7 @@ label {
   display: block;
 }
 
-input {
+input, select {
     border-radius: 8px; 
     padding: 10px;
     margin: 10px;
@@ -124,11 +124,48 @@ input:focus {
     box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); 
 }
 
-.modal {
+.Modal {
+  max-width: 80%;
+  max-height: 90%; /* Altura máxima del contenido */
+  overflow-y: auto; /* Permitir desplazamiento vertical */
   background-color: white;
   padding: 20px;
+  margin: 20px auto;
   border-radius: 6px;
 }
+
+.ModalSubmitButton {
+  position: absolute;
+  right: 9rem;
+  bottom: 6rem;
+}
+
+.ModalCloseButton {
+  position: absolute;
+  max-width: 4rem;
+  max-height: 3rem;
+  right: 9rem;
+  top: 2rem;
+}
+
+.ModalCloseButton:hover {
+  color: #80ffe1; 
+  box-shadow: 0 0 5px#80ffe1;
+}
+
+.ModalContent {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr); /* Tres columnas con el mismo ancho */
+  gap: 5px; /* Espacio entre las columnas */
+}
+
+/* Estilos para los elementos dentro del modal */
+.ModalContent > * {
+  /* Ajusta los estilos según tus necesidades */
+  padding: 5px;
+  border-radius: 8px;
+}
+
 
 /* @media (prefers-color-scheme: light) {
   :root {
