@@ -41,7 +41,7 @@ export const Navbar = () => {
         
                                     <NavLink 
                                         className={ ({isActive}) => `nav-item nav-link ${ isActive ? 'active': '' } navbar-text-white`}
-                                        to="/nombre2"
+                                        to="/students"
                                     >
                                         Estudiantes
                                     </NavLink>

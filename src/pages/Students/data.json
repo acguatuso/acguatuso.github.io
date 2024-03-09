@@ -1,0 +1,6 @@
+[
+    { "id": 1, "name": "John Doe", "dir": "123 Main St", "idCR": "1234567890", "email": "john.doe@example.com" },
+    { "id": 2, "name": "Jane Smith", "dir": "456 Elm St", "idCR": "0987654321", "email": "jane.smith@example.com" },
+    { "id": 3, "name": "Alice Johnson", "dir": "789 Oak St", "idCR": "1357924680", "email": "alice.johnson@example.com" }
+  ]
+  
