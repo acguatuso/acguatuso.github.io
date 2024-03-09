@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { logOut, login } from '../../redux/reducers/authSlice';
+import {  login } from '../../redux/reducers/authSlice';
 import { RootState } from '../../redux/store';
 
 const LoginAccountForm: React.FC = () => {
@@ -21,10 +21,6 @@ const LoginAccountForm: React.FC = () => {
     dispatch(login(email, password) as any); // Usa dispatch para llamar a la acción login
   };
 
-  const handleLogOut = () => {
-    dispatch(logOut());
-  }
-
   const handleEmailChange = (e: any) => {
     setEmail(e.target.value);
   };
@@ -41,7 +37,7 @@ const LoginAccountForm: React.FC = () => {
           {loggedIn && user && emailVerified &&
             <div>
               <p>Bievenido! {user.nombre}</p>
-              <button onClick={handleLogOut}>Cerrar Sesión</button>
+              
             </div>
           }
           {error && (

@@ -1,17 +1,22 @@
 import { Route, Routes } from 'react-router-dom';
-import App from '../App';
 import LoginAccountForm from '../components/gestion_usuarios/LoginAccForm';
 import CreateAccountForm from '../components/gestion_usuarios/CreateAccForm';
-
 import { PagesRoutes } from './PagesRoutes';
+import CursosMain from '../components/gestion_cursos/CursosMain';
+import GestionCursos from '../components/gestion_cursos/GestionCursos';
+import About from '../pages/About/About';
+import { HomePage } from '../ui/Hompage';
 
 export const AppRouter = () => {
   return (
     <>
         <Routes>
-          <Route path="/" element={<App/>} />
-          <Route path="/iniciar-sesion" element={<LoginAccountForm />} />
-          <Route path="/crear-cuenta" element={<CreateAccountForm />} />
+            <Route path="/iniciar-sesion" element={<LoginAccountForm />} />
+            <Route path="/home" element={<HomePage/>} />
+            <Route path="/crear-cuenta" element={<CreateAccountForm />} />
+            <Route path='/Cursos' element={<CursosMain/>} />
+            <Route path='/gestionar-cursos' element={<GestionCursos/>} />
+            <Route path='/About' element={<About/>} />
           <Route path="/*" element={<PagesRoutes />} />
         </Routes>
     

@@ -6,20 +6,10 @@
   color-scheme: light dark;
   color: rgba(255, 255, 255, 0.87);
   background-color: #242424;
-
-  font-synthesis: none;
+  
   text-rendering: optimizeLegibility;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-}
-
-a {
-  font-weight: 500;
-  color: #646cff;
-  text-decoration: inherit;
-}
-a:hover {
-  color: #535bf2;
 }
 
 .paleta {
@@ -29,53 +19,7 @@ a:hover {
   background-color: #80ffe1;
 }
 
-header {
-  background-color: #636363;
-  color: black;
-  width: 100%;
-  height: 80px;
-  position: fixed;
-  top: 0;
-  left: 0;
-  color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 20px;
-  box-sizing: border-box;
-}
-
-
-body {
-  margin: 0;
-  display: flex;
-  place-items: center;
-  min-width: 320px;
-  min-height: 100vh;
-  background-color: #c1b8b1;
-  font-family: 'Poppins', sans-serif;
-  color: black;
-}
-
-footer {
-  background-color: #636363;
-  color: black;
-  width: 100%;
-  height: 80px;
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  color: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 0 20px;
-  box-sizing: border-box;
-}
-
 h1 {
-  font-size: 3.2em;
-  line-height: 1.1;
   color: black;
 }
 
@@ -84,98 +28,14 @@ h2 {
 }
 
 button {
-  border-radius: 8px;
-  border: 1px solid transparent;
-  padding: 0.6em 1.2em;
-  font-weight: 500;
-  font-family: inherit;
   background-color: #197abe;
   color: white;
-  cursor: pointer;
-  transition: border-color 0.25s;
 }
+
 button:hover {
   background-color: rgb(10, 110, 182);
 }
-button:focus,
-button:focus-visible {
-  outline: 4px auto -webkit-focus-ring-color;
-}
 
 label {
-  font-weight: bold; 
   color: black;
-  margin-bottom: 5px; 
-  display: block;
 }
-
-input, select {
-    border-radius: 8px; 
-    padding: 10px;
-    margin: 10px;
-    border: 1px solid #636363; 
-    outline: none; 
-    font-family: 'Poppins', sans-serif;
-    width: 250px;
-}
-
-input:focus {
-    border-color: #197abe; 
-    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5); 
-}
-
-.Modal {
-  max-width: 80%;
-  max-height: 90%; /* Altura máxima del contenido */
-  overflow-y: auto; /* Permitir desplazamiento vertical */
-  background-color: white;
-  padding: 20px;
-  margin: 20px auto;
-  border-radius: 6px;
-}
-
-.ModalSubmitButton {
-  position: absolute;
-  right: 9rem;
-  bottom: 6rem;
-}
-
-.ModalCloseButton {
-  position: absolute;
-  max-width: 4rem;
-  max-height: 3rem;
-  right: 9rem;
-  top: 2rem;
-}
-
-.ModalCloseButton:hover {
-  color: #80ffe1; 
-  box-shadow: 0 0 5px#80ffe1;
-}
-
-.ModalContent {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr); /* Tres columnas con el mismo ancho */
-  gap: 5px; /* Espacio entre las columnas */
-}
-
-/* Estilos para los elementos dentro del modal */
-.ModalContent > * {
-  /* Ajusta los estilos según tus necesidades */
-  padding: 5px;
-  border-radius: 8px;
-}
-
-
-/* @media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #f9f9f9;
-  }
-} */
