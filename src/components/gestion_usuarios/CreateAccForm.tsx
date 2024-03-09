@@ -54,7 +54,7 @@ const CreateAccountForm: React.FC = () => {
     <>
       <div>
         <div>
-          <h2>Bienvenido! Crer Cuenta Usuario </h2>
+          <h2>Crear Cuenta Usuario </h2>
           {!emailVerified && notification &&
             <div>
               <p>{notification}, Debes confirmar tu correo electrónico! </p>

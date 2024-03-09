@@ -17,6 +17,7 @@ type UserData = {
   fechaNacimiento: Timestamp;
   genero: string;
   user_type: number;
+  estado: number;
 }
 
 type AuthState = {
@@ -117,7 +118,7 @@ const obtenerUsuario = async (userEmail: string): Promise<UserData | null> => {
       // Obtener los datos del documento
       const userData = primerDocumento.data() as UserData;
       
-      // Construir un objeto UserData a partir de los datos
+      // Construir un objeto UserData a partir de los datos obtenidos de DB FIREBASE
       const userDataObject: UserData = {
         nombre: userData.nombre,
         correo: userData.correo,
@@ -129,7 +130,8 @@ const obtenerUsuario = async (userEmail: string): Promise<UserData | null> => {
         direccion: userData.direccion,
         fechaNacimiento: userData.fechaNacimiento,
         genero: userData.genero,
-        user_type: userData.user_type
+        user_type: userData.user_type,
+        estado: userData.estado
       };
 
       return userDataObject;
@@ -177,7 +179,8 @@ const agregarDoc = async (formData: any) => {
     direccion: formData.direccion,
     fechaNacimiento: Timestamp.fromDate(new Date(formData.fechaNacimiento)),
     genero: formData.genero,
-    user_type: parseInt(formData.userType,10)
+    user_type: parseInt(formData.user_type,10),
+    estado: 1  // toda cuenta se crea con estado ->   (1 : Activo)
   };
 
   // Referencia a la coleccion de 'Usuarios'
