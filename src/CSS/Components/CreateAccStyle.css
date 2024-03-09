@@ -45,4 +45,5 @@ h2 {
 
 .card {
   background-color: whitesmoke;
+  border-radius: 10px;
 }

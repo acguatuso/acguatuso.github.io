@@ -35,7 +35,7 @@ const LoginAccountForm: React.FC = () => {
   return (
     <>
       <div>
-        <div>
+        <div className='card'>
           {loggedIn && user && emailVerified &&
             <div>
               <p>Bievenido! {user.nombre}</p>
