@@ -15,6 +15,7 @@ const LoginAccountForm: React.FC = () => {
   const error = useSelector((state: RootState) => state.auth.error);
   const emailVerified = useSelector((state: RootState) => state.auth.emailVerified);
 
+
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Evita que se envíe la solicitud HTTP predeterminada
     dispatch(login(email, password) as any); // Usa dispatch para llamar a la acción login
@@ -31,6 +32,7 @@ const LoginAccountForm: React.FC = () => {
   const handlePasswordChange = (e: any) => {
     setPassword(e.target.value);
   };
+
 
   return (
     <>
