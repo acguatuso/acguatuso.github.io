@@ -6,11 +6,10 @@ export const Navbar = () => {
     const navigate = useNavigate();
 
     const onLogout = () => {
-        navigate('/', {
+        navigate('/home', {
             replace: true,
         });
     }
-
 
     return (
         <div className="navbar-container">
@@ -82,9 +81,18 @@ export const Navbar = () => {
                             <div className="navbar-collapse collapse w-100 order-3 dual-collapse2 d-flex justify-content-end">
                                 <ul className="navbar-nav ml-auto">
                                     
-                                    <span className="nav-item nav-link text-info navbar-text-white">
-                                        UsuarioAdmin
-                                    </span>
+                                    <NavLink 
+                                        className={ ({isActive}) => `nav-item nav-link ${ isActive ? 'active': '' } navbar-text-white`}
+                                        to="/iniciar-sesion"
+                                    >
+                                        Iniciar Sessión
+                                    </NavLink>
+                                    <NavLink 
+                                        className={ ({isActive}) => `nav-item nav-link ${ isActive ? 'active': '' } navbar-text-white`}
+                                        to="/crear-cuenta"
+                                    >
+                                        Crear Cuenta
+                                    </NavLink>
         
                                     <button
                                         className="nav-item nav-link btn navbar-text-white"

@@ -1,23 +1,18 @@
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import { BrowserRouter as Router} from 'react-router-dom';
+import { AppRouter } from './router/AppRouter.tsx';
+import Layout from './ui/layout.tsx';
 import './App.css'
-import { Link } from 'react-router-dom'
-
 
 function App() {
 
+  // Dentro del componente Router<Layout> se encapsula se pasa como children AppRouter, 
+  // LAyout posee por defecto header/navbar y footer
   return (
-    <>
-      
-      <div className="card">
-        <li>
-          <Link to="/iniciar-sesion">Iniciar Sesión</Link>
-        </li>
-        <li>
-          <Link to="/crear-cuenta">Crear Cuenta</Link>
-        </li>
-      </div>
-    </>
+    <Router>
+      <Layout>
+        <AppRouter /> 
+      </Layout>
+    </Router>
   )
 }
 
