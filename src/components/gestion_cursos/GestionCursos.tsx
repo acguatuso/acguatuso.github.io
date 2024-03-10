@@ -1,27 +1,17 @@
 import { useState, ChangeEvent } from 'react';
-import Modal from 'react-modal';
 import { uploadFirebaseImage } from "../../utils/uploadFirebaseImages/uploadFirebaseImages";
-
-interface Horario {
-  diaSemana: string;
-  horaInicio: string;
-  horaFin: string;
-}
+import { addFirebaseDoc } from "../../utils/addFirebaseDoc/addFirebaseDoc";
 
 function GestionCursos() {
-  const [modalIsOpen, setModalIsOpen] = useState(false);
   const [nombreCurso, setNombreCurso] = useState('');
   const [descripcionCurso, setDescripcionCurso] = useState('');
   const [modalidad, setModalidad] = useState('');
   const [fechaInicio, setFechaInicio] = useState<Date | null>(null);
   const [fechaFin, setFechaFin] = useState<Date | null>(null);
   const [linkCurso, setLinkCurso] = useState('');
-  const [horarios, setHorarios] = useState<Horario[]>([]);
-  const [nuevoHorario, setNuevoHorario] = useState<Horario>({
-    diaSemana: '',
-    horaInicio: '',
-    horaFin: '',
-  });
+  const [horario, setHorario] = useState('');
+  const [fileImage, setFileImage] = useState<File>()
+  const [mensajeExito, setMensajeExito] = useState('');
 
   const handleModalidadChange = (e: ChangeEvent<HTMLSelectElement>) => {
     setModalidad(e.target.value);
@@ -49,134 +39,123 @@ function GestionCursos() {
     setFechaFin(new Date(fechaSeleccionada));
   };
 
-  const handleDiaSemanaChange = (e: ChangeEvent<HTMLSelectElement>) => {
-    setNuevoHorario({ ...nuevoHorario, diaSemana: e.target.value });
+  const handleHorarioChange = (e: ChangeEvent<HTMLInputElement>) => {
+    setHorario(e.target.value);
   };
 
-  const handleHoraInicioChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const horaSeleccionada = e.target.value;
-    setNuevoHorario({ ...nuevoHorario, horaInicio: horaSeleccionada });
-  };
-  
-  const handleHoraFinChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const horaSeleccionada = e.target.value;
-    setNuevoHorario({ ...nuevoHorario, horaFin: horaSeleccionada });
-  };
+  const handleCrearCurso = () => {
+    const fechaCreacion = new Date();
+    if(fileImage != null){
+      uploadFirebaseImage(fileImage, `${nombreCurso}/image1`)
+      setFileImage(undefined);
+    }
+    const cursoData = {
+        nombre: nombreCurso,
+        descripcion: descripcionCurso,
+        modalidad: modalidad,
+        fecha_inicio: fechaInicio?.toISOString(),
+        fecha_finalizacion: fechaFin?.toISOString(),
+        link_plataforma: linkCurso,
+        horario: horario,
+        fechaCreacion: fechaCreacion.toISOString(),
+        image_url: `${nombreCurso}/`,
+        aprobados: [],
+        reprobados: [],
+        matriculados: [],
+        postulados: [],
+        estado: 0,
 
-  const agregarHorario = () => {
-    setHorarios([...horarios, nuevoHorario]);
-    setNuevoHorario({
-      diaSemana: '',
-      horaInicio: '',
-      horaFin: '',
-    });
-    console.log(nuevoHorario)
-  };
+    };
+    addFirebaseDoc('Cursos', cursoData);
 
-  function limpiarHorarios() {
-    setHorarios([]);
-  }
+    // Después de enviar los datos, mostrar el mensaje de éxito
+    setMensajeExito('El curso se ha creado con éxito.');
 
-  function verHorarios() {
-    console.log(horarios)
-  }
+    // Limpiar el formulario y cerrar el modal después de unos segundos
+    setTimeout(() => {
+      setNombreCurso('');
+      setDescripcionCurso('');
+      setModalidad('');
+      setFechaInicio(null);
+      setFechaFin(null);
+      setLinkCurso('');
+      setHorario('');
+      setMensajeExito('');
+    }, 5000); // El mensaje de éxito se mostrará durante 5 segundos (5000 milisegundos)
+};
+
 
   return (
     <>
       <h2>Gestión de Cursos</h2>
-      <button onClick={() => setModalIsOpen(true)}>Crear un Nuevo Curso</button>
-      <Modal 
-        isOpen={modalIsOpen}
-        onRequestClose={() => setModalIsOpen(false)}
-        shouldCloseOnOverlayClick={false}
-        className="Modal"
-      >
-        <h2>Crear un Nuevo Curso</h2>
-        <button className="ModalCloseButton" onClick={() => setModalIsOpen(false)}>X</button>
-        <div className="ModalContent">
-            <div>
-              <label htmlFor="nombre">Nombre</label>
-              <input type="text" value={nombreCurso} onChange={handleNombreCursoChange} id="nombre" name="nombre" placeholder='Nombre del curso' required/>  
+      <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+        Crear un Nuevo Curso
+      </button>
+      <div className="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+        <div className="modal-dialog modal-xl">
+          <div className="modal-content">
+            <div className="modal-header border-0">
+              <h1 className="modal-title fs-5" id="staticBackdropLabel">Crear un Nuevo Curso</h1>
+              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
-            <div>
-                <label htmlFor="descripcion">Descripción</label>
-                <input type="text" value={descripcionCurso} onChange={handleDescripcionCursoChange} id="descripcion" name="descripcion" placeholder='Descripción del curso' required/>
+            <div className="modal-body text-start">
+                <form action="">
+                  <div className="row">
+                    <div className="col">
+                      <label className="form-label" htmlFor="nombre">Nombre</label>
+                      <input type="text" className="form-control" id="nombre" name="nombre" value={nombreCurso} onChange={handleNombreCursoChange}  placeholder="Nombre del curso" required/>
+                    </div>
+                    <div className="col">
+                      <label className="form-label" htmlFor="descripcion">Descripción</label>
+                      <input type="text" className="form-control" id="descripcion" name="descripcion" value={descripcionCurso} onChange={handleDescripcionCursoChange} placeholder="Descripción del curso" required/>
+                    </div>
+                    <div className="col">
+                      <label className="form-label" htmlFor="modalidad">Modalidad</label>
+                      <select id="modalidad" className="form-select" name="modalidad" value={modalidad} onChange={handleModalidadChange} required>
+                        <option disabled value="">Selecciona una modalidad</option>
+                        <option value="presencial">Presencial</option>
+                        <option value="virtual">Virtual</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col">
+                      <label className="form-label" htmlFor="fechaInicio">Fecha de Inicio</label>
+                      <input type="date" className="form-control" id="fechaInicio" name="fechaInicio" value={fechaInicio ? fechaInicio.toISOString().substring(0, 10) : ''} onChange={handleFechaInicioChange} required/>
+                    </div>
+                    <div className="col">
+                      <label className="form-label" htmlFor="fechaFin">Fecha de Fin</label>
+                      <input type="date" className="form-control" id="fechaFin" name="fechaFin" value={fechaFin ? fechaFin.toISOString().substring(0, 10) : ''} onChange={handleFechaFinChange} required/>
+                    </div>
+                    <div className="col">
+                      <label className="form-label" htmlFor="horario">Horario</label>
+                      <input type="text" className="form-control" id="horario" name="horario" value={horario} onChange={handleHorarioChange}placeholder="Ej: Lunes: 8:00am - 9:00am" required/>
+                    </div>
+                  </div>
+                  <div className="row">
+                    <div className="col">
+                      <label className="form-label" htmlFor="linkClase">Link de Clase</label>
+                      <input type="url" className="form-control" id="linkClase" name="linkClase" value={linkCurso} onChange={handleLinkCursoChange}/>
+                    </div>
+                    <div className="col">
+                      <label className="form-label" htmlFor="imagen">Imagen Ilustrativa</label>
+                      <input type="file" className="form-control" id="imagen" name="imagen" onChange={ (event) => setFileImage(event.target.files![0])}/>
+                    </div>
+                  </div>
+                </form>
             </div>
-            <div>
-                <label htmlFor="modalidad">Modalidad</label>
-                <select id="modalidad" value={modalidad} onChange={handleModalidadChange} required>
-                    <option disabled selected value="">Selecciona una modalidad</option>
-                    <option value="presencial">Presencial</option>
-                    <option value="virtual">Virtual</option>
-                </select> 
+            <div className="modal-footer border-0">
+              <button type="button" className="btn btn-primary" onClick={handleCrearCurso} data-bs-dismiss="modal">Crear Curso</button>
             </div>
-            <div>
-              <label htmlFor="fechaInicio">Fecha de Inicio</label>
-              <input
-                type="date"
-                id="fechaInicio"
-                value={fechaInicio ? fechaInicio.toISOString().substring(0, 10) : ''}
-                onChange={handleFechaInicioChange}
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="fechaFin">Fecha de Fin</label>
-              <input
-                type="date"
-                id="fechaFin"
-                value={fechaFin ? fechaFin.toISOString().substring(0, 10) : ''}
-                onChange={handleFechaFinChange}
-                required
-              />
-            </div>
-            <div>
-                <label htmlFor="link-plat">Link de Clase</label>
-                <input type="url" value={linkCurso} onChange={handleLinkCursoChange} id="link-plat" name="link-plat" />
-            </div>
-            <div>
-              <label htmlFor="diaSemana">Día de la semana:</label>
-              <select id="diaSemana" name="diaSemana" value={nuevoHorario.diaSemana} onChange={handleDiaSemanaChange} required>
-                <option disabled value="">Selecciona un día</option>
-                <option value="Lunes">Lunes</option>
-                <option value="Martes">Martes</option>
-                <option value="Miércoles">Miércoles</option>
-                <option value="Jueves">Jueves</option>
-                <option value="Viernes">Viernes</option>
-                <option value="Sábado">Sábado</option>
-                <option value="Domingo">Domingo</option>
-              </select>
-            </div>
-            <div>
-              <label htmlFor="horaInicio">Hora de Inicio:</label>
-              <input
-                type="time"
-                id="horaInicio"
-                value={nuevoHorario.horaInicio}
-                onChange={handleHoraInicioChange}
-                required
-              />
-            </div>
-            <div>
-              <label htmlFor="horaFin">Hora de Fin:</label>
-              <input
-                type="time"
-                id="horaFin"
-                value={nuevoHorario.horaFin}
-                onChange={handleHoraFinChange}
-                required
-              />
-              <button onClick={agregarHorario}>Agregar Horario</button>
-{/*               <button onClick={limpiarHorarios}>Limpiar Horarios</button>
- */}            </div>
-            <div>
-                  <label htmlFor="link-img">Link de Imagen Ilustrativa</label>
-                  <input type="file" id="link-img" name="link-img" onChange={ (event) => uploadFirebaseImage(event.target.files![0], `${nombreCurso}/image1`)} />
-            </div>
+          </div>
         </div>
-        <button className='ModalSubmitButton' onClick={verHorarios}>Crear Curso</button>
-      </Modal>
-
+      </div>
+       {/* Mensaje de éxito */}
+       {mensajeExito && (
+        <div className="alert alert-success" role="alert">
+          {mensajeExito}
+        </div>
+      )}
     </>
   );
 }
