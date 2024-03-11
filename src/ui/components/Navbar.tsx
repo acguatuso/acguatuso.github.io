@@ -111,8 +111,10 @@ export const Navbar = () => {
                                     )}
                                     {loggedIn && user && (
                                     <button className="nav-item nav-link btn navbar-text-white"onClick={handleLogOut}>
+                                        <i className="fa-solid fa-right-from-bracket me-2"></i>
                                         Cerrar Sesión
                                     </button>
+                                    
                                     )}
                                 </ul>
                             </div>

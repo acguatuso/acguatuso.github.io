@@ -1,0 +1,18 @@
+.enlace-sin-subrayado{
+    text-decoration: none;
+}
+
+.copyright-estilo{
+    text-align: center;
+    padding: 1rem;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.redes-estilo{
+    background-color: #21D192;
+}
+
+.horario-tabla{
+    color: #4f4f4f;
+    border-color: #666;
+}
