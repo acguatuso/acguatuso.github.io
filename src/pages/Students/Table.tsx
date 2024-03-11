@@ -1,19 +1,94 @@
-interface StudentRow {
-  id: number;
-  name: String;
-  dir: String;
-  idCR: String; //cedula
-  email: String;
-}
+import React, { useEffect, useState } from "react";
+import DataTable, { TableProps } from "react-data-table-component";
 
-interface tableProps {
-  data: StudentRow[];
-}
+const columns = [
+  {
+    name: "ID",
+    selector: (row: any) => row.id,
+    sortable: true,
+  },
+  {
+    name: "Nombre",
+    selector: (row: any) => row.name,
+    sortable: true,
+  },
 
-const Table: React.FC<tableProps>  = ({ data }) => {
+  {
+    name: "Cédula",
+    selector: (row: any) => row.idCR,
+    sortable: true,
+  },
+  {
+    name: "Télefono",
+    selector: (row: any) => row.phone,
+    sortable: true,
+  },
+  {
+    name: "Correo",
+    selector: (row: any) => row.email,
+    sortable: true,
+    width: "250px",
+  },
+  {
+    name: "Acciones",
+  },
+];
+
+const data = [
+  {
+    id: 1,
+    name: "John Doe",
+    idCR: "1234567",
+    phone: "61234567",
+    email: "john.doe@example.com",
+  },
+  {
+    id: 2,
+    name: "Jane Smith",
+    idCR: "2345671",
+    phone: "81234567",
+    email: "jane.smith@example.com",
+  },
+  {
+    id: 3,
+    name: "Alice Johnson",
+    idCR: "3456712",
+    phone: "61234568",
+    email: "alice.johnson@example.com",
+  },
+];
+
+const Table = () => {
+  const [jsonData, setJsonData] = useState([]);
+
+  useEffect(() => {
+    fetch("src/pages/Students/data.json")
+      .then((response) => response.json())
+      .then((data) => setJsonData(data))
+      .catch((error) => console.error("Error fetching JSON:", error));
+  }, []);
   return (
-    <>
-      <table className="table table-bordered table-striped">
+    <div>
+      <DataTable
+        columns={columns}
+        data={jsonData}
+        pagination
+        paginationPerPage={5}
+        paginationRowsPerPageOptions={[5, 10, 15, 20, 25]}
+        theme="dark"
+        fixedHeader
+        fixedHeaderScrollHeight="300px"
+        selectableRowsSingle
+        responsive
+      ></DataTable>
+    </div>
+  );
+};
+
+export default Table;
+
+/*
+ <table className="table table-bordered table-striped">
         <thead>
           <tr>
             <th>ID</th>
@@ -41,8 +116,4 @@ const Table: React.FC<tableProps>  = ({ data }) => {
           ))}
         </tbody>
       </table>
-    </>
-  );
-};
-
-export default Table;
+*/

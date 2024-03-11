@@ -8,17 +8,14 @@ const Students = () => {
     fetch("src/pages/Students/data.json") // Assuming the JSON file is in the public folder
       .then((response) => response.json())
       .then((data) => setJsonData(data))
-      .then(() => console.log(jsonData))
       .catch((error) => console.error("Error fetching JSON:", error));
   }, []);
 
   return (
-    <>
-      <div>
-        <h2>Estudiantes</h2>
-        <Table data={jsonData}></Table>
-      </div>
-    </>
+    <div className="position-fixed" style={{top:"20%", left:"10%", right:"10%", bottom:"10%"}}>
+      <h2 className="text-secondary">Estudiantes</h2>
+      <Table></Table>
+    </div>
   );
 };
 
