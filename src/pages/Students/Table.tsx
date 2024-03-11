@@ -1,5 +1,64 @@
 import React, { useEffect, useState } from "react";
-import DataTable, { TableProps } from "react-data-table-component";
+import DataTable, { createTheme } from "react-data-table-component";
+
+const tableCustomStyles = {
+    headRow: {
+      style: {
+        color:'#223336',
+        backgroundColor: '#e00ef0'
+      },
+    },
+    rows: {
+      style: {
+        color: "STRIPEDCOLOR",
+        backgroundColor: "STRIPEDCOLOR"
+      },
+      stripedStyle: {
+        color: "NORMALCOLOR",
+        backgroundColor: "NORMALCOLOR"
+      }
+    }
+  }
+// createTheme creates a new theme named solarized that overrides the build in dark theme
+createTheme(
+	'custom',
+	{
+		text: {
+			primary: '#268bd2',
+			secondary: '#2aa198',
+		},
+		background: {
+			default: '#002b36',
+            
+		},
+        striped: {
+            default: '#1e1e'
+          },
+		context: {
+			background: '#cb4b16',
+			text: '#FFFFFF',
+		},
+		divider: {
+			default: '#073642',
+		},
+		button: {
+			default: '#2aa198',
+			hover: 'rgba(0,0,0,.08)',
+			focus: 'rgba(255,255,255,.12)',
+			disabled: 'rgba(255, 255, 255, .34)',
+		},
+		sortFocus: {
+			default: '#2aa198',
+		},
+        headRow: {
+            style: {
+              color:'#223336',
+              backgroundColor: '#e00ef0'
+            },
+          },
+	},
+	'dark',
+);
 
 const columns = [
   {
@@ -75,11 +134,13 @@ const Table = () => {
         pagination
         paginationPerPage={5}
         paginationRowsPerPageOptions={[5, 10, 15, 20, 25]}
-        theme="dark"
+        theme="custom"
+        striped
         fixedHeader
-        fixedHeaderScrollHeight="300px"
+        fixedHeaderScrollHeight="450px"
         selectableRowsSingle
         responsive
+        style={tableCustomStyles}
       ></DataTable>
     </div>
   );
