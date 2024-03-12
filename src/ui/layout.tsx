@@ -1,6 +1,6 @@
 // Layout.tsx
 import React, { ReactNode } from 'react';
-import { Navbar } from '.';
+import { Footer, Navbar } from '.';
 
 interface LayoutProps {
   children: ReactNode;
@@ -14,7 +14,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <div>
       <Navbar />
       {children}
-      {/*<Footbar />*/}
+      <Footer />
     </div>
   );
 };
