@@ -11,6 +11,7 @@ export const AppRouter = () => {
   return (
     <>
         <Routes>
+            <Route path="/" element={<LoginAccountForm />} />
             <Route path="/iniciar-sesion" element={<LoginAccountForm />} />
             <Route path="/home" element={<HomePage/>} />
             <Route path="/crear-cuenta" element={<CreateAccountForm />} />

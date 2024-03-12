@@ -14,7 +14,7 @@ type UserData = {
   canton: string;
   distrito: string;
   direccion: string;
-  fechaNacimiento: Timestamp;
+  fechaNacimiento: Timestamp | string;
   genero: string;
   user_type: number;
   estado: number;
@@ -118,6 +118,10 @@ const obtenerUsuario = async (userEmail: string): Promise<UserData | null> => {
       // Obtener los datos del documento
       const userData = primerDocumento.data() as UserData;
 
+      // Convertir fechaNacimiento a objeto Date si es un Timestamp
+      const fechaNacimiento: string = userData.fechaNacimiento instanceof Timestamp? userData.fechaNacimiento.toDate().toDateString(): userData.fechaNacimiento.toString();
+      //console.log(fechaNacimiento)
+
       // Construir un objeto UserData a partir de los datos obtenidos de DB FIREBASE
       const userDataObject: UserData = {
         nombre: userData.nombre,
@@ -128,7 +132,7 @@ const obtenerUsuario = async (userEmail: string): Promise<UserData | null> => {
         canton: userData.canton,
         distrito: userData.distrito,
         direccion: userData.direccion,
-        fechaNacimiento: userData.fechaNacimiento,
+        fechaNacimiento: fechaNacimiento,
         genero: userData.genero,
         user_type: userData.user_type,
         estado: userData.estado
