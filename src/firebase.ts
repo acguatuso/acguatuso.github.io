@@ -26,7 +26,4 @@ export const data_base = getFirestore(app);
 export const auth_fire = getAuth(app);
 
 // Obtener la referencia de la raiz para el almacenamiento de firebase
-export const firebase_storage = getStorage();
-
-//Obtener la referencia al servicio Cloud Firestore
-export const db = getFirestore(app);
+export const firebase_storage = getStorage(app);

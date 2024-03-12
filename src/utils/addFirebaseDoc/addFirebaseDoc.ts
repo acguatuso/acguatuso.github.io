@@ -1,10 +1,10 @@
 import { collection, addDoc } from 'firebase/firestore';
-import { db } from '../../firebase';
+import { data_base } from '../../firebase';
 
 export const addFirebaseDoc = async (collectionPath: string, data: any) => {
     try {
         // Se obtiene la referencia a la colección
-        const collectionRef = collection(db, collectionPath);
+        const collectionRef = collection(data_base, collectionPath);
         
         // Se agrega un nuevo documento con los datos proporcionados
         const newDocRef = await addDoc(collectionRef, data);

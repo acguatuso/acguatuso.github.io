@@ -1,11 +1,12 @@
 import { doc, getDoc } from 'firebase/firestore'
-import { db } from '../../firebase'
+import { data_base } from '../../firebase'
 
 export const getFirebaseDoc = async (path: string) => {
     //Se realiza la referencia al atributo que se quiere leer
     try{
-        const docRef = doc(db,path)
+        const docRef = doc(data_base,path)
         const docSnap = await getDoc(docRef)
+        console.log(docSnap)
         return docSnap.data()
         //console.log(docSnap.data)
     }catch(error){console.log(error)} 

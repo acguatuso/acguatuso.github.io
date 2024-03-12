@@ -1,8 +1,8 @@
 import { doc,updateDoc } from 'firebase/firestore'
-import { db } from '../../firebase'
+import { data_base } from '../../firebase'
 export const updateFirebaseDoc = async (path : string,data: any) => {
     //Se realiza la referencia al atributo que se quiere actualizar
-    const docRef = doc(db,path)
+    const docRef = doc(data_base,path)
     try{
         await updateDoc(docRef, data)
         console.log('Doc updated')
