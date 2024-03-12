@@ -12,8 +12,7 @@ const Students = () => {
   }, []);
 
   return (
-    <div className="position-fixed" style={{top:"16%", left:"10%", right:"10%", bottom:"10%"}}>
-      <h2 className="text-secondary">Estudiantes</h2>
+    <div className="position-fixed" style={{top:"18%", left:"10%", right:"10%", bottom:"10%"}}>
       <Table></Table>
     </div>
   );
