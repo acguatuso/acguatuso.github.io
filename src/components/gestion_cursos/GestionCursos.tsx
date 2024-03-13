@@ -1,6 +1,6 @@
 import { useState, ChangeEvent } from 'react';
-import { uploadFirebaseImage } from "../../utils/uploadFirebaseImages/uploadFirebaseImages";
-import { addFirebaseDoc } from "../../utils/addFirebaseDoc/addFirebaseDoc";
+import { uploadFirebaseImage } from "../../api/uploadFirebaseImages/uploadFirebaseImages";
+import { addFirebaseDoc } from "../../api/addFirebaseDoc/addFirebaseDoc";
 
 function GestionCursos() {
   const [nombreCurso, setNombreCurso] = useState('');

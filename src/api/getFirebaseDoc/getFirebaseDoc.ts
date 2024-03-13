@@ -6,7 +6,7 @@ export const getFirebaseDoc = async (path: string) => {
     try{
         const docRef = doc(data_base,path)
         const docSnap = await getDoc(docRef)
-        console.log(docSnap)
+        //console.log(docSnap)
         return docSnap.data()
         //console.log(docSnap.data)
     }catch(error){console.log(error)} 

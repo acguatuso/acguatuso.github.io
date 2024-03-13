@@ -2,7 +2,7 @@ import './Footer.css';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { useEffect, useState } from 'react';
-import { getFirebaseDoc } from '../../utils/getFirebaseDoc/getFirebaseDoc';
+import { getFirebaseDoc } from '../../api/getFirebaseDoc/getFirebaseDoc';
 
 
 export const Footer = () => {

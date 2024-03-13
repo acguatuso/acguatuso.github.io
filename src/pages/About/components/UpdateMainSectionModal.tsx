@@ -1,6 +1,7 @@
 import { useState,useEffect } from 'react';
-import { headData } from '../../pages/About/About';
-import { updateFirebaseDoc } from '../../utils/updateFirebaseDoc/updateFirebaseDoc';
+import { headData } from './about.interface';
+import { updateFirebaseDoc } from '../../../api/updateFirebaseDoc/updateFirebaseDoc';
+import { uploadFirebaseImage } from '../../../api/uploadFirebaseImages/uploadFirebaseImages';
 
 
 export const UpdateMainSectionModal = (head: headData) => {
@@ -12,9 +13,9 @@ export const UpdateMainSectionModal = (head: headData) => {
   })
 
   const [state, setState] = useState(false)
-
+  const [imageUpload, setImageUpload] = useState<File>()
   const handleChange = (evt: any) => {
-    console.log(forms.titulo,forms.subtitulo)
+    //console.log(forms.titulo,forms.subtitulo)
     setForms({
       ...forms,
       [evt.target.name]: evt.target.value
@@ -27,28 +28,22 @@ export const UpdateMainSectionModal = (head: headData) => {
       image_url: head.image_principal_url as string
     })
   }
-
-useEffect(() => {
-  //console.log(head.titulo_principal,head.subtitulo_principal)
-  handlePrevious()
-
-}, [])
-
-
+  const handleSetFile = (evt: any) =>{
+    setImageUpload(evt.target.files[0])
+    handleChange(evt)
+  }
   useEffect(() => {
     (async () => {
       if(state){
       await updateFirebaseDoc('/Empresa/ZktZQqsBnqVVoL4dfRHv',{
         titulo_principal: forms.titulo,
         subtitulo_principal: forms.subtitulo,
-        image_url: forms.image_url
-      
+        image_url: `/Empresa/Principal/imagen_principal`      
       })
+      await uploadFirebaseImage(imageUpload!,'/Empresa/Principal/imagen_principal')
       setState(false)
-      window.location.reload()
-    }
-      
-      
+      //window.location.reload()
+    }            
     })()
     
   }, [state])
@@ -57,17 +52,18 @@ useEffect(() => {
     <>
     <div id='main-text-setting' className="bg-image p-5 text-center shadow-1-strong rounded mb-5 text-white"
       style={{
-        backgroundImage: `url('https://mdbcdn.b-cdn.net/img/new/slides/003.webp')`,
+        backgroundImage: `${head.download_url}`,
         backgroundSize: 'cover',
         backgroundPosition: 'center',
       }}
       >
+        <img src={head.download_url}/>
       <h1 className="mb-2 ">{head.titulo_principal}</h1>
       <p className="lead">
         {head.subtitulo_principal}
       </p>
       
-      <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
+      <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop" onClick={()=> handlePrevious()}>
       Actualizar Inicio
       </button>    
       <div className="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -86,17 +82,19 @@ useEffect(() => {
                 <label className='form-label' htmlFor={`subtitle-about-add`}>Subtitulo</label>
                 <textarea className='form-control rounded-0 ' id={`subtitle-about-add`} name='subtitulo' value={forms.subtitulo} onChange={(evt) => handleChange(evt)} />        
                 <label className='form-label' htmlFor={`uploadImage-add`}>Subir imagen</label>
-                <input className="form-control" id={`uploadImage-add`}  name='image_url' type="file" onChange={(evt)=> handleChange(evt)}/>                    
+                <input className="form-control" id={`uploadImage-add`}  name='image_url' type="file" onChange={(evt)=> handleSetFile(evt)}/>                    
               </div>
             </div>
             <div className="modal-footer">
               <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={()=> handlePrevious() }>Cancelar</button>
-              <button type="button" className="btn btn-primary" onClick={() => setState(true)}>Guardar Cambios</button>
+              <button type="button" className="btn btn-primary"  data-bs-dismiss="modal" onClick={()=>setState(true)}>Guardar Cambios</button>
             </div>
           </div>
         </div>
       </div>
+
     </div>  
+
     </>
   )
 }
