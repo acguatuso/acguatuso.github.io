@@ -1,8 +1,9 @@
 import './Footer.css';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import { useEffect, useState } from 'react';
-import { getFirebaseDoc } from '../../api/getFirebaseDoc/getFirebaseDoc';
+import { useEffect} from 'react';
+import { useDispatch } from 'react-redux';
+import { fetchEmpresaData } from '../../redux/reducers/empresaSlice';
 
 
 export const Footer = () => {
