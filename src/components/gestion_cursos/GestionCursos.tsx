@@ -46,7 +46,7 @@ function GestionCursos() {
   const handleCrearCurso = () => {
     const fechaCreacion = new Date();
     if(fileImage != null){
-      uploadFirebaseImage(fileImage, `${nombreCurso}/image1`)
+      uploadFirebaseImage(fileImage, `/Cursos${nombreCurso}/image1`)
       setFileImage(undefined);
     }
     const cursoData = {
@@ -58,7 +58,7 @@ function GestionCursos() {
         link_plataforma: linkCurso,
         horario: horario,
         fechaCreacion: fechaCreacion.toISOString(),
-        image_url: `${nombreCurso}/`,
+        image_url: `/Cursos${nombreCurso}/`,
         aprobados: [],
         reprobados: [],
         matriculados: [],
