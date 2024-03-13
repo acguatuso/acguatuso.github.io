@@ -1,8 +1,8 @@
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppThunk } from '../store';
-import { getFirebaseDoc } from "../../utils/getFirebaseDoc/getFirebaseDoc";
-
+import { getFirebaseDocs } from "../../api/getFirebaseDocs/getFirebaseDocs";
+getFirebaseDocs
 interface EmpresaData {
     correo: string;
     facebookUrl: string;
