@@ -68,7 +68,7 @@ const LoginAccountForm: React.FC = () => {
                   </div>
                 </div>
               )}
-              {!error && (
+              {!user &&(
                 <form onSubmit={handleLogin}>
                   <div className="mb-3">
                     <label htmlFor="email" className="form-label text-start text-muted" >Correo:</label>

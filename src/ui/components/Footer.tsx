@@ -7,44 +7,16 @@ import { getFirebaseDoc } from '../../api/getFirebaseDoc/getFirebaseDoc';
 
 export const Footer = () => {
 
-    const [correo, setCorreo] = useState('')
-    const [facebookUrl, setFacebookUrl] = useState('');
-    const [tituloPrincipal, setTituloPrincipal] = useState('');
-    const [subtituloPrincipal, setSubtituloPrincipal] = useState('');
-    const [telefonoFijo, setTelefonoFijo] = useState('');
-    const [whatsapp, setWhatsapp] = useState('');
-    const [direccionCorta, setDireccionCorta] = useState('');
-    const [horarioLunes, setHorarioLunes] = useState('');
-    const [horarioMartes, setHorarioMartes] = useState('');
-    const [horarioMiercoles, setHorarioMiercoles] = useState('');
-    const [horarioJueves, setHorarioJueves] = useState('');
-    const [horarioViernes, setHorarioViernes] = useState('');
-    const [horarioSabado, setHorarioSabado] = useState('');
-    const [horarioDomingo, setHorarioDomingo] = useState('');
-
+    const dispatch = useDispatch();
+    
     // Redux Hooks & Access
     const user = useSelector((state: RootState) => state.auth.user);
-
+    const empresaData = useSelector((state: RootState) => state.empresa.data);
+    
     useEffect(() => {
-        (async() => {
-            const docSnap = await getFirebaseDoc('/Empresa/ZktZQqsBnqVVoL4dfRHv');
+        dispatch(fetchEmpresaData() as any );
+    },[]);
 
-            setCorreo(docSnap?.correo);
-            setFacebookUrl(docSnap?.redes[0].red_url);
-            setTituloPrincipal(docSnap?.titulo_principal);
-            setSubtituloPrincipal(docSnap?.subtitulo_principal);
-            setTelefonoFijo(docSnap?.telefonos[0]);
-            setWhatsapp(docSnap?.telefonos[1]);
-            setDireccionCorta(docSnap?.direccion_corta);
-            setHorarioLunes(docSnap?.horarios[0]);
-            setHorarioMartes(docSnap?.horarios[1]);
-            setHorarioMiercoles(docSnap?.horarios[2]);
-            setHorarioJueves(docSnap?.horarios[3]);
-            setHorarioViernes(docSnap?.horarios[4]);
-            setHorarioSabado(docSnap?.horarios[5]);
-            setHorarioDomingo(docSnap?.horarios[6]);
-    })()
-    }, []);
 
   return (
 
@@ -63,8 +35,8 @@ export const Footer = () => {
 
                 {/* Derecha */}
                 <div>
-                    <a href={ facebookUrl } className='me-4 text-reset'>  
-                        <i className='fab fa-facebook-f'> </i>
+                    <a href={ empresaData?.facebookUrl } className='me-4 text-reset'>  
+                        <i className='fab fa-facebook-f facebook-color'> </i>
                     </a>
                 </div>
                 {/* Derecha */}
@@ -77,10 +49,10 @@ export const Footer = () => {
                         {/* Columna 1 */}
                         <div className="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
                             <h6 className='text-uppercase fw-bold mb-4'>
-                                <i className="fas fa-gem me-3"></i>{ tituloPrincipal }
+                                <i className="fas fa-gem me-3"></i>{ empresaData?.nombre }
                             </h6>
                             <p>
-                                { subtituloPrincipal }
+                                { empresaData?.subtituloPrincipal }
                             </p>
                         </div>
                         {/* Columna 1 */}
@@ -104,25 +76,25 @@ export const Footer = () => {
                                 </tbody>
                             </table> */}
                             <p className="mb-1">
-                                 { horarioLunes }
+                                 { empresaData?.horarioLunes }
                             </p>
                             <p className="mb-1">
-                                { horarioMartes }
+                                { empresaData?.horarioMartes }
                             </p>
                             <p className="mb-1">
-                                { horarioMiercoles }
+                                { empresaData?.horarioMiercoles }
                             </p>
                             <p className="mb-1">
-                                { horarioJueves }
+                                { empresaData?.horarioJueves }
                             </p>
                             <p className="mb-1">
-                                { horarioViernes }
+                                { empresaData?.horarioViernes }
                             </p>
                             <p className="mb-1">
-                                { horarioSabado }
+                                { empresaData?.horarioSabado }
                             </p>
                             <p className="mb-1">
-                                { horarioDomingo }
+                                { empresaData?.horarioDomingo }
                             </p>
                         </div>
                         {/* Columna 2 Horarios*/}
@@ -134,16 +106,16 @@ export const Footer = () => {
                                 Contacto
                             </h6>
                             <p>
-                                <i className='fas fa-home me-3'></i> { direccionCorta }
+                                <i className='fas fa-home me-3'></i> { empresaData?.direccionCorta }
                             </p>
                             <p>
-                                <i className='fas fa-envelope me-3'></i> { correo }
+                                <i className='fas fa-envelope me-3'></i> { empresaData?.correo }
                             </p>
                             <p>
-                                <i className='fas fa-phone me-3'></i> { telefonoFijo }
+                                <i className='fas fa-phone me-3'></i> { empresaData?.telefonoFijo }
                             </p>
                             <p>
-                                <i className='fa-brands fa-whatsapp me-3'></i> {whatsapp}
+                                <i className='fa-brands fa-whatsapp me-3'></i> {empresaData?.whatsapp}
                             </p>
                         </div>
                         {/* Fin Columna 4 */}
