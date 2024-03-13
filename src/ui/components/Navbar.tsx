@@ -3,6 +3,8 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { logOut } from '../../redux/reducers/authSlice';
 import './Navbar.css';
+import { useEffect } from 'react';
+import { fetchEmpresaData } from '../../redux/reducers/empresaSlice';
 
 export const Navbar = () => {
 
@@ -10,9 +12,13 @@ export const Navbar = () => {
     const dispatch = useDispatch();
     const user = useSelector((state: RootState) => state.auth.user);
     const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
+    const empresaData = useSelector((state: RootState) => state.empresa.data);
 
     const navigate = useNavigate();
 
+    useEffect(() => {
+        dispatch(fetchEmpresaData() as any );
+    },[]);
 
     const handleLogOut = () => {
         dispatch(logOut());
@@ -40,7 +46,7 @@ export const Navbar = () => {
                             <img src="/src/assets/LogoUCAG.png" alt="Bootstrap" width="110" height="80" />
 
                         </NavLink>)}
-                    <h4 className='navbar-text-white'>Unión de Asociaciones Cantonales de Guatuso</h4>
+                    <h4 className='navbar-text-white'>{ empresaData?.nombre }</h4>
                     <button className="navbar-toggler navbar-dark navbar-toggler-custom" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
                     </button>
