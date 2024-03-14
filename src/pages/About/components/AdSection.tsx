@@ -3,6 +3,7 @@ import { AdSectionDelete } from './AdSectionDelete';
 import { adSection } from './about.interface';
 
 export const AdSection = (props: adSection) => {    
+    
     const handleAux1 = () => {
         console.log('handleaux1')
         props.globalStateFunction2()
@@ -11,6 +12,7 @@ export const AdSection = (props: adSection) => {
         console.log('handleaux2')
         props.globalStateFunction2()
     }
+    
     return (
     <>    
     {
@@ -18,7 +20,7 @@ export const AdSection = (props: adSection) => {
         props.posicion_id  == 1 ?
         <div className="row mb-3 border">        
             <div className="col">
-                <img  className='img-thumbnail' src={props!.download_url}/>           
+                <img  className='img-thumbnail' src={props.download_url}/>           
             </div>            
             <div className="col">                        
                 <h3>{props.titulo}</h3>

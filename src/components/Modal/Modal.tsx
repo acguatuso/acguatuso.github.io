@@ -1,6 +1,7 @@
 import { modalProps } from "./modal.interface"
 
 export const Modal = (props: modalProps) => {
+
   return (
     <>       
     <button type="button" className={props.buttonStyle} data-bs-toggle="modal" data-bs-target={`#${props.id}`}>

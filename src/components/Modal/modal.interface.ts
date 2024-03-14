@@ -9,5 +9,6 @@ export interface modalProps{
     primaryButtonText:string
     classSecondaryButton: string
     classPrimaryButton: string
-    functionButtonOption(): void;
+    functionButtonOption: () => void;
+
 }

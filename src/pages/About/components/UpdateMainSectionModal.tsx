@@ -41,6 +41,7 @@ const handleUpdate = async () => {
   })
   if(imageUpload != undefined){
     await uploadFirebaseImage(imageUpload!,'/Empresa/Principal/imagen_principal')
+    
   }
   head.globalStateFunction1()
 }          

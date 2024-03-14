@@ -56,3 +56,9 @@ export interface adSection{
 export interface addSection{
   globalStateFunction2(): void
 }
+
+export interface imageList{
+  id: string
+  image_url: string
+  download_url: string
+}

@@ -20,7 +20,7 @@ const [globalStateMainSection, setGlobalStateMainSection] = useState(0)
 const [globalStateSections, setGlobalStateSections] = useState(0)
 const [sections, setSections] = useState<sectionsData[]>([])
 const [head, setHead] = useState<headData>({ image_principal_url: '',subtitulo_principal: '',titulo_principal: ''})
-const [imageList, setImageList] = useState<string[]>([])
+//const [imageList, setImageList] = useState<string[]>([])
 const [mainImage, setMainImage] = useState('')
 
 
@@ -46,14 +46,9 @@ useEffect(() => {
   (async()=>{
     //CARGA LOS ELEMENTOS DE EMPRESA
     const doc2 = await getFirebaseDocs('/Empresa/ZktZQqsBnqVVoL4dfRHv/secciones')
+    //obtener los urls
     setSections(doc2 as sectionsData[])
-
-    //CARGA LAS IMAGENES DEL SECTION
-    const docRef = ref(firebase_storage, '/Empresa/Secciones')
-    await listAll(docRef)
-    await listAll(docRef).then((resp)=> {resp.items.forEach((items)=>{
-      getDownloadURL(items).then((url)=> setImageList((prev)=>[...prev,url]))       
-    })})
+    
   })()
 
 }, [globalStateSections])
@@ -79,9 +74,9 @@ useEffect(() => {
         <UpdateMainSectionModal             
             image_principal_url= {head.image_principal_url}
             subtitulo_principal= {head.subtitulo_principal}
-            titulo_principal= {head.titulo_principal}
-            download_url={mainImage}
+            titulo_principal= {head.titulo_principal}          
             globalStateFunction1={()=> handleGlobalState1()}
+            download_url={mainImage}
           />    
         
     
@@ -95,9 +90,9 @@ useEffect(() => {
         <div>
 
         {
-          sections.map( (element,index) => ( 
+          sections.map( (element) => (             
             <AdSection
-            key={`element.id${index}`}
+            key={`element.id'-${element.id}`}
             id = {element.id}
             posicion_id={element.posicion_id}           
             descripcion= {element.descripcion} 
@@ -105,10 +100,10 @@ useEffect(() => {
             image_url= {element.image_url}
             subtitulo= {element.subtitulo}
             titulo= {element.titulo}
-            download_url={imageList[index]}
+            download_url={element.download_url}
             globalStateFunction2={()=> handleGlobalState3()}
             />
-          ))
+            ))
         }  
         </div>      
       </div>   

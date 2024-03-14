@@ -3,6 +3,7 @@ import { addFirebaseDoc } from '../../../api/addFirebaseDoc/addFirebaseDoc';
 import { uploadFirebaseImage } from '../../../api/uploadFirebaseImage/uploadFirebaseImage';
 import { addSection, sectionsData } from './about.interface';
 import { v4 } from "uuid"
+import { getFirebaseImage } from '../../../api/getFirebaseImage/getFirebaseImage';
 //se pasan funciones medainte props en react el modal se puede convertir en un ui
 export const AddSection = (prop: addSection) => {
     //debo hacer una funcion en el about para poder agregar elementos del section
@@ -32,8 +33,9 @@ export const AddSection = (prop: addSection) => {
   }
 
   const handleAdd = async()=> {
+    let res: string | undefined = ''
     if(fileImage != undefined){
-    await uploadFirebaseImage(fileImage!,forms.image_url)
+      res = await uploadFirebaseImage(fileImage!,forms.image_url)
     }
     await addFirebaseDoc('/Empresa/ZktZQqsBnqVVoL4dfRHv/secciones',{
       posicion_id: forms.posicion_id,
@@ -41,7 +43,8 @@ export const AddSection = (prop: addSection) => {
       subtitulo: forms.subtitulo,
       descripcion: forms.descripcion,
       estado: 1,
-      image_url: forms.image_url
+      image_url: forms.image_url,
+      download_url: res
     })
     //llamamos al globalState2 del about para que renderice mediante el useEffect
     prop.globalStateFunction2()
