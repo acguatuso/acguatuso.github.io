@@ -18,8 +18,8 @@ export const Modal = (props: modalProps) => {
             {props.body}
         </div>
         <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">{props.buttonOption1}</button>
-            <button type="button" className="btn btn-primary" data-bs-dismiss='modal' onClick={()=> props.functionButtonOption()}>{props.buttonOption2}</button>
+            <button type="button" className={props.classSecondaryButton} data-bs-dismiss="modal">{props.secondaryButtonText}</button>
+            <button type="button" className={props.classPrimaryButton} data-bs-dismiss='modal' onClick={()=> props.functionButtonOption()}>{props.primaryButtonText}</button>
         </div>
         </div>
     </div>

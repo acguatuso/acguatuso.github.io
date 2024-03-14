@@ -1,8 +1,9 @@
 import { useState } from 'react'
-import { sectionsData } from './about.interface';
+import { adSection, sectionsData } from './about.interface';
 import { updateFirebaseDoc } from '../../../api/updateFirebaseDoc/updateFirebaseDoc';
+import { uploadFirebaseImage } from '../../../api/uploadFirebaseImage/uploadFirebaseImage';
 
-export const AdSectionEditModal = (props: sectionsData,image_url_list: string[]) => {
+export const AdSectionEditModal = (props: adSection) => {
     const [fileImage, setFileImage] = useState<File>()
     const [forms, setForms] = useState<sectionsData>({
       id: props.id,
@@ -12,6 +13,7 @@ export const AdSectionEditModal = (props: sectionsData,image_url_list: string[])
       descripcion: props.descripcion,
       estado: props.estado,
       image_url: props.image_url
+      
       //todo imagenes se debe realizar una funcion que verifique cuales nombres est[an repetido en el firestore
     })
     //console.log(props, 'adsectioneditmodal')
@@ -24,32 +26,27 @@ export const AdSectionEditModal = (props: sectionsData,image_url_list: string[])
     }
     const handleSetFile = (evt: any) =>{
         setFileImage(evt.target.files[0])
-        handleChange(evt)
+        //handleChange(evt)
       }
     const handleUpdate = async()=> {
-        let counter = 1        
-        let simplifiedPath = forms.image_url.slice(12)    
-        while (forms.image_url in image_url_list){
-          setForms({
-            ...forms,
-            image_url: `/Empresa/Secciones/${simplifiedPath}(${counter})`
-          })
-          counter++
-          simplifiedPath = forms.image_url
-        }            
+        console.log('handleupdate')
+        if(fileImage != undefined){
+            await uploadFirebaseImage(fileImage!,forms.image_url)
+        }
         await updateFirebaseDoc(`/Empresa/ZktZQqsBnqVVoL4dfRHv/secciones/${forms.id}`,{
             posicion_id: forms.posicion_id,
             titulo: forms.titulo,
             subtitulo: forms.subtitulo,
             descripcion: forms.descripcion,
             estado: 1,
-            image_url: `/Empresa/Secciones/${simplifiedPath}`
+            image_url: forms.image_url
         })
-    }  
+        props.globalStateFunction2()
+    }
 
     return (
     <>
-    <button type="button" className="btn btn-primary btn-sm mb-1" data-bs-toggle="modal" data-bs-target={`#${props.id}`}>
+    <button type="button" className="btn btn-primary btn-sm" data-bs-toggle="modal" data-bs-target={`#${props.id}`}>
     Editar
     </button>     
     <div className="modal fade" id={props.id} data-bs-backdrop="static" data-bs-keyboard="false"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -70,7 +67,7 @@ export const AdSectionEditModal = (props: sectionsData,image_url_list: string[])
                     <label className='form-label' htmlFor={`description-about-${props.id}`}>Descripción</label>
                     <textarea className='form-control rounded-0 ' id={`description-about-${props.id}`} name='descripcion' defaultValue={props.descripcion}  rows={10}  onChange={(evt) => handleChange(evt)}/>        
                     <label className='form-label' htmlFor={`uploadImage-${props.id}`}>Subir imagen</label>
-                    <input className="form-control mb-3" id={`uploadImage-${props.id}`}  name='image_url' type="file" onChange={(evt) => handleSetFile(evt)}/>    
+                    <input className="form-control mb-3" id={`uploadImage-${props.id}`}  name='image_url' type="file" onChange={(evt)=>handleSetFile(evt)}/>    
                     {/* <div className="form-check mb-1" >
                         <input className="form-check-input" type="radio" name="position" id="position1" onChange={() => setForms({...forms, posicion_id: 1})}/>
                         <label className="form-check-label" htmlFor="position1">

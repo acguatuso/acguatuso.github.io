@@ -7,21 +7,24 @@ import { idDelete } from './about.interface';
 
 export const AdSectionDelete = (prop: idDelete) => {
     const handleDelete = async() =>{
+        console.log('handleDelete')
         await deleteFirebaseDoc(`/Empresa/ZktZQqsBnqVVoL4dfRHv/secciones/${prop.id}`)
-
+        prop.globalStateFunction2()
     }
 
     return (
     <>
         <Modal
         id={'ad-section-modal-delete'}
-        buttonStyle={"btn-close"}
+        buttonStyle={"btn btn-danger btn-sm"}
         modalTitle="Eliminar"
-        buttonName={''}
+        buttonName={'Eliminar'}
         modalName={'Eliminar'}
         body={'¿Estás seguro que desea eliminar está sección?'}
-        buttonOption1={'Cancelar'}
-        buttonOption2={'Aceptar'}
+        secondaryButtonText={'Cancelar'}
+        primaryButtonText={'Aceptar'}
+        classPrimaryButton="btn btn-danger"
+        classSecondaryButton="btn btn-secondary"
         functionButtonOption={() => {handleDelete()}} 
         />
     </>

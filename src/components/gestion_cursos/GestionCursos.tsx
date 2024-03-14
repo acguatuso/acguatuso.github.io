@@ -1,5 +1,5 @@
 import { useState, ChangeEvent } from 'react';
-import { uploadFirebaseImage } from "../../api/uploadFirebaseImages/uploadFirebaseImages";
+import { uploadFirebaseImage } from "../../api/uploadFirebaseImage/uploadFirebaseImage";
 import { addFirebaseDoc } from "../../api/addFirebaseDoc/addFirebaseDoc";
 
 function GestionCursos() {

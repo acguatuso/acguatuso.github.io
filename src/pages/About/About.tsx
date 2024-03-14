@@ -5,7 +5,7 @@ import { UpdateMainSectionModal } from "./components/UpdateMainSectionModal";
 import { AdSection } from './components/AdSection';
 import { AddSection } from './components/AddSection';
 import { getFirebaseDocs } from "../../api/getFirebaseDocs/getFirebaseDocs";
-import { headData, sectionsData } from "./components/about.interface";
+import { headData,sectionsData, } from './components/about.interface';
 
 
 
@@ -16,52 +16,80 @@ import { firebase_storage } from '../../firebase'
 
 
 export const About = () => {
-
+const [globalStateMainSection, setGlobalStateMainSection] = useState(0)
+const [globalStateSections, setGlobalStateSections] = useState(0)
 const [sections, setSections] = useState<sectionsData[]>([])
 const [head, setHead] = useState<headData>({ image_principal_url: '',subtitulo_principal: '',titulo_principal: ''})
 const [imageList, setImageList] = useState<string[]>([])
 const [mainImage, setMainImage] = useState('')
-const imagesList = sections.map( (evt) => { return  evt.image_url });
-// const downloadList = sections.map( (element)=>)
+
+
+//FUNCIONES GLOBALES QUE SIRVEN PARA SER LLAMADAS DESDE OTROS COMPONENTES 
+//SE UTILIZA UNA POR COMPONENTE PARA QUE SE EJECUTEN DE MANERA CORRECTA
+const handleGlobalState1 = () => {
+  console.log('handleGlobalState1')
+  setGlobalStateMainSection(globalStateMainSection + 1)
+}
+
+const handleGlobalState2 = () =>{
+  console.log('handleGlobalState2')
+  setGlobalStateSections(globalStateSections + 1)
+}
+
+const handleGlobalState3 = () =>{
+  console.log('handleGlobalState3')
+  setGlobalStateSections(globalStateSections + 1)
+}
+
+
 useEffect(() => {
   (async()=>{
-    const doc = await getFirebaseDoc('/Empresa/ZktZQqsBnqVVoL4dfRHv')
+    //CARGA LOS ELEMENTOS DE EMPRESA
     const doc2 = await getFirebaseDocs('/Empresa/ZktZQqsBnqVVoL4dfRHv/secciones')
     setSections(doc2 as sectionsData[])
-    setHead({image_principal_url: doc?.image_principal_url, subtitulo_principal: doc?.subtitulo_principal, titulo_principal: doc?.titulo_principal})     
+
+    //CARGA LAS IMAGENES DEL SECTION
     const docRef = ref(firebase_storage, '/Empresa/Secciones')
     await listAll(docRef)
-    //console.log(listAllaux)
     await listAll(docRef).then((resp)=> {resp.items.forEach((items)=>{
       getDownloadURL(items).then((url)=> setImageList((prev)=>[...prev,url]))       
     })})
   })()
 
-}, [])
+}, [globalStateSections])
 
 useEffect(() => {
   (async()=>{
+    //CARGA ELEMENTOS DE LA SECCION PRINCIPAL
+    const doc = await getFirebaseDoc('/Empresa/ZktZQqsBnqVVoL4dfRHv')
+    setHead({
+      image_principal_url: doc?.image_principal_url, 
+      subtitulo_principal: doc?.subtitulo_principal, 
+      titulo_principal: doc?.titulo_principal
+    })   
+    //CARGA LA IMAGEN PRINCIPAL
     const docRef2 = ref(firebase_storage,'/Empresa/Principal/imagen_principal')
-    console.log(docRef2)
-    const res = await getDownloadURL(docRef2).then((url)=> setMainImage(url))
-    console.log(res,'mainimage')
+    await getDownloadURL(docRef2).then((url)=> setMainImage(url))
   })()
-}, [])
+}, [globalStateMainSection])
 
   return (
     <>      
-      <div className="container-fluid" id="about-container">  
+      <div className="container-sm" id="about-container">  
         <UpdateMainSectionModal             
             image_principal_url= {head.image_principal_url}
             subtitulo_principal= {head.subtitulo_principal}
             titulo_principal= {head.titulo_principal}
             download_url={mainImage}
+            globalStateFunction1={()=> handleGlobalState1()}
           />    
         
     
         <div className="row">                
           <div className="col mb-4">           
-          <AddSection {...imagesList}/>  
+          <AddSection 
+          globalStateFunction2={()=>handleGlobalState2()}
+          />  
           </div>
         </div>
         <div>
@@ -78,12 +106,12 @@ useEffect(() => {
             subtitulo= {element.subtitulo}
             titulo= {element.titulo}
             download_url={imageList[index]}
-            {...imagesList}
+            globalStateFunction2={()=> handleGlobalState3()}
             />
           ))
         }  
         </div>      
-      </div>    
+      </div>   
     </>
   )
 }
