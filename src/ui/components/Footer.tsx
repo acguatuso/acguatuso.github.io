@@ -37,7 +37,8 @@ export const Footer = () => {
                 {/* Derecha */}
                 <div>
                     <a href={ empresaData?.facebookUrl } className='me-4 text-reset'>  
-                        <i className='fab fa-facebook-f facebook-color'> </i>
+                    <img src="/src/assets/icono_facebook.svg" alt="Facebook" width="40" height="35" />
+                        {/* <i className='fab fa-facebook-f facebook-color'> </i> */}
                     </a>
                 </div>
                 {/* Derecha */}
