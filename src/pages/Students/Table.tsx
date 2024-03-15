@@ -1,11 +1,6 @@
 import React, { useEffect, useState } from "react";
 import DataTable, { createTheme } from "react-data-table-component";
-
-createTheme("dark", {
-  striped: {
-    default: "#393939",
-  },
-});
+import DataTableBase from "../../components/dataTable/DataTableBase";
 
 const columns = [
   {
@@ -94,54 +89,12 @@ const Table = () => {
       .catch((error) => console.error("Error fetching JSON:", error));
   }, []);
   return (
-    <div>
-      <DataTable
-        title="Estudiantes"
-        columns={columns}
-        data={jsonData}
-        pagination
-        paginationPerPage={10}
-        paginationRowsPerPageOptions={[5, 10, 15, 20, 25]}
-        theme="dark"
-        striped
-        fixedHeader
-        fixedHeaderScrollHeight="450px"
-        selectableRowsSingle
-        responsive
-      ></DataTable>
-    </div>
+    <DataTableBase
+      title="Estudiantes"
+      columns={columns}
+      data={jsonData}
+    />
   );
 };
 
 export default Table;
-
-/*
- <table className="table table-bordered table-striped">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Dirección</th>
-            <th>Cédula</th>
-            <th>Correo</th>
-            <th>Ver</th>
-            <th>Editar</th>
-            <th>Borrar</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((item, index) => (
-            <tr key={index}>
-              <td>{item.id}</td>
-              <td>{item.name}</td>
-              <td>{item.dir}</td>
-              <td>{item.idCR}</td>
-              <td>{item.email}</td>
-              <td>-</td>
-              <td>-</td>
-              <td>-</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-*/
