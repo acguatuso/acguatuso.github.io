@@ -3,7 +3,7 @@ import { uploadFirebaseImage } from "../../api/uploadFirebaseImages/uploadFireba
 import { addFirebaseDoc } from "../../api/addFirebaseDoc/addFirebaseDoc";
 import { updateFirebaseDoc } from '../../api/updateFirebaseDoc/updateFirebaseDoc';
 import { Curso } from './curso.interface';
-
+import './CursosMain.css'
 
 interface formProps{
     id: string
@@ -107,9 +107,10 @@ export const FormularioCursos = (props: formProps) => {
       }, 5000); // El mensaje de éxito se mostrará durante 5 segundos (5000 milisegundos)
     };
 
+    
+
     const handleEditarCurso = () => {
-        const confirmacion = window.confirm("¿Estás seguro de querer realizar los cambios?");
-        if (confirmacion && props.curso !== null) {
+        if (props.curso !== null) {
             // Llamar a la función para actualizar el curso en Firebase
             updateFirebaseDoc(`/Cursos/${props.curso.id}`, {
                 nombre: nombreCurso,
@@ -126,9 +127,13 @@ export const FormularioCursos = (props: formProps) => {
                 postulados: [],
                 estado: 0,
             });
+            // Después de enviar los datos, mostrar el mensaje de éxito
+            setMensajeExito("Curso editado con éxito!");
 
-        }
-        
+            setTimeout(() => {
+              setMensajeExito('');
+            }, 5000); // El mensaje de éxito se mostrará durante 5 segundos (5000 milisegundos)
+        } 
     }
 
     const handleSubmit = () => {
@@ -203,15 +208,16 @@ export const FormularioCursos = (props: formProps) => {
                   </form>
               </div>
               <div className="modal-footer border-0">
-                <button type="button" className="btn btn-primary" onClick={handleSubmit} data-bs-dismiss="modal">{props.submitButton}</button>
+                  <button type="button" className="btn btn-primary" onClick={handleSubmit} data-bs-dismiss="modal">{props.submitButton}</button>
               </div>
             </div>
           </div>
         </div>
-         {/* Mensaje de éxito */}
+        
          {mensajeExito && (
-          <div className="alert alert-success" role="alert">
+          <div className="alert alert-success centered-alert" role="alert">
             {mensajeExito}
+            {/* <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> */}
           </div>
         )}
       </>

@@ -1,12 +1,14 @@
 import { useState, useEffect} from 'react';
 import { getFirebaseDocs } from "../../api/getFirebaseDocs/getFirebaseDocs";
-import CrearCurso from "./CrearCurso"
-import EditarCurso from './EditarCurso';
+import { FormularioCursos } from "./FormularioCursos";
 import { Curso } from './curso.interface';
+import EliminarCurso from './EliminarCurso';
 
 
 function GestionCursos() {
   const [cursos, setCursos] = useState<Curso[]>([]);
+
+
 
   useEffect(() => {
     // Obtiene los cursos de Firebase
@@ -32,34 +34,46 @@ function GestionCursos() {
   return (
     <>
       <h2>Gestión de Cursos</h2>
-      <CrearCurso/>
+      <FormularioCursos 
+      id={"course-section-modal-add"}
+      titulo={"Crear un Nuevo Curso"}
+      nombreButton={"Crear un Nuevo Curso"}
+      submitButton={"Crear Curso"}
+      curso={null}
+      />
       <div>
-  <h2>Lista de Cursos</h2>
-  <table className="table">
-    <thead className="table-dark">
-      <tr>
-        <th scope="col">Nombre</th>
-        <th scope="col">Duración</th>
-        <th scope="col">Editar</th>
-        <th scope="col">Eliminar</th>
-      </tr>
-    </thead>
-    <tbody>
-      {cursos.map(course => (
-        <tr key={course.id}>
-          <td>{course.nombre}</td>
-          <td>{course.descripcion}</td>
-          <td>
-            <EditarCurso curso={course}/>
-          </td>
-          <td>
-            <button className="btn btn-danger" /* onClick={() => handleDelete(course.id)} */>Eliminar</button>
-          </td>
-        </tr>
-      ))}
-    </tbody>
-  </table>
-</div>
+        <h2>Lista de Cursos</h2>
+        <table className="table">
+          <thead className="table-dark">
+            <tr>
+              <th scope="col">Nombre</th>
+              <th scope="col">Descripción</th>
+              <th scope="col">Editar</th>
+              <th scope="col">Eliminar</th>
+            </tr>
+          </thead>
+          <tbody>
+            {cursos.map(curso => (
+              <tr key={curso.id}>
+                <td>{curso.nombre}</td>
+                <td>{curso.descripcion}</td>
+                <td>
+                <FormularioCursos 
+                id={`course-section-modal-edit-${curso.id}`}
+                titulo={`Editar Curso: ${curso.nombre}`}
+                nombreButton={"Editar"}
+                submitButton={"Guardar Cambios"}
+                curso={curso}
+                />
+                </td>
+                <td>
+                  <EliminarCurso id={curso.id}/>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
 
     </>
   );
