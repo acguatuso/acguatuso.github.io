@@ -4,6 +4,7 @@ import { RootState } from '../../redux/store';
 import { useEffect} from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchEmpresaData } from '../../redux/reducers/empresaSlice';
+import { SentEmail } from '../SentEmail';
 
 
 export const Footer = () => {
@@ -26,7 +27,7 @@ export const Footer = () => {
         <footer className='text-center text-lg-start bg-body-tertiary text-muted footer-ancho footer-container'>
 
             {/* Seccion: Redes Sociales */}
-            <section className='d-flex justify-content-center justify-content-lg-between p-4 text-white border-botton bg-dark /* redes-estilo */'>
+            <section className='d-flex justify-content-center justify-content-lg-between p-4 text-dark border-botton redes-estilo'>
                 {/* Izquierda */}
                 <div className='me-5 d-none d-lg-block'>
                     <span>Mantente conectado con nosotros por redes sociales</span>
@@ -36,7 +37,8 @@ export const Footer = () => {
                 {/* Derecha */}
                 <div>
                     <a href={ empresaData?.facebookUrl } className='me-4 text-reset'>  
-                        <i className='fab fa-facebook-f facebook-color'> </i>
+                    <img src="/src/assets/icono_facebook.svg" alt="Facebook" width="40" height="35" />
+                        {/* <i className='fab fa-facebook-f facebook-color'> </i> */}
                     </a>
                 </div>
                 {/* Derecha */}
@@ -63,18 +65,7 @@ export const Footer = () => {
                             <h6 className="text-uppercase fw-bold mb-4">
                                 Horario
                             </h6>
-                            {/* <table className='table horario-tabla'>
-                                <tbody>
-                                    <tr>
-                                        <td>Lun - Vie:</td>
-                                        <td>8am - 4pm</td>
-                                    </tr>
-                                    <tr>
-                                        <td>Sab - Dom:</td>
-                                        <td>Cerrado</td>
-                                    </tr>
-                                </tbody>
-                            </table> */}
+
                             <p className="mb-1">
                                  { empresaData?.horarioLunes }
                             </p>
@@ -117,6 +108,7 @@ export const Footer = () => {
                             <p>
                                 <i className='fa-brands fa-whatsapp me-3'></i> {empresaData?.whatsapp}
                             </p>
+                            <SentEmail />
                         </div>
                         {/* Fin Columna 4 */}
                     </div>
