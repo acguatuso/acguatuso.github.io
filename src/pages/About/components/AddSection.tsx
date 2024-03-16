@@ -1,14 +1,14 @@
 import { useState } from 'react';
 import { addFirebaseDoc } from '../../../api/addFirebaseDoc/addFirebaseDoc';
 import { uploadFirebaseImage } from '../../../api/uploadFirebaseImage/uploadFirebaseImage';
-import { addSection, sectionsData } from './about.interface';
+import { adsSection } from './about.interface';
 import { v4 } from "uuid"
-import { getFirebaseImage } from '../../../api/getFirebaseImage/getFirebaseImage';
-//se pasan funciones medainte props en react el modal se puede convertir en un ui
-export const AddSection = (prop: addSection) => {
-    //debo hacer una funcion en el about para poder agregar elementos del section
+import { useAppDispatch } from '../../../hooks/hooks';
+import { addSection } from '../../../redux/reducers/aboutSlice';
+export const AddSection = () => {
+  const dispatch = useAppDispatch()
   const [fileImage, setFileImage] = useState<File>()
-  const [forms, setForms] = useState<sectionsData>({
+  const [forms, setForms] = useState<adsSection>({
     id: '',
     posicion_id: 1,
     titulo: '',
@@ -16,17 +16,14 @@ export const AddSection = (prop: addSection) => {
     descripcion: '',
     estado: 1,
     image_url: ''
-    //todo imagenes se debe realizar una funcion que verifique cuales nombres est[an repetido en el firestore
   })
   const handleChange = (evt: any) => {
-    //console.log(evt.target.value, forms.position_id) 
     setForms({
         ...forms,
         [evt.target.name]: evt.target.value
       })
   }
   const handleSetFile = (evt: any) =>{
-    //console.log(evt.target.value.slice(12),'handlesetfile')
     setFileImage(evt.target.files[0])
     setForms({...forms, 
       image_url: `Empresa/Secciones/${v4()}`})
@@ -37,7 +34,7 @@ export const AddSection = (prop: addSection) => {
     if(fileImage != undefined){
       res = await uploadFirebaseImage(fileImage!,forms.image_url)
     }
-    await addFirebaseDoc('/Empresa/ZktZQqsBnqVVoL4dfRHv/secciones',{
+    let data: adsSection = {
       posicion_id: forms.posicion_id,
       titulo: forms.titulo,
       subtitulo: forms.subtitulo,
@@ -45,9 +42,16 @@ export const AddSection = (prop: addSection) => {
       estado: 1,
       image_url: forms.image_url,
       download_url: res
-    })
-    //llamamos al globalState2 del about para que renderice mediante el useEffect
-    prop.globalStateFunction2()
+    }
+    const res2 = await addFirebaseDoc('/Empresa/ZktZQqsBnqVVoL4dfRHv/secciones',data)
+    console.log(res2!.id)
+    
+    data = {
+      ...data,
+      id: res2?.id
+    }
+    dispatch(addSection(data))
+
   }
     return (
     <>

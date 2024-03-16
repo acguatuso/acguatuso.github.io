@@ -1,7 +1,7 @@
 import { ref, deleteObject } from "firebase/storage";
 import { firebase_storage } from "../../firebase";
 
-export const deleteFirebaseDoc = async (path: string) => {
+export const deleteFirebaseImages = async (path: string) => {
     try{
         const docRef = ref(firebase_storage, path); 
         deleteObject(docRef)
