@@ -32,21 +32,21 @@ const columns = [
   },
   {
     name: "Ver",
-    cell: (row: { name: any; }) => (
+    cell: (row: { name: any }) => (
       <button onClick={() => handleButtonClick(row.name)}>Ver</button>
     ),
     ignoreRowClick: true,
   },
   {
     name: "Editar",
-    cell: (row: { name: any; }) => (
+    cell: (row: { name: any }) => (
       <button onClick={() => handleButtonClick(row.name)}>Editar</button>
     ),
     ignoreRowClick: true,
   },
   {
     name: "Eliminar",
-    cell: (row: { name: any; }) => (
+    cell: (row: { name: any }) => (
       <button onClick={() => handleButtonClick(row.name)}>Eliminar</button>
     ),
     ignoreRowClick: true,
@@ -55,15 +55,15 @@ const columns = [
 
 const Students = () => {
   const [jsonData, setJsonData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]); // State to hold filtered data
-  const [filterText, setFilterText] = useState(""); // State to hold filter text
+  const [filteredData, setFilteredData] = useState([]);
+  const [filterText, setFilterText] = useState("");
 
   useEffect(() => {
     fetch("/src/pages/Students/data.json")
       .then((response) => response.json())
       .then((data) => {
         setJsonData(data);
-        setFilteredData(data); // Initialize filtered data with all data
+        setFilteredData(data);
       })
       .catch((error) => console.error("Error fetching JSON:", error));
   }, []);
@@ -75,13 +75,33 @@ const Students = () => {
     setFilteredData(filtered);
   }, [filterText, jsonData]);
 
+  const addStudent = () => {
+    const newEntry = {
+      id: jsonData.length + 1, // Generate a new ID for the entry
+      name: "New Student",
+      idCR: "1234567",
+      phone: "12345678",
+      email: "new.student@example.com",
+    };
+    setJsonData([newEntry, ...jsonData]); // Add the new entry to jsonData
+  };
+
   return (
     <div
       className="position-fixed"
       style={{ top: "18%", left: "10%", right: "10%", bottom: "10%" }}
     >
       <div className="d-flex justify-content-between">
-        <h2 className="text-secondary mb-0 pt-3 ps-2">Estudiantes</h2>
+        <div className="d-flex">
+          <h2 className="text-secondary mb-0 pt-3 ps-2">Estudiantes</h2>
+          <button
+            className="btn btn-dark py-0 ms-2 mt-3"
+            style={{ height: "35px" }}
+            onClick={() => addStudent()}
+          >
+            Crear Estudiante
+          </button>
+        </div>
         <input
           type="text"
           placeholder="Filtrar por Nombre"
@@ -95,8 +115,8 @@ const Students = () => {
   );
 };
 
-export default Students;
 function handleButtonClick(id: any): void {
-  console.log('Button clicked for:', id);
+  console.log("Button clicked for:", id);
 }
 
+export default Students;
