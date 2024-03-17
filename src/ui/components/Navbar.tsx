@@ -71,12 +71,12 @@ export const Navbar = () => {
                                             Inicio
                                         </NavLink>
 
-                                        <NavLink
-                                            className={({ isActive }) => `nav-item nav-link ${isActive ? 'active' : ''} navbar-text-white`}
-                                            to="/nombre2"
-                                        >
-                                            Estudiantes
-                                        </NavLink>
+                                        <NavLink 
+                                        className={ ({isActive}) => `nav-item nav-link ${ isActive ? 'active': '' } navbar-text-white`}
+                                        to="/students"
+                                         >
+                                        Estudiantes
+                                         </NavLink>
 
                                         <NavLink
                                             className={({ isActive }) => `nav-item nav-link ${isActive ? 'active' : ''} navbar-text-white`}
