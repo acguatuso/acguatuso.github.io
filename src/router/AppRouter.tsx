@@ -1,7 +1,6 @@
 import { Route, Routes } from 'react-router-dom';
 import LoginAccountForm from '../components/gestion_usuarios/LoginAccForm';
 import CreateAccountForm from '../components/gestion_usuarios/CreateAccForm';
-import { PagesRoutes } from './PagesRoutes';
 import CursosMain from '../components/gestion_cursos/CursosMain';
 import GestionCursos from '../components/gestion_cursos/GestionCursos';
 import About from '../pages/About/About';
@@ -18,9 +17,7 @@ export const AppRouter = () => {
             <Route path='/Cursos' element={<CursosMain/>} />
             <Route path='/gestionar-cursos' element={<GestionCursos/>} />
             <Route path='/About' element={<About/>} />
-          <Route path="/*" element={<PagesRoutes />} />
         </Routes>
-    
     </>
   )
 }
