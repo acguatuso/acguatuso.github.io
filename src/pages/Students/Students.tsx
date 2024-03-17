@@ -35,21 +35,21 @@ const columns = [
     cell: (row: { name: any }) => (
       <button onClick={() => handleButtonClick(row.name)}>Ver</button>
     ),
-    ignoreRowClick: true,
+    width: "7vw",
   },
   {
     name: "Editar",
     cell: (row: { name: any }) => (
       <button onClick={() => handleButtonClick(row.name)}>Editar</button>
     ),
-    ignoreRowClick: true,
+    width: "7vw",
   },
   {
     name: "Eliminar",
     cell: (row: { name: any }) => (
       <button onClick={() => handleButtonClick(row.name)}>Eliminar</button>
     ),
-    ignoreRowClick: true,
+    width: "8vw",
   },
 ];
 
@@ -93,7 +93,7 @@ const Students = () => {
     >
       <div className="d-flex justify-content-between">
         <div className="d-flex">
-          <h2 className="text-secondary mb-0 pt-3 ps-2">Estudiantes</h2>
+          {/* <h2 className="text-secondary mb-0 pt-3 ps-2">Estudiantes</h2> */}
           <button
             className="btn btn-dark py-0 ms-2 mt-3"
             style={{ height: "35px" }}
@@ -109,7 +109,6 @@ const Students = () => {
           onChange={(e) => setFilterText(e.target.value)}
         />
       </div>
-
       <DataTableBase columns={columns} data={filteredData} />
     </div>
   );
