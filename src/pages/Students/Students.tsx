@@ -32,12 +32,24 @@ const columns = [
   },
   {
     name: "Ver",
+    cell: (row: { name: any; }) => (
+      <button onClick={() => handleButtonClick(row.name)}>Ver</button>
+    ),
+    ignoreRowClick: true,
   },
   {
     name: "Editar",
+    cell: (row: { name: any; }) => (
+      <button onClick={() => handleButtonClick(row.name)}>Editar</button>
+    ),
+    ignoreRowClick: true,
   },
   {
     name: "Eliminar",
+    cell: (row: { name: any; }) => (
+      <button onClick={() => handleButtonClick(row.name)}>Eliminar</button>
+    ),
+    ignoreRowClick: true,
   },
 ];
 
@@ -57,7 +69,6 @@ const Students = () => {
   }, []);
 
   useEffect(() => {
-    // Filter data based on filterText
     const filtered = jsonData.filter((item) =>
       item.name.toLowerCase().includes(filterText.toLowerCase())
     );
@@ -70,7 +81,7 @@ const Students = () => {
       style={{ top: "18%", left: "10%", right: "10%", bottom: "10%" }}
     >
       <div className="d-flex justify-content-between">
-        <h2 className="mb-0 pt-3">Estudiantes</h2>
+        <h2 className="text-secondary mb-0 pt-3 ps-2">Estudiantes</h2>
         <input
           type="text"
           placeholder="Filtrar por Nombre"
@@ -85,3 +96,7 @@ const Students = () => {
 };
 
 export default Students;
+function handleButtonClick(id: any): void {
+  console.log('Button clicked for:', id);
+}
+
