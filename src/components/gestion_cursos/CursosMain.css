@@ -1,0 +1,9 @@
+.opciones-container {
+    border: 1px solid black;
+    box-shadow: 0 0 10px rgb(82, 79, 79);
+    margin: 5px auto;
+    padding: 20px;
+    width: 70%;
+    border-radius: 6px;
+    text-align: center;
+}

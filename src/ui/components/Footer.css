@@ -1,0 +1,32 @@
+.enlace-sin-subrayado{
+    text-decoration: none;
+}
+
+.copyright-estilo{
+    text-align: center;
+    padding: 1rem;
+    background-color: rgba(0, 0, 0, 0.05);
+}
+
+.redes-estilo{
+    background-color: #BFBFBF;
+}
+
+.facebook-color{
+    color: #6F8BC7 ;
+}
+
+.horario-tabla{
+    color: #4f4f4f;
+    border-color: #666;
+}
+
+.footer-ancho {
+    width: 100%;
+  }
+
+  .footer-container {
+    width: 100%;
+    margin-top: 200px;
+    z-index: 1000;
+  }

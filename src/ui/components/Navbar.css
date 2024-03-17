@@ -1,9 +1,13 @@
+body{
+  padding-top: 90px;
+}
+
 .navbar-container {
     width: 100%;
     position: fixed;
     top: 0;
     left: 0;
-    z-index: 1000; /* Asegura que el navbar esté por encima de otros elementos */
+    z-index: 1000;
   }
   
   .navbar {
@@ -22,6 +26,13 @@
   color: rgb(191, 161, 240) !important;
 }
 
+.navbar-toggler-custom {
+  margin-right: 0; /* Ajusta el margen derecho a 0 */
+}
+
+.navbar-collapse-custom {
+  text-align: left;
+}
 
 
   
