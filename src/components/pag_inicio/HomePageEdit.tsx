@@ -1,7 +1,7 @@
 import React, { useState, ChangeEvent, FormEvent } from 'react';
-import { DragDrop } from './DragDrop';
+import { DragDrop } from '../DragDrop';
 
-export const Homepage = () => {
+export const HomePageEdit = () => {
     const [titulo, setTitulo] = useState('');
     const [descripcion, setDescripcion] = useState('');
 
