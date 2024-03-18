@@ -19,7 +19,6 @@ export const Footer = () => {
         dispatch(fetchEmpresaData() as any );
     },[]);
 
-
   return (
 
     <div className='footer-container'>
@@ -52,10 +51,10 @@ export const Footer = () => {
                         {/* Columna 1 */}
                         <div className="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
                             <h6 className='text-uppercase fw-bold mb-4'>
-                                <i className="fas fa-gem me-3"></i>{ empresaData?.nombre }
+                                <i className="fas fa-gem me-3"></i>{ empresaData?.titulo_footer }
                             </h6>
                             <p>
-                                { empresaData?.subtituloPrincipal }
+                                { empresaData?.subtitulo_footer }
                             </p>
                         </div>
                         {/* Columna 1 */}

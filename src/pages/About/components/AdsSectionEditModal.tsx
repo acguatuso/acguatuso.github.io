@@ -1,22 +1,24 @@
 import { useState } from 'react'
-import { sectionsData } from './about.interface';
+import { adsSection } from './about.interface';
 import { updateFirebaseDoc } from '../../../api/updateFirebaseDoc/updateFirebaseDoc';
+import { uploadFirebaseImage } from '../../../api/uploadFirebaseImage/uploadFirebaseImage';
+import { useAppDispatch } from '../../../hooks/hooks';
+import { editSection } from '../../../redux/reducers/aboutSlice';
 
-export const AdSectionEditModal = (props: sectionsData,image_url_list: string[]) => {
+export const AdsSectionEditModal = (props: adsSection) => {
     const [fileImage, setFileImage] = useState<File>()
-    const [forms, setForms] = useState<sectionsData>({
-      id: props.id,
-      posicion_id: props.posicion_id,
-      titulo: props.titulo,
-      subtitulo: props.subtitulo,
-      descripcion: props.descripcion,
-      estado: props.estado,
-      image_url: props.image_url
-      //todo imagenes se debe realizar una funcion que verifique cuales nombres est[an repetido en el firestore
+    const [forms, setForms] = useState<adsSection>({
+        id: props.id,
+        posicion_id: props.posicion_id,
+        titulo: props.titulo,
+        subtitulo: props.subtitulo,
+        descripcion: props.descripcion,
+        estado: props.estado,
+        image_url: props.image_url, 
+        download_url: props.download_url
     })
-    //console.log(props, 'adsectioneditmodal')
+    const dispatch = useAppDispatch()
     const handleChange = (evt: any) => {
-      //console.log(evt.target.value, forms.position_id) 
       setForms({
           ...forms,
           [evt.target.name]: evt.target.value
@@ -24,32 +26,33 @@ export const AdSectionEditModal = (props: sectionsData,image_url_list: string[])
     }
     const handleSetFile = (evt: any) =>{
         setFileImage(evt.target.files[0])
-        handleChange(evt)
       }
     const handleUpdate = async()=> {
-        let counter = 1        
-        let simplifiedPath = forms.image_url.slice(12)    
-        while (forms.image_url in image_url_list){
-          setForms({
-            ...forms,
-            image_url: `/Empresa/Secciones/${simplifiedPath}(${counter})`
-          })
-          counter++
-          simplifiedPath = forms.image_url
-        }            
-        await updateFirebaseDoc(`/Empresa/ZktZQqsBnqVVoL4dfRHv/secciones/${forms.id}`,{
+        let res: string | undefined = forms.download_url
+        console.log('handleupdate')
+        if(fileImage != undefined){
+            res = await uploadFirebaseImage(fileImage!,forms.image_url)
+        }
+        let data: adsSection = {                        
             posicion_id: forms.posicion_id,
             titulo: forms.titulo,
             subtitulo: forms.subtitulo,
             descripcion: forms.descripcion,
             estado: 1,
-            image_url: `/Empresa/Secciones/${simplifiedPath}`
-        })
-    }  
+            image_url: forms.image_url,
+            download_url: res
+        }
+        await updateFirebaseDoc(`/Empresa/ZktZQqsBnqVVoL4dfRHv/secciones/${forms.id}`,data)
+        data = {
+            ...data,
+            id: props.id
+        }
+        dispatch(editSection(data))
+    }
 
     return (
     <>
-    <button type="button" className="btn btn-primary btn-sm mb-1" data-bs-toggle="modal" data-bs-target={`#${props.id}`}>
+    <button type="button" className="btn btn-outline-warning mb-1 btn-sm" data-bs-toggle="modal" data-bs-target={`#${props.id}`}>
     Editar
     </button>     
     <div className="modal fade" id={props.id} data-bs-backdrop="static" data-bs-keyboard="false"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -63,27 +66,15 @@ export const AdSectionEditModal = (props: sectionsData,image_url_list: string[])
                 </div>
                 <div className="modal-body">
                 <div className='form-row text-black'>                      
-                    <label className='form-label' htmlFor={`title-about-addSection`}>Título</label>
+                    <label className='form-label' htmlFor={`title-about-adsSection`}>Título</label>
                     <textarea className='form-control rounded-0 h-10' id={`title-about-${props.id}`} name="titulo" defaultValue={props.titulo} onChange={(evt) => handleChange(evt)}/>
                     <label className='form-label' htmlFor={`subtitle-about-${props.id}`}>Subtítulo</label>
                     <textarea className='form-control rounded-0 h-10' id={`subtitle-about-${props.id}`} name="subtitulo" defaultValue={props.subtitulo} onChange={(evt) => handleChange(evt)}/>
                     <label className='form-label' htmlFor={`description-about-${props.id}`}>Descripción</label>
                     <textarea className='form-control rounded-0 ' id={`description-about-${props.id}`} name='descripcion' defaultValue={props.descripcion}  rows={10}  onChange={(evt) => handleChange(evt)}/>        
                     <label className='form-label' htmlFor={`uploadImage-${props.id}`}>Subir imagen</label>
-                    <input className="form-control mb-3" id={`uploadImage-${props.id}`}  name='image_url' type="file" onChange={(evt) => handleSetFile(evt)}/>    
-                    {/* <div className="form-check mb-1" >
-                        <input className="form-check-input" type="radio" name="position" id="position1" onChange={() => setForms({...forms, posicion_id: 1})}/>
-                        <label className="form-check-label" htmlFor="position1">
-                            Imagen a la derecha
-                        </label>
-                    </div>
-                    <div className="form-check mb-1">
-                        <input className="form-check-input" type="radio" name="position" id="position2" onChange={() => setForms({...forms, posicion_id: 2})} />
-                        <label className="form-check-label" htmlFor="position2">
-                            Imagen a la izquierda
-                        </label>
+                    <input className="form-control mb-3" id={`uploadImage-${props.id}`}  name='image_url' type="file" onChange={(evt)=>handleSetFile(evt)}/>    
 
-                    </div> */}
                     <div className="btn-group" data-toggle="buttons">
                         <label className="btn btn-secondary">
                         
@@ -94,8 +85,6 @@ export const AdSectionEditModal = (props: sectionsData,image_url_list: string[])
                         </label>
                     </div>
 
-                        {/* <button type="button" className="btn btn-lg btn-primary" disabled>Primary button</button>
-                        <button type="button" className="btn btn-secondary btn-lg" disabled>Button</button> */}
                 </div>
 
             </div>
