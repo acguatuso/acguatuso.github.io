@@ -7,6 +7,7 @@ import emailjs from '@emailjs/browser';
   const templateId: string = 'contact_form';
   const publicKey: string = 'Z5h6nUaQ9KoLIq2kN';
   const [showButton, setShowButton] = useState(true);
+  const [mensajeExito, setMensajeExito] = useState('');
 
    const form: any = useRef();
 
@@ -21,6 +22,11 @@ import emailjs from '@emailjs/browser';
          () => {
            console.log('SUCCESS!');
            setShowButton(false);
+           setMensajeExito('Su consulta ha sido enviada con éxito.')
+           setTimeout(() => {
+            setMensajeExito('');
+            cleanForm();
+          }, 4000);
          },
          (error) => {
            console.log('FAILED...', error.text);
@@ -30,7 +36,13 @@ import emailjs from '@emailjs/browser';
 
    const handleSubmitButton = () => {
     setShowButton(true);
+    setMensajeExito('');
    }
+
+   const cleanForm = () => {
+    form.current.reset();
+   };
+
 
   return (
     <>
@@ -42,6 +54,9 @@ import emailjs from '@emailjs/browser';
       {/* <!-- Modal --> */}
       <div className="modal fade" id="sentEmailModal" tabIndex={-1} aria-labelledby="contactenosModalLabel" aria-hidden="true">
         <div className="modal-dialog modal-lg">
+    {mensajeExito && (
+      <div className="alert alert-success mt-2">{mensajeExito}</div>
+    )}
           <div className="modal-content">
             <div className="modal-header">
               <h1 className="modal-title fs-5" id="contactenosModalLabel"> Contáctenos</h1>
