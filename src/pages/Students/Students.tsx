@@ -87,8 +87,7 @@ const Students = () => {
 
   return (
     <div
-      className="position-fixed"
-      style={{ top: "18%", left: "10%", right: "10%", bottom: "10%" }}
+      style={{ top: "18%", left: "10%", right: "10%", bottom: "10%"}}
     >
       <h2 className="text-secondary mb-0 pt-3 ps-2">Listado General de Estudiantes</h2>  
       <div className="d-flex justify-content-between">
