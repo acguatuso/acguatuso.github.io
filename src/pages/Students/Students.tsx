@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import Table from "./Table";
 import DataTableBase from "../../components/dataTable/DataTableBase";
 
 const columns = [
@@ -91,15 +90,22 @@ const Students = () => {
       className="position-fixed"
       style={{ top: "18%", left: "10%", right: "10%", bottom: "10%" }}
     >
+      <h2 className="text-secondary mb-0 pt-3 ps-2">Listado General de Estudiantes</h2>  
       <div className="d-flex justify-content-between">
         <div className="d-flex">
-          {/* <h2 className="text-secondary mb-0 pt-3 ps-2">Estudiantes</h2> */}
           <button
             className="btn btn-dark py-0 ms-2 mt-3"
             style={{ height: "35px" }}
             onClick={() => addStudent()}
           >
             Crear Estudiante
+          </button>
+          <button
+            className="btn btn-dark py-0 ms-2 mt-3"
+            style={{ height: "35px" }}
+            onClick={() => console.log("desactivando.....")}
+          >
+            Desactivar Estudiante
           </button>
         </div>
         <input
