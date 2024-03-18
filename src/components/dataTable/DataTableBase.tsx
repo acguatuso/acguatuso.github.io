@@ -16,7 +16,7 @@ function DataTableBase<T>(props: TableProps<T>): JSX.Element {
       theme="dark"
       striped
       fixedHeader
-      fixedHeaderScrollHeight="450px"
+      fixedHeaderScrollHeight="80vh"
       responsive
       {...props}
     />

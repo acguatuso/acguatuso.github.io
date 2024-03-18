@@ -1,5 +1,7 @@
 import { useEffect, useState } from "react";
 import DataTableBase from "../../components/dataTable/DataTableBase";
+import { FaAddressCard, FaEdit } from "react-icons/fa";
+import { MdDelete } from "react-icons/md";
 
 const columns = [
   {
@@ -32,23 +34,38 @@ const columns = [
   {
     name: "Ver",
     cell: (row: { name: any }) => (
-      <button onClick={() => handleButtonClick(row.name)}>Ver</button>
+      <button
+        className="btn btn-primary"
+        onClick={() => handleButtonClick(row.name)}
+      >
+        <FaAddressCard />
+      </button>
     ),
-    width: "7vw",
+    width: "5vw",
   },
   {
     name: "Editar",
     cell: (row: { name: any }) => (
-      <button onClick={() => handleButtonClick(row.name)}>Editar</button>
+      <button
+        className="btn btn-primary"
+        onClick={() => handleButtonClick(row.name)}
+      >
+        <FaEdit />
+      </button>
     ),
-    width: "7vw",
+    width: "5vw",
   },
   {
     name: "Eliminar",
     cell: (row: { name: any }) => (
-      <button onClick={() => handleButtonClick(row.name)}>Eliminar</button>
+      <button
+        className="btn btn-primary"
+        onClick={() => handleButtonClick(row.name)}
+      >
+        <MdDelete />
+      </button>
     ),
-    width: "8vw",
+    width: "6vw",
   },
 ];
 
@@ -76,21 +93,21 @@ const Students = () => {
 
   const addStudent = () => {
     const newEntry = {
-      id: jsonData.length + 1, // Generate a new ID for the entry
+      id: jsonData.length + 1,
       name: "New Student",
       idCR: "1234567",
       phone: "12345678",
       email: "new.student@example.com",
     };
-    setJsonData([newEntry, ...jsonData]); // Add the new entry to jsonData
+    setJsonData([newEntry, ...jsonData]);
   };
 
   return (
-    <div
-      style={{ top: "18%", left: "10%", right: "10%", bottom: "10%"}}
-    >
-      <h2 className="text-secondary mb-0 pt-3 ps-2">Listado General de Estudiantes</h2>  
-      <div className="d-flex justify-content-between">
+    <div style={{ top: "18%", left: "10%", right: "10%", bottom: "10%" }}>
+      <h2 className="text-secondary mb-0 pt-3 ps-2">
+        Listado General de Estudiantes
+      </h2>
+      <div className="d-flex justify-content-between mb-2">
         <div className="d-flex">
           <button
             className="btn btn-dark py-0 ms-2 mt-3"
@@ -107,12 +124,15 @@ const Students = () => {
             Desactivar Estudiante
           </button>
         </div>
-        <input
-          type="text"
-          placeholder="Filtrar por Nombre"
-          value={filterText}
-          onChange={(e) => setFilterText(e.target.value)}
-        />
+        <div className="col-3">
+          <input
+            type="text"
+            className="form-control bg-secondary text-white mt-3"
+            placeholder="Filtrar por Nombre"
+            value={filterText}
+            onChange={(e) => setFilterText(e.target.value)}
+          />
+        </div>
       </div>
       <DataTableBase columns={columns} data={filteredData} />
     </div>
