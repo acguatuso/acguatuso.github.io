@@ -1,9 +1,9 @@
 
 import { useState, useRef } from 'react';
-import { HomePageEdit } from '.';
-import './HomePage.css'
+import { HomePageEdit } from './';
+import './HomePageApp.css'
 
-export const HomePage = () => {
+export const HomePageApp = () => {
     const [showEditPage, setShowEditPage ] = useState(false);
     const editRef = useRef<any>(null);
 

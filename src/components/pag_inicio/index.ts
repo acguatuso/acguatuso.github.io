@@ -1,3 +1,3 @@
 
-export * from './HomePage';
+export * from './HomePageApp';
 export * from './HomePageEdit';

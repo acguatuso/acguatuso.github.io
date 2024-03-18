@@ -1,4 +1,4 @@
-import React, { useState, ChangeEvent, FormEvent } from 'react';
+import { useState, ChangeEvent, FormEvent } from 'react';
 import { DragDrop } from '../DragDrop';
 
 export const HomePageEdit = () => {
@@ -61,7 +61,7 @@ export const HomePageEdit = () => {
                     
                     
                     <div className="col-md-6 d-flex flex-column justify-content-between">
-                        <DragDrop />
+                        {/* <DragDrop /> */}
                         
                         {/* <div className='form-group'>
                             <label htmlFor="imagen">Insertar Imagen</label>
