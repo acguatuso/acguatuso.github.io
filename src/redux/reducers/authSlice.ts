@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk } from '../store';
 import { auth_fire, data_base } from '../../firebase';
 import { Timestamp, collection, addDoc, query, where, getDocs } from "firebase/firestore";
-import { createUserWithEmailAndPassword, sendEmailVerification, signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
 
 type UserData = {
   nombre: string;
@@ -199,3 +199,12 @@ const agregarDoc = async (formData: any) => {
     console.error("Error al agregar documento: ", error);
   }
 }
+
+export const enviarResetPassword = async (email:string) => {
+  try {
+    await sendPasswordResetEmail(auth_fire, email);
+    alert('Se ha enviado un correo electrónico para restablecer tu contraseña.');
+  } catch (error) {
+    console.log(error);
+  }
+};
