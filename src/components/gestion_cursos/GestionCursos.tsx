@@ -4,7 +4,6 @@ import { FormularioCursos } from "./FormularioCursos";
 import { Curso } from './curso.interface';
 import EliminarCurso from './EliminarCurso';
 
-
 function GestionCursos() {
   const [cursos, setCursos] = useState<Curso[]>([]);
 

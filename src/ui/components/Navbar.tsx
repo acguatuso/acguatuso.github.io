@@ -46,7 +46,7 @@ export const Navbar = () => {
                             <img src="/src/assets/LogoUCAG.png" alt="Bootstrap" width="110" height="80" />
 
                         </NavLink>)}
-                    <h4 className='navbar-text-white'>{ empresaData?.nombre }</h4>
+                    <h4 className='navbar-text-white'>{ empresaData?.nombre ?? 'Unión Cantonal de Asociaciones Guatuso'}</h4>
                     <button className="navbar-toggler navbar-dark navbar-toggler-custom" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>
                     </button>
@@ -71,12 +71,12 @@ export const Navbar = () => {
                                             Inicio
                                         </NavLink>
 
-                                        <NavLink
-                                            className={({ isActive }) => `nav-item nav-link ${isActive ? 'active' : ''} navbar-text-white`}
-                                            to="/nombre2"
-                                        >
-                                            Estudiantes
-                                        </NavLink>
+                                        <NavLink 
+                                        className={ ({isActive}) => `nav-item nav-link ${ isActive ? 'active': '' } navbar-text-white`}
+                                        to="/students"
+                                         >
+                                        Estudiantes
+                                         </NavLink>
 
                                         <NavLink
                                             className={({ isActive }) => `nav-item nav-link ${isActive ? 'active' : ''} navbar-text-white`}

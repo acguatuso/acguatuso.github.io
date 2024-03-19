@@ -5,7 +5,10 @@ export interface modalProps{
     buttonName:string
     modalName:string
     body:string
-    buttonOption1:string
-    buttonOption2:string
-    functionButtonOption(): void;
+    secondaryButtonText:string
+    primaryButtonText:string
+    classSecondaryButton: string
+    classPrimaryButton: string
+    functionButtonOption: () => void;
+
 }
