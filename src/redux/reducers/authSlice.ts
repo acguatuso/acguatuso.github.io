@@ -1,11 +1,11 @@
 // authSlice.ts
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {  createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk } from '../store';
 import { auth_fire, data_base } from '../../firebase';
-import { Timestamp, collection, addDoc, query, where, getDocs } from "firebase/firestore";
+import { Timestamp, collection, addDoc, query, where, getDocs, doc, setDoc } from "firebase/firestore";
 import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword} from 'firebase/auth';
 
-type UserData = {
+export type UserData = {
   nombre: string;
   correo: string;
   cedula: string;
@@ -66,11 +66,14 @@ const authSlice = createSlice({
       state.loggedIn = false;
       state.user = null;
     },
+    editInfo: (state, action: PayloadAction<UserData>) =>{
+      state.user = action.payload;
+    }
   }
 });
 
 
-export const { loginSuccess, loginFailure, signupSuccess, signupFailure, logOut } = authSlice.actions;
+export const { loginSuccess, loginFailure, signupSuccess, signupFailure, logOut, editInfo} = authSlice.actions;
 export default authSlice.reducer;
 
 export const login = (email: string, password: string): AppThunk => async dispatch => {
@@ -173,7 +176,7 @@ export const signup = (formData: any): AppThunk => async dispatch => {
 const agregarDoc = async (formData: any) => {
   // Datos del nuevo documento
   const nuevoDocumento: UserData = {
-    nombre: formData.name,
+    nombre: formData.nombre,
     correo: formData.email,
     cedula: formData.cedula,
     telefono: formData.telefono,
@@ -199,6 +202,39 @@ const agregarDoc = async (formData: any) => {
     console.error("Error al agregar documento: ", error);
   }
 }
+
+export const editarDoc = (formData: any, userEmail: string): AppThunk => async dispatch  => {
+  // Referencia a la colección de 'Usuarios'
+  const usuariosCollectionRef = collection(data_base, "Usuarios");
+
+  try {
+    // Consulta para buscar documentos con el correo electrónico proporcionado
+    const db_query = query(usuariosCollectionRef, where("correo", "==", userEmail));
+
+    // Obtener el documento del usuario
+    const usuarioDocSnap = await getDocs(db_query);
+    
+    // Verificar si se encontró el documento
+    if (!usuarioDocSnap.empty) {
+      // Obtener la referencia al documento del usuario
+      const primerDocumento = usuarioDocSnap.docs[0];
+      const userDocRef = doc(data_base, "Usuarios", primerDocumento.id);
+
+      // Actualizar los datos del documento con los datos proporcionados en formData
+      await setDoc(userDocRef, formData);
+
+      const user_data_updated= await obtenerUsuario(userEmail);
+
+      dispatch(editInfo(user_data_updated!));
+
+      console.log("Documento del usuario actualizado exitosamente");
+    } else {
+      console.log("No se encontró el documento del usuario");
+    }
+  } catch (error) {
+    console.error("Error al actualizar el documento del usuario: ", error);
+  }
+};
 
 export const enviarResetPassword = async (email:string) => {
   try {

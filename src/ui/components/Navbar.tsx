@@ -70,7 +70,12 @@ export const Navbar = () => {
                                         >
                                             Inicio
                                         </NavLink>
-
+                                        <NavLink
+                                            className={({ isActive }) => `nav-item nav-link ${isActive ? 'active' : ''} navbar-text-white`}
+                                            to="/mi-perfil"
+                                        >
+                                            Mi Perfil
+                                        </NavLink>
                                         <NavLink 
                                         className={ ({isActive}) => `nav-item nav-link ${ isActive ? 'active': '' } navbar-text-white`}
                                         to="/students"
