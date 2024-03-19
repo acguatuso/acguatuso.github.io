@@ -1,6 +1,9 @@
-import { useState, ChangeEvent } from 'react';
+import { useState, ChangeEvent, useEffect } from 'react';
 import { uploadFirebaseImage } from "../../api/uploadFirebaseImage/uploadFirebaseImage";
 import { addFirebaseDoc } from "../../api/addFirebaseDoc/addFirebaseDoc";
+import { RootState } from '../../redux/store';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 function GestionCursos() {
   const [nombreCurso, setNombreCurso] = useState('');
@@ -33,7 +36,7 @@ function GestionCursos() {
     const fechaSeleccionada = e.target.value;
     setFechaInicio(new Date(fechaSeleccionada));
   };
-  
+
   const handleFechaFinChange = (e: ChangeEvent<HTMLInputElement>) => {
     const fechaSeleccionada = e.target.value;
     setFechaFin(new Date(fechaSeleccionada));
@@ -45,25 +48,25 @@ function GestionCursos() {
 
   const handleCrearCurso = () => {
     const fechaCreacion = new Date();
-    if(fileImage != null){
+    if (fileImage != null) {
       uploadFirebaseImage(fileImage, `/Cursos/${nombreCurso}/image1`)
       setFileImage(undefined);
     }
     const cursoData = {
-        nombre: nombreCurso,
-        descripcion: descripcionCurso,
-        modalidad: modalidad,
-        fecha_inicio: fechaInicio?.toISOString(),
-        fecha_finalizacion: fechaFin?.toISOString(),
-        link_plataforma: linkCurso,
-        horario: horario,
-        fechaCreacion: fechaCreacion.toISOString(),
-        image_url: `/Cursos/${nombreCurso}/`,
-        aprobados: [],
-        reprobados: [],
-        matriculados: [],
-        postulados: [],
-        estado: 0,
+      nombre: nombreCurso,
+      descripcion: descripcionCurso,
+      modalidad: modalidad,
+      fecha_inicio: fechaInicio?.toISOString(),
+      fecha_finalizacion: fechaFin?.toISOString(),
+      link_plataforma: linkCurso,
+      horario: horario,
+      fechaCreacion: fechaCreacion.toISOString(),
+      image_url: `/Cursos/${nombreCurso}/`,
+      aprobados: [],
+      reprobados: [],
+      matriculados: [],
+      postulados: [],
+      estado: 0,
 
     };
     addFirebaseDoc('Cursos', cursoData);
@@ -82,16 +85,29 @@ function GestionCursos() {
       setHorario('');
       setMensajeExito('');
     }, 5000); // El mensaje de éxito se mostrará durante 5 segundos (5000 milisegundos)
-};
+  };
 
-
+  // LOGICA PARA REDIRECCIONAR SI NO SE ESTA LOGUEADO, PARA QUE NO SE PUEDA ACCEDER MENDIATE URL DIRECTA
+  // React-router-dom
+  const navigate = useNavigate();
+  // Redux Hooks & Access
+  const user = useSelector((state: RootState) => state.auth.user);
+  const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
+  console.log('Conectado: ', loggedIn);
+  // Redireccionar si está no logueado, y no hay usuario
+  useEffect(() => {
+    if (!loggedIn && !user) {
+      navigate("/");
+    }
+  }, [loggedIn, user, navigate]);
+  
   return (
     <>
       <h2>Gestión de Cursos</h2>
       <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#staticBackdrop">
         Crear un Nuevo Curso
       </button>
-      <div className="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
+      <div className="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div className="modal-dialog modal-xl">
           <div className="modal-content">
             <div className="modal-header border-0">
@@ -99,50 +115,50 @@ function GestionCursos() {
               <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div className="modal-body text-start">
-                <form action="">
-                  <div className="row">
-                    <div className="col">
-                      <label className="form-label" htmlFor="nombre">Nombre</label>
-                      <input type="text" className="form-control" id="nombre" name="nombre" value={nombreCurso} onChange={handleNombreCursoChange}  placeholder="Nombre del curso" required/>
-                    </div>
-                    <div className="col">
-                      <label className="form-label" htmlFor="descripcion">Descripción</label>
-                      <input type="text" className="form-control" id="descripcion" name="descripcion" value={descripcionCurso} onChange={handleDescripcionCursoChange} placeholder="Descripción del curso" required/>
-                    </div>
-                    <div className="col">
-                      <label className="form-label" htmlFor="modalidad">Modalidad</label>
-                      <select id="modalidad" className="form-select" name="modalidad" value={modalidad} onChange={handleModalidadChange} required>
-                        <option disabled value="">Selecciona una modalidad</option>
-                        <option value="presencial">Presencial</option>
-                        <option value="virtual">Virtual</option>
-                      </select>
-                    </div>
+              <form action="">
+                <div className="row">
+                  <div className="col">
+                    <label className="form-label" htmlFor="nombre">Nombre</label>
+                    <input type="text" className="form-control" id="nombre" name="nombre" value={nombreCurso} onChange={handleNombreCursoChange} placeholder="Nombre del curso" required />
                   </div>
-                  <div className="row">
-                    <div className="col">
-                      <label className="form-label" htmlFor="fechaInicio">Fecha de Inicio</label>
-                      <input type="date" className="form-control" id="fechaInicio" name="fechaInicio" value={fechaInicio ? fechaInicio.toISOString().substring(0, 10) : ''} onChange={handleFechaInicioChange} required/>
-                    </div>
-                    <div className="col">
-                      <label className="form-label" htmlFor="fechaFin">Fecha de Fin</label>
-                      <input type="date" className="form-control" id="fechaFin" name="fechaFin" value={fechaFin ? fechaFin.toISOString().substring(0, 10) : ''} onChange={handleFechaFinChange} required/>
-                    </div>
-                    <div className="col">
-                      <label className="form-label" htmlFor="horario">Horario</label>
-                      <input type="text" className="form-control" id="horario" name="horario" value={horario} onChange={handleHorarioChange}placeholder="Ej: Lunes: 8:00am - 9:00am" required/>
-                    </div>
+                  <div className="col">
+                    <label className="form-label" htmlFor="descripcion">Descripción</label>
+                    <input type="text" className="form-control" id="descripcion" name="descripcion" value={descripcionCurso} onChange={handleDescripcionCursoChange} placeholder="Descripción del curso" required />
                   </div>
-                  <div className="row">
-                    <div className="col">
-                      <label className="form-label" htmlFor="linkClase">Link de Clase</label>
-                      <input type="url" className="form-control" id="linkClase" name="linkClase" value={linkCurso} onChange={handleLinkCursoChange}/>
-                    </div>
-                    <div className="col">
-                      <label className="form-label" htmlFor="imagen">Imagen Ilustrativa</label>
-                      <input type="file" className="form-control" id="imagen" name="imagen" onChange={ (event) => setFileImage(event.target.files![0])}/>
-                    </div>
+                  <div className="col">
+                    <label className="form-label" htmlFor="modalidad">Modalidad</label>
+                    <select id="modalidad" className="form-select" name="modalidad" value={modalidad} onChange={handleModalidadChange} required>
+                      <option disabled value="">Selecciona una modalidad</option>
+                      <option value="presencial">Presencial</option>
+                      <option value="virtual">Virtual</option>
+                    </select>
                   </div>
-                </form>
+                </div>
+                <div className="row">
+                  <div className="col">
+                    <label className="form-label" htmlFor="fechaInicio">Fecha de Inicio</label>
+                    <input type="date" className="form-control" id="fechaInicio" name="fechaInicio" value={fechaInicio ? fechaInicio.toISOString().substring(0, 10) : ''} onChange={handleFechaInicioChange} required />
+                  </div>
+                  <div className="col">
+                    <label className="form-label" htmlFor="fechaFin">Fecha de Fin</label>
+                    <input type="date" className="form-control" id="fechaFin" name="fechaFin" value={fechaFin ? fechaFin.toISOString().substring(0, 10) : ''} onChange={handleFechaFinChange} required />
+                  </div>
+                  <div className="col">
+                    <label className="form-label" htmlFor="horario">Horario</label>
+                    <input type="text" className="form-control" id="horario" name="horario" value={horario} onChange={handleHorarioChange} placeholder="Ej: Lunes: 8:00am - 9:00am" required />
+                  </div>
+                </div>
+                <div className="row">
+                  <div className="col">
+                    <label className="form-label" htmlFor="linkClase">Link de Clase</label>
+                    <input type="url" className="form-control" id="linkClase" name="linkClase" value={linkCurso} onChange={handleLinkCursoChange} />
+                  </div>
+                  <div className="col">
+                    <label className="form-label" htmlFor="imagen">Imagen Ilustrativa</label>
+                    <input type="file" className="form-control" id="imagen" name="imagen" onChange={(event) => setFileImage(event.target.files![0])} />
+                  </div>
+                </div>
+              </form>
             </div>
             <div className="modal-footer border-0">
               <button type="button" className="btn btn-primary" onClick={handleCrearCurso} data-bs-dismiss="modal">Crear Curso</button>
@@ -150,8 +166,8 @@ function GestionCursos() {
           </div>
         </div>
       </div>
-       {/* Mensaje de éxito */}
-       {mensajeExito && (
+      {/* Mensaje de éxito */}
+      {mensajeExito && (
         <div className="alert alert-success" role="alert">
           {mensajeExito}
         </div>

@@ -2,6 +2,9 @@ import { useEffect, useState } from "react";
 import DataTableBase from "../../components/dataTable/DataTableBase";
 import { FaAddressCard, FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
+import { useNavigate } from "react-router-dom";
+import { RootState } from "../../redux/store";
+import { useSelector } from "react-redux";
 
 const columns = [
   {
@@ -101,6 +104,20 @@ const Students = () => {
     };
     setJsonData([newEntry, ...jsonData]);
   };
+
+  // LOGICA PARA REDIRECCIONAR SI NO SE ESTA LOGUEADO, PARA QUE NO SE PUEDA ACCEDER MENDIATE URL DIRECTA
+  // React-router-dom
+  const navigate = useNavigate();
+  // Redux Hooks & Access
+  const user = useSelector((state: RootState) => state.auth.user);
+  const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
+  console.log('Conectado: ', loggedIn);
+  // Redireccionar si está no logueado, y no hay usuario
+  useEffect(() => {
+    if (!loggedIn && !user) {
+      navigate("/");
+    }
+  }, [loggedIn, user, navigate]);
 
   return (
     <div style={{ top: "18%", left: "10%", right: "10%", bottom: "10%" }}>

@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk } from '../store';
 import { auth_fire, data_base } from '../../firebase';
 import { Timestamp, collection, addDoc, query, where, getDocs } from "firebase/firestore";
-import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword} from 'firebase/auth';
 
 type UserData = {
   nombre: string;
