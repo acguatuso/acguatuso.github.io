@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { signup } from '../../redux/reducers/authSlice';
 import { RootState } from '../../redux/store';
-//import '../../CSS/Components/CreateAccStyle.css'
+import '../../CSS/Components/CreateAccStyle.css';
 import { Link } from 'react-router-dom';
 
 const CreateAccountForm: React.FC = () => {

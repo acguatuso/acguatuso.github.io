@@ -4,6 +4,8 @@ import { login } from '../../redux/reducers/authSlice';
 import { RootState } from '../../redux/store';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
+import '../../CSS/Components/LoginAccStyle.css';
+import ForgotPassword from './ForgotPassword';
 
 const LoginAccountForm: React.FC = () => {
   // React-router-dom
@@ -13,6 +15,7 @@ const LoginAccountForm: React.FC = () => {
   const [email, setEmail] = useState<string>('');
   const [password, setPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState(false);
+  const [isForgotPasswordModalOpen, setIsForgotPasswordModalOpen] = useState(false);
 
   // Redux Hooks & Access
   const dispatch = useDispatch();
@@ -45,8 +48,7 @@ const LoginAccountForm: React.FC = () => {
   // Redireccionar si está logueado, hay usuario y email verificado
   useEffect(() => {
     if (loggedIn && user && emailVerified) {
-    
-        navigate("/home");
+      navigate("/home");
     }
   }, [loggedIn, user, emailVerified, navigate]);
 
@@ -55,7 +57,7 @@ const LoginAccountForm: React.FC = () => {
       <div className="container">
         <div>
           <img src="/src/assets/LogoUCAG.png" alt="Bootstrap" width="200" height="150" />
-          <h2>Bievenido!</h2>
+          <h2>Bienvenido!</h2>
           <h2>Inicio de Sesión</h2>
         </div>
         <div className="row justify-content-center">
@@ -68,7 +70,7 @@ const LoginAccountForm: React.FC = () => {
                   </div>
                 </div>
               )}
-              {!user &&(
+              {!user && (
                 <form onSubmit={handleLogin}>
                   <div className="mb-3">
                     <label htmlFor="email" className="form-label text-start text-muted" >Correo:</label>
@@ -91,6 +93,11 @@ const LoginAccountForm: React.FC = () => {
             <div>
               <label>¿No tiene cuenta?</label>
               <Link to="/crear-cuenta">Crear Cuenta</Link>
+            </div>
+            <div>
+              <span>¿Olvidaste tu contraseña? </span>
+              <span className="link-style" onClick={() => setIsForgotPasswordModalOpen(true)} >Haz clic aquí</span>
+              <ForgotPassword isOpen={isForgotPasswordModalOpen} onClose={() => setIsForgotPasswordModalOpen(false)} />
             </div>
           </div>
         </div>
