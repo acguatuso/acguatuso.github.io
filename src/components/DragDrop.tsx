@@ -68,6 +68,8 @@ export const DragDrop = () => {
     }
 
   return (
+    <div className="dragDrop-component card">
+            
     <div className="card">
             <div className="top">
                 <p>Subir imágen</p>
@@ -98,10 +100,11 @@ export const DragDrop = () => {
                 </div>
             )}
             {image && (
-                <button type='button' onClick={uploadImage}>
+                <button type='button' className='btn btn-success' onClick={uploadImage}>
                     Subir
                 </button>
             )}
         </div>
+    </div>
   )
 }

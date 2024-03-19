@@ -16,7 +16,7 @@ export const HomePageEdit = () => {
 
     const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
         //
-        //
+        //firebase
         //
     };
 
@@ -61,7 +61,7 @@ export const HomePageEdit = () => {
                     
                     
                     <div className="col-md-6 d-flex flex-column justify-content-between">
-                        {/* <DragDrop /> */}
+                        <DragDrop />
                         
                         {/* <div className='form-group'>
                             <label htmlFor="imagen">Insertar Imagen</label>

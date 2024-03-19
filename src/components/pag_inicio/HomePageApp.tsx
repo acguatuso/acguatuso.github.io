@@ -18,7 +18,7 @@ export const HomePageApp = () => {
             setTitulo(docSnap?.titulo);
             setDescripcion(docSnap?.descripcion);
             setImageUrl(docSnap?.image_url);
-            console.log(image_url);
+            
         })()
     }, []);
 

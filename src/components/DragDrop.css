@@ -1,17 +1,20 @@
-/* .card {
+.dragDrop-component .card {
     padding: 10px;
     box-shadow: 0 0 5px #ffdfdf;
     border-radius: 5px;
     overflow: hidden;
 }
-/*.card .top{
+
+.dragDrop-component .card .top {
     text-align: center;
 }
-.card p {
+
+.dragDrop-component .card p {
     font-weight: bold;
     color: #0086fe;
 }
-.card button{
+
+.dragDrop-component .card button {
     outline: 0;
     border: 0;
     color: #fff;
@@ -22,7 +25,8 @@
     width: 100%;
     background: #0086fe;
 }
-.card .drag-area{
+
+.dragDrop-component .card .drag-area {
     height: 300px;
     border-radius: 5px;
     border: 2px dashed #0086fe;
@@ -35,19 +39,23 @@
     -webkit-user-select: none;
     margin-top: 10px;
 }
-.card .drag-area .visible{
+
+.dragDrop-component .card .drag-area .visible {
     font-size: 18px;
 }
-.card .select{
+
+.dragDrop-component .card .select {
     color: #5256ad;
     margin-left: 5px;
     cursor: pointer;
     transition: 0.4s;
 }
-.card .select:hover{
+
+.dragDrop-component .card .select:hover {
     opacity: 0.6;
 }
-.card .container{
+
+.dragDrop-component .card .container {
     width: 100%;
     height: auto;
     display: flex;
@@ -58,19 +66,22 @@
     overflow-y: auto;
     margin-top: 10px;
 }
-.card .container .image{
+
+.dragDrop-component .card .container .image {
     width: 185px;
     margin-right: 5px;
     height: 155px;
     position: relative;
     margin-bottom: 8px;
 }
-.card .container .image img{
+
+.dragDrop-component .card .container .image img {
     width: 100%;
     height: 100%;
     border-radius: 10px;
 }
-.card .container .image span{
+
+.dragDrop-component .card .container .image span {
     position: absolute;
     top: -2px;
     right: 9px;
@@ -78,14 +89,13 @@
     cursor: pointer;
 }
 
-.card input,
-.card .drag-area .on-drop,
-.card .drag-area.dragover .visible {
+.dragDrop-component .card input,
+.dragDrop-component .card .drag-area .on-drop,
+.dragDrop-component .card .drag-area.dragover .visible {
     display: none;
 }
 
-.delete{
+.dragDrop-component .delete {
     z-index: 999;
     color: #0086fe;
 }
- */
