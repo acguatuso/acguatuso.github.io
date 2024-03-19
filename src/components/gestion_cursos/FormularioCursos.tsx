@@ -8,7 +8,8 @@ import { uploadFirebaseImage } from '../../api/uploadFirebaseImage/uploadFirebas
 interface formProps{
     id: string
     titulo: string
-    nombreButton: string
+    nombreButton: string | JSX.Element;
+    styleButton: string
     submitButton: string
     curso: Curso | null
 }
@@ -151,14 +152,14 @@ export const FormularioCursos = (props: formProps) => {
 
     return (
       <>
-      <button type="button" className="btn btn-primary"  data-bs-toggle="modal" data-bs-target={`#${props.id}`}>
+      <button type="button" className={props.styleButton}  data-bs-toggle="modal" data-bs-target={`#${props.id}`}>
     {props.nombreButton}
     </button>
       <div className="modal fade" id={props.id} data-bs-backdrop="static" data-bs-keyboard="false"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
           <div className="modal-dialog modal-xl">
             <div className="modal-content">
               <div className="modal-header border-0">
-                <h1 className="modal-title fs-5" id="staticBackdropLabel">{props.titulo}</h1>
+                <h1 className="modal-title fs-5 text-dark" id="staticBackdropLabel">{props.titulo}</h1>
                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div className="modal-body text-start">
@@ -176,8 +177,8 @@ export const FormularioCursos = (props: formProps) => {
                         <label className="form-label" htmlFor="modalidad">Modalidad</label>
                         <select id="modalidad" className="form-select" name="modalidad" value={modalidad} onChange={handleModalidadChange} required>
                           <option disabled value="">Selecciona una modalidad</option>
-                          <option value="presencial">Presencial</option>
-                          <option value="virtual">Virtual</option>
+                          <option value="Presencial">Presencial</option>
+                          <option value="Virtual">Virtual</option>
                         </select>
                       </div>
                     </div>
@@ -208,6 +209,7 @@ export const FormularioCursos = (props: formProps) => {
                   </form>
               </div>
               <div className="modal-footer border-0">
+                  <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
                   <button type="button" className="btn btn-primary" onClick={handleSubmit} data-bs-dismiss="modal">{props.submitButton}</button>
               </div>
             </div>

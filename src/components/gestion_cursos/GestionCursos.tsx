@@ -5,7 +5,6 @@ import { Curso } from './curso.interface';
 import EliminarCurso from './EliminarCurso';
 import DataTableBase from '../dataTable/DataTableBase';
 import { FaAddressCard, FaEdit } from 'react-icons/fa';
-import { MdDelete } from 'react-icons/md';
 
 const columns = [
   {
@@ -29,7 +28,7 @@ const columns = [
     cell: (row: any) => (
       <button
         className="btn btn-primary"
-        onClick={() => handleButtonClick(row.name)}
+        onClick={() => handleButtonClick(row.nombre)}
       >
         <FaAddressCard />
       </button>
@@ -39,24 +38,21 @@ const columns = [
   {
     name: "Editar",
     cell: (row: any) => (
-      <button
-        className="btn btn-primary"
-        onClick={() => handleButtonClick(row.name)}
-      >
-        <FaEdit />
-      </button>
+      <FormularioCursos 
+      id={`course-section-modal-edit-${row.id}`}
+      titulo={`Editar Curso: ${row.nombre}`}
+      nombreButton={<FaEdit />}
+      styleButton={"btn btn-primary"}
+      submitButton={"Guardar Cambios"}
+      curso={row}
+      />
     ),
     width: "5vw",
   },
   {
     name: "Eliminar",
     cell: (row: any) => (
-      <button
-        className="btn btn-primary"
-        onClick={() => handleButtonClick(row.name)}
-      >
-        <MdDelete />
-      </button>
+      <EliminarCurso id={row.id}/>
     ),
     width: "6vw",
   },
@@ -65,6 +61,7 @@ const columns = [
 
 function GestionCursos() {
   const [cursos, setCursos] = useState<Curso[]>([]);
+  const [filterText, setFilterText] = useState("");
   useEffect(() => {
     // Obtiene los cursos de Firebase
     const obtenerCursos = async () => {
@@ -89,16 +86,33 @@ function GestionCursos() {
   
   return (
     <>
-      <h2>Gestión de Cursos</h2>
-      <FormularioCursos 
-      id={"course-section-modal-add"}
-      titulo={"Crear un Nuevo Curso"}
-      nombreButton={"Crear un Nuevo Curso"}
-      submitButton={"Crear Curso"}
-      curso={null}
-      />
+      <div style={{ top: "18%", left: "10%", right: "10%", bottom: "10%" }}>
+      <h2 className="text-secondary mb-0 pt-3 ps-2">
+        Gestión de Cursos
+      </h2>
+      </div>
+      <div className="d-flex justify-content-between mb-2">
+        <div className="d-flex">
+          <FormularioCursos 
+          id={"course-section-modal-add"}
+          titulo={"Crear un Nuevo Curso"}
+          nombreButton={"Crear un Nuevo Curso"}
+          styleButton='btn btn-primary py-0 ms-2 mt-3'
+          submitButton={"Crear Curso"}
+          curso={null}
+          />
+        </div>
+        <div className="col-3">
+          <input
+            type="text"
+            className="form-control bg-secondary text-white mt-3"
+            placeholder="Filtrar por Nombre"
+            value={filterText}
+            onChange={(e) => setFilterText(e.target.value)}
+          />
+        </div>
+      </div>
       <div>
-        <h2>Lista de Cursos</h2>
         <DataTableBase columns={columns} data={cursos}></DataTableBase>
         {/* <table className="table">
           <thead className="table-dark">

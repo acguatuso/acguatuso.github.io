@@ -2,7 +2,7 @@ export interface modalProps{
     id: string
     buttonStyle: string
     modalTitle: string
-    buttonName:string
+    buttonName:string | JSX.Element;
     modalName:string
     body:string
     secondaryButtonText:string

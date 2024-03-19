@@ -1,3 +1,4 @@
+import { MdDelete } from "react-icons/md"
 import { deleteFirebaseDoc } from "../../api/deleteFirebaseDoc/deleteFirebaseDoc"
 import { Modal } from "../../components/Modal/Modal"
 
@@ -19,7 +20,7 @@ function EliminarCurso(prop: idBorrar) {
         id={`course-section-modal-delete-${prop.id}`}
         buttonStyle={"btn btn-danger"}
         modalTitle="Eliminar"
-        buttonName={'Eliminar'}
+        buttonName={<MdDelete />}
         modalName={'Eliminar'}
         body={'¿Estás seguro que desea eliminar este curso?'}
         secondaryButtonText={'Cancelar'}
