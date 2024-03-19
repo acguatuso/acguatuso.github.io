@@ -1,8 +1,13 @@
 import { deleteFirebaseDoc } from "../../api/deleteFirebaseDoc/deleteFirebaseDoc"
 import { Modal } from "../../components/Modal/Modal"
-import { idDelete } from "../../pages/About/components/about.interface"
 
-function EliminarCurso(prop: idDelete) {
+
+interface idBorrar {
+    id: string
+}
+  
+
+function EliminarCurso(prop: idBorrar) {
     const handleDelete = async() =>{
         await deleteFirebaseDoc(`/Cursos/${prop.id}`)
 
@@ -17,8 +22,10 @@ function EliminarCurso(prop: idDelete) {
         buttonName={'Eliminar'}
         modalName={'Eliminar'}
         body={'¿Estás seguro que desea eliminar este curso?'}
-        buttonOption1={'Cancelar'}
-        buttonOption2={'Aceptar'}
+        secondaryButtonText={'Cancelar'}
+        primaryButtonText={'Aceptar'}
+        classSecondaryButton="btn btn-sencodary"
+        classPrimaryButton="btn btn-primary"
         functionButtonOption={() => {handleDelete()}} 
         />
     </>

@@ -3,12 +3,68 @@ import { getFirebaseDocs } from "../../api/getFirebaseDocs/getFirebaseDocs";
 import { FormularioCursos } from "./FormularioCursos";
 import { Curso } from './curso.interface';
 import EliminarCurso from './EliminarCurso';
+import DataTableBase from '../dataTable/DataTableBase';
+import { FaAddressCard, FaEdit } from 'react-icons/fa';
+import { MdDelete } from 'react-icons/md';
+
+const columns = [
+  {
+    name: "Nombre",
+    selector: (row: any) => row.nombre,
+    sortable: true,
+  },
+
+  {
+    name: "Horario",
+    selector: (row: any) => row.horario,
+    sortable: true,
+  },
+  {
+    name: "Modalidad",
+    selector: (row: any) => row.modalidad,
+    sortable: true,
+  },
+  {
+    name: "Ver",
+    cell: (row: any) => (
+      <button
+        className="btn btn-primary"
+        onClick={() => handleButtonClick(row.name)}
+      >
+        <FaAddressCard />
+      </button>
+    ),
+    width: "5vw",
+  },
+  {
+    name: "Editar",
+    cell: (row: any) => (
+      <button
+        className="btn btn-primary"
+        onClick={() => handleButtonClick(row.name)}
+      >
+        <FaEdit />
+      </button>
+    ),
+    width: "5vw",
+  },
+  {
+    name: "Eliminar",
+    cell: (row: any) => (
+      <button
+        className="btn btn-primary"
+        onClick={() => handleButtonClick(row.name)}
+      >
+        <MdDelete />
+      </button>
+    ),
+    width: "6vw",
+  },
+];
+
 
 function GestionCursos() {
   const [cursos, setCursos] = useState<Curso[]>([]);
-
-
-
   useEffect(() => {
     // Obtiene los cursos de Firebase
     const obtenerCursos = async () => {
@@ -25,6 +81,7 @@ function GestionCursos() {
         link_plataforma: curso.link_plataforma
       }));
       setCursos(cursosFormateados);
+      
     };
 
     obtenerCursos();
@@ -42,7 +99,8 @@ function GestionCursos() {
       />
       <div>
         <h2>Lista de Cursos</h2>
-        <table className="table">
+        <DataTableBase columns={columns} data={cursos}></DataTableBase>
+        {/* <table className="table">
           <thead className="table-dark">
             <tr>
               <th scope="col">Nombre</th>
@@ -71,7 +129,7 @@ function GestionCursos() {
               </tr>
             ))}
           </tbody>
-        </table>
+        </table> */}
       </div>
 
     </>
@@ -79,4 +137,8 @@ function GestionCursos() {
 }
 
 export default GestionCursos;
+
+function handleButtonClick(name: any): void {
+  console.log(name)
+}
 

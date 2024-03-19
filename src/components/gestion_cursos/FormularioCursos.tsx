@@ -1,9 +1,9 @@
 import { useState, ChangeEvent, useEffect } from 'react';
-import { uploadFirebaseImage } from "../../api/uploadFirebaseImages/uploadFirebaseImages";
 import { addFirebaseDoc } from "../../api/addFirebaseDoc/addFirebaseDoc";
 import { updateFirebaseDoc } from '../../api/updateFirebaseDoc/updateFirebaseDoc';
 import { Curso } from './curso.interface';
 import './CursosMain.css'
+import { uploadFirebaseImage } from '../../api/uploadFirebaseImage/uploadFirebaseImage';
 
 interface formProps{
     id: string
