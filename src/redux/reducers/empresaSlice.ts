@@ -3,8 +3,9 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppThunk, RootState } from '../store';
 //import { getFirebaseDocs } from "../../api/getFirebaseDocs/getFirebaseDocs";
 import { getFirebaseDoc } from "../../api/getFirebaseDoc/getFirebaseDoc";
-import { useAppSelector } from "../../hooks/hooks";
+
 export interface EmpresaData {
+    nombre: string,
     correo: string;
     facebookUrl: string;
     titulo_footer:string;
@@ -49,6 +50,7 @@ export const fetchEmpresaData = (): AppThunk => async dispatch => {
         const docSnap = await getFirebaseDoc('/Empresa/ZktZQqsBnqVVoL4dfRHv');
         if(docSnap){
             const empresaData: EmpresaData = {
+                nombre: docSnap.nombre,
                 correo: docSnap.correo,
                 facebookUrl: docSnap.redes[0].red_url,
                 titulo_footer: docSnap.titulo_principal,

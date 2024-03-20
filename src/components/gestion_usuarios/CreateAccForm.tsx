@@ -139,14 +139,6 @@ const CreateAccountForm: React.FC = () => {
                       <option value="Palmera">Palmera</option>
                     </select>
                   </div>
-                  <div className="mb-3">
-                    <label htmlFor="user_type">Tipo de Usuario:</label>
-                    <select id="user_type" name="user_type" value={formData.user_type} onChange={handleChange} className="form-control">
-                      <option value="">Seleccione tipo de usuario...</option>
-                      <option value="0">0. Usuario Común</option>
-                      <option value="1">1. Usuario Administrador</option>
-                    </select>
-                  </div>
                 </div>
               </div>
               <button type="submit" className="btn btn-primary">Crear Cuenta</button>
