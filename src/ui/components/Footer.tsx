@@ -4,7 +4,7 @@ import { RootState } from '../../redux/store';
 import { useEffect} from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchEmpresaData } from '../../redux/reducers/empresaSlice';
-import { SentEmail } from '../../components/sent_email/SentEmail';
+import { FormEmailLoggedIn, SentEmail } from '../../components';
 
 
 export const Footer = () => {
@@ -14,6 +14,7 @@ export const Footer = () => {
     // Redux Hooks & Access
     const user = useSelector((state: RootState) => state.auth.user);
     const empresaData = useSelector((state: RootState) => state.empresa.data);
+    const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
     
     useEffect(() => {
         dispatch(fetchEmpresaData() as any );
@@ -108,7 +109,12 @@ export const Footer = () => {
                             <p>
                                 <i className='fa-brands fa-whatsapp me-3'></i> {empresaData?.whatsapp}
                             </p>
-                            <SentEmail />
+                            {!loggedIn && (
+                                <SentEmail />
+                            )}
+                            {loggedIn && (
+                                <FormEmailLoggedIn />
+                            )}
                         </div>
                         {/* Fin Columna 4 */}
                     </div>
