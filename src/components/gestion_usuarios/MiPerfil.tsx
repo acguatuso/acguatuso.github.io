@@ -63,6 +63,18 @@ const MiPerfil: React.FC = () => {
     const handleSaveClick = () => {
         console.log(formData);
         console.log(user?.correo);
+        if (!formData.cedula || !formData.nombre) {
+            alert('Por favor, complete todos los campos obligatorios.');
+            return;
+        }
+    
+        // Validar formato de número de teléfono
+        const numberPattern = /^[0-9]+$/;
+        if ((formData.telefono && !numberPattern.test(formData.telefono)) || (formData.cedula && !numberPattern.test(formData.cedula))) {
+            alert('El número de teléfono solo puede contener números.');
+            return;
+        }
+
         // Dispatch de la acción para actualizar los datos del usuario en Firebase Firestore
         dispatch(editarDoc(formData, user?.correo || '') as any);
         setEditMode(false);
