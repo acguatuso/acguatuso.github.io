@@ -72,7 +72,7 @@ export const DragDrop = () => {
             
     <div className="card">
             <div className="top">
-                <p>Subir imágen</p>
+                <p>Subir imagen</p>
             </div>
             <div className='drag-area' onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDrop}>
                 {isDragging ? (

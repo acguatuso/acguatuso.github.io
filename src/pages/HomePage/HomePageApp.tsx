@@ -1,6 +1,6 @@
 
 import { useState, useRef, useEffect } from 'react';
-import { HomePageEdit } from './';
+import { HomePageEdit } from '../../pages/HomePage';
 import './HomePageApp.css'
 import { getFirebaseDoc } from '../../api/getFirebaseDoc/getFirebaseDoc';
 

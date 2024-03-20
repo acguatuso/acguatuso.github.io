@@ -1,5 +1,6 @@
 import { useState, ChangeEvent, FormEvent } from 'react';
-import { DragDrop } from '../DragDrop';
+import { DragDrop } from '../../components/drag-drop_image/DragDrop';
+
 
 export const HomePageEdit = () => {
     const [titulo, setTitulo] = useState('');

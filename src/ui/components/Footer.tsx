@@ -4,7 +4,7 @@ import { RootState } from '../../redux/store';
 import { useEffect} from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchEmpresaData } from '../../redux/reducers/empresaSlice';
-import { SentEmail } from '../SentEmail';
+import { SentEmail } from '../../components/sent_email/SentEmail';
 
 
 export const Footer = () => {

@@ -5,7 +5,7 @@ import CursosMain from '../components/gestion_cursos/CursosMain';
 import GestionCursos from '../components/gestion_cursos/GestionCursos';
 import About from '../pages/About/About';
 // import { HomePage } from '../ui/Hompage';
-import { HomePageApp } from '../components/pag_inicio';
+import { HomePageApp } from '../pages/HomePage';
 
 
 export const AppRouter = () => {
