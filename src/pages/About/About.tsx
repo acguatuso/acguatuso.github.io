@@ -1,89 +1,61 @@
-import { useState,useEffect } from "react";
-//import './About.css'
-import { getFirebaseDoc } from "../../api/getFirebaseDoc/getFirebaseDoc";
 import { UpdateMainSectionModal } from "./components/UpdateMainSectionModal";
-import { AdSection } from './components/AdSection';
+import { AdsSection } from './components/AdsSection';
 import { AddSection } from './components/AddSection';
-import { getFirebaseDocs } from "../../api/getFirebaseDocs/getFirebaseDocs";
-import { headData, sectionsData } from "./components/about.interface";
-
-
-
-import { getDownloadURL, ref, listAll } from "firebase/storage";
-import { firebase_storage } from '../../firebase'
-
-                 
-
+import { aboutSelector, fetchMainSection, fetchSections } from '../../redux/reducers/aboutSlice';
+import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
+import { EditInformationSection } from "./components/EditInformationSection";
+import { useEffect, useState } from "react";
+import { adsSection } from "./components/about.interface";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
+import { useNavigate } from "react-router-dom";
 
 export const About = () => {
+  //IMPLEMENTACION DE REDUX
+  const dispatch = useAppDispatch()
 
-const [sections, setSections] = useState<sectionsData[]>([])
-const [head, setHead] = useState<headData>({ image_principal_url: '',subtitulo_principal: '',titulo_principal: ''})
-const [imageList, setImageList] = useState<string[]>([])
-const [mainImage, setMainImage] = useState('')
-const imagesList = sections.map( (evt) => { return  evt.image_url });
-// const downloadList = sections.map( (element)=>)
-useEffect(() => {
-  (async()=>{
-    const doc = await getFirebaseDoc('/Empresa/ZktZQqsBnqVVoL4dfRHv')
-    const doc2 = await getFirebaseDocs('/Empresa/ZktZQqsBnqVVoL4dfRHv/secciones')
-    setSections(doc2 as sectionsData[])
-    setHead({image_principal_url: doc?.image_principal_url, subtitulo_principal: doc?.subtitulo_principal, titulo_principal: doc?.titulo_principal})     
-    const docRef = ref(firebase_storage, '/Empresa/Secciones')
-    await listAll(docRef)
-    //console.log(listAllaux)
-    await listAll(docRef).then((resp)=> {resp.items.forEach((items)=>{
-      getDownloadURL(items).then((url)=> setImageList((prev)=>[...prev,url]))       
-    })})
-  })()
+  //se realiza el fetch del mainSection y se utiliza el useSelector para extraer sus datos
+  // const fetch = async()=> {
 
-}, [])
-
-useEffect(() => {
-  (async()=>{
-    const docRef2 = ref(firebase_storage,'/Empresa/Principal/imagen_principal')
-    console.log(docRef2)
-    const res = await getDownloadURL(docRef2).then((url)=> setMainImage(url))
-    console.log(res,'mainimage')
-  })()
-}, [])
+  // }
+  const [sections, setSections] = useState<adsSection[]>([])
+  useEffect(() => {
+    (async () => {
+      await dispatch(fetchMainSection())
+      const res2 = await dispatch(fetchSections())
+      //console.log(res2.payload,'res2')
+      setSections(res2.payload as adsSection[])
+    })()
+  }, [])
+  
+  // LOGICA PARA REDIRECCIONAR SI NO SE ESTA LOGUEADO, PARA QUE NO SE PUEDA ACCEDER MENDIATE URL DIRECTA
+  // React-router-dom
+  const navigate = useNavigate();
+  // Redux Hooks & Access
+  const user = useSelector((state: RootState) => state.auth.user);
+  const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
+  console.log('Conectado: ', loggedIn);
+  // Redireccionar si está no logueado, y no hay usuario
+  useEffect(() => {
+    if (!loggedIn && !user) {
+      navigate("/");
+    }
+  }, [loggedIn, user, navigate]);
 
   return (
-    <>      
-      <div className="container-fluid" id="about-container">  
-        <UpdateMainSectionModal             
-            image_principal_url= {head.image_principal_url}
-            subtitulo_principal= {head.subtitulo_principal}
-            titulo_principal= {head.titulo_principal}
-            download_url={mainImage}
-          />    
-        
-    
-        <div className="row">                
-          <div className="col mb-4">           
-          <AddSection {...imagesList}/>  
-          </div>
-        </div>
-        <div>
+    <>
+      <div className="p-3 mb-2 bg-white text-dark border" id="about-container">
+        <UpdateMainSectionModal
+        />
 
-        {
-          sections.map( (element,index) => ( 
-            <AdSection
-            key={`element.id${index}`}
-            id = {element.id}
-            posicion_id={element.posicion_id}           
-            descripcion= {element.descripcion} 
-            estado= {element.estado} 
-            image_url= {element.image_url}
-            subtitulo= {element.subtitulo}
-            titulo= {element.titulo}
-            download_url={imageList[index]}
-            {...imagesList}
-            />
-          ))
-        }  
-        </div>      
-      </div>    
+        <AddSection />
+
+        <div className="container-fluid">
+          <AdsSection />
+        </div>
+
+        <EditInformationSection />
+      </div>
     </>
   )
 }

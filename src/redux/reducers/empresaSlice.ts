@@ -1,13 +1,15 @@
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { AppThunk } from '../store';
+import { AppThunk, RootState } from '../store';
+//import { getFirebaseDocs } from "../../api/getFirebaseDocs/getFirebaseDocs";
 import { getFirebaseDoc } from "../../api/getFirebaseDoc/getFirebaseDoc";
-interface EmpresaData {
+
+export interface EmpresaData {
+    nombre: string,
     correo: string;
     facebookUrl: string;
-    nombre:string;
-    tituloPrincipal:string;
-    subtituloPrincipal: string;
+    titulo_footer:string;
+    subtitulo_footer: string;
     telefonoFijo: string;
     whatsapp: string;
     direccionCorta: string;
@@ -34,10 +36,11 @@ const empresaSlice = createSlice({
     reducers: {
         setEmpresaData(state, action: PayloadAction<EmpresaData>){
             state.data = action.payload;
-        },
+        },        
     },
 });
 
+export const empresaSelector = (state: RootState) => state.empresa.data
 export const { setEmpresaData } = empresaSlice.actions;
 export default empresaSlice.reducer;
 
@@ -47,11 +50,11 @@ export const fetchEmpresaData = (): AppThunk => async dispatch => {
         const docSnap = await getFirebaseDoc('/Empresa/ZktZQqsBnqVVoL4dfRHv');
         if(docSnap){
             const empresaData: EmpresaData = {
+                nombre: docSnap.nombre,
                 correo: docSnap.correo,
                 facebookUrl: docSnap.redes[0].red_url,
-                nombre: docSnap.nombre,
-                tituloPrincipal: docSnap.titulo_principal,
-                subtituloPrincipal: docSnap.subtitulo_principal,
+                titulo_footer: docSnap.titulo_principal,
+                subtitulo_footer: docSnap.subtitulo_principal,
                 telefonoFijo: docSnap.telefonos[0],
                 whatsapp: docSnap.telefonos[1],
                 direccionCorta: docSnap.direccion_corta,
@@ -62,7 +65,6 @@ export const fetchEmpresaData = (): AppThunk => async dispatch => {
                 horarioViernes: docSnap.horarios[4],
                 horarioSabado: docSnap.horarios[5],
                 horarioDomingo: docSnap.horarios[6],
-
             };
             dispatch(setEmpresaData(empresaData));
         }

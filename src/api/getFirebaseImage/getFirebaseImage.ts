@@ -5,7 +5,7 @@ export const getFirebaseImage = async (path: string) => {
     try{
         const docRef = ref(firebase_storage, path)
         
-        const res = getDownloadURL(docRef).then((url)=> url)
+        const res = await getDownloadURL(docRef).then((url)=> url)
         return res
     }catch(error:any){console.log(error)}
 
