@@ -4,6 +4,7 @@ export interface Curso {
     nombre: string;
     descripcion: string;
     modalidad: string;
+    fechaCreacion: Timestamp;
     fecha_inicio: Timestamp;
     fecha_finalizacion: Timestamp;
     horario: string;

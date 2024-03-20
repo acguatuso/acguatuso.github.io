@@ -63,7 +63,12 @@ function GestionCursos() {
   const [cursos, setCursos] = useState<Curso[]>([]);
   const [filterText, setFilterText] = useState("");
   useEffect(() => {
-    // Obtiene los cursos de Firebase
+    
+
+    obtenerCursos();
+  }, []);
+
+  // Obtiene los cursos de Firebase
     const obtenerCursos = async () => {
       const cursosData = await getFirebaseDocs("Cursos");
       var cursosFormateados: Curso[] = [];
@@ -72,17 +77,17 @@ function GestionCursos() {
         nombre: curso.nombre,
         descripcion: curso.descripcion,
         modalidad: curso.modalidad,
+        fechaCreacion: curso.fechaCreacion,
         fecha_inicio: curso.fecha_inicio, 
         fecha_finalizacion: curso.fecha_finalizacion, 
         horario: curso.horario,
         link_plataforma: curso.link_plataforma
       }));
+      cursosFormateados.sort((a, b) => b.fechaCreacion.toMillis() - a.fechaCreacion.toMillis());
       setCursos(cursosFormateados);
+      console.log(cursosFormateados)
       
     };
-
-    obtenerCursos();
-  }, []);
   
   return (
     <>
@@ -114,36 +119,6 @@ function GestionCursos() {
       </div>
       <div>
         <DataTableBase columns={columns} data={cursos}></DataTableBase>
-        {/* <table className="table">
-          <thead className="table-dark">
-            <tr>
-              <th scope="col">Nombre</th>
-              <th scope="col">Descripción</th>
-              <th scope="col">Editar</th>
-              <th scope="col">Eliminar</th>
-            </tr>
-          </thead>
-          <tbody>
-            {cursos.map(curso => (
-              <tr key={curso.id}>
-                <td>{curso.nombre}</td>
-                <td>{curso.descripcion}</td>
-                <td>
-                <FormularioCursos 
-                id={`course-section-modal-edit-${curso.id}`}
-                titulo={`Editar Curso: ${curso.nombre}`}
-                nombreButton={"Editar"}
-                submitButton={"Guardar Cambios"}
-                curso={curso}
-                />
-                </td>
-                <td>
-                  <EliminarCurso id={curso.id}/>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table> */}
       </div>
 
     </>
