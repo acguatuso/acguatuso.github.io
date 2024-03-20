@@ -4,6 +4,7 @@ import { RootState } from '../../redux/store';
 import { editarDoc } from '../../redux/reducers/authSlice';
 import { useNavigate } from 'react-router-dom';
 import '../../CSS/Components/MiPerfil.css'
+import { fetchPaisInfoAsync } from '../../redux/reducers/paisInfoSlice';
 
 // Opciones de ejemplo para los dropdowns
 const provincias = ['San José', 'Alajuela', 'Cartago', 'Heredia', 'Guanacaste', 'Puntarenas', 'Limón'];
@@ -32,6 +33,14 @@ const MiPerfil: React.FC = () => {
     const dispatch = useDispatch();
     const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
     const user = useSelector((state: RootState) => state.auth.user);
+    
+
+    useEffect(() => {
+      // Realiza la solicitud de la información del país al montar el componente
+      dispatch(fetchPaisInfoAsync() as any);
+    }, [dispatch]);
+    const paisInfo = useSelector((state: RootState) => state.paisInfo.data);
+    console.log(paisInfo);
 
     // Efecto para inicializar el formulario cuando el usuario cambia
     useEffect(() => {
@@ -61,8 +70,8 @@ const MiPerfil: React.FC = () => {
     };
 
     const handleSaveClick = () => {
-        console.log(formData);
-        console.log(user?.correo);
+        //console.log(formData);
+        //console.log(user?.correo);
         if (!formData.cedula || !formData.nombre) {
             alert('Por favor, complete todos los campos obligatorios.');
             return;
