@@ -1,14 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import {  editarDoc } from '../../redux/reducers/authSlice';
+import { editarDoc } from '../../redux/reducers/authSlice';
 import { useNavigate } from 'react-router-dom';
+import '../../CSS/Components/MiPerfil.css'
 
 // Opciones de ejemplo para los dropdowns
 const provincias = ['San José', 'Alajuela', 'Cartago', 'Heredia', 'Guanacaste', 'Puntarenas', 'Limón'];
 const cantones = ['Canton 1', 'Canton 2', 'Canton 3']; // Ejemplo de opciones de cantones
 const distritos = ['Distrito 1', 'Distrito 2', 'Distrito 3']; // Ejemplo de opciones de distritos
 const generos = ['Masculino', 'Femenino', 'Otro']; // Ejemplo de opciones de género
+const labels: { [key: string]: string } = {
+    correo: 'Correo Electrónico',
+    cedula: 'Cédula',
+    telefono: 'Teléfono',
+    provincia: 'Provincia',
+    canton: 'Cantón',
+    distrito: 'Distrito',
+    direccion: 'Dirección',
+    fechaNacimiento: 'Fecha de Nacimiento',
+    genero: 'Género',
+    nombre: 'Nombre'
+};
 
 
 const MiPerfil: React.FC = () => {
@@ -68,19 +81,22 @@ const MiPerfil: React.FC = () => {
     }, [loggedIn, user, navigate]);
 
     return (
-        <div className="container">
-            <h2>Mi Perfil</h2>
+        <div className="container shadow-lg">
+            <br />
+            <h2 >Mi Datos Personales</h2>
+            <br />
             <div className="row">
                 {formData && Object.entries(formData).map(([key, value]) => {
                     if (key === 'correo' || key === 'user_type' || key === 'estado') {
                         return null; // Salta email, user_type y estado
                     }
-    
+                    // Renderizar el label con el texto personalizado
+                    const label = labels[key] || key; // Usar el texto personalizado o el nombre del campo si no se encuentra en el objeto labels
                     if (key === 'fechaNacimiento') {
                         // Renderizar el selector de fecha para fecha de nacimiento
                         return (
                             <div key={key} className="col-md-3 mb-3">
-                                <label className="form-label">{key}</label>
+                                <label className="form-label">{label}</label>
                                 {!editMode ? (
                                     <div className="form-control">{value}</div>
                                 ) : (
@@ -96,12 +112,12 @@ const MiPerfil: React.FC = () => {
                             </div>
                         );
                     }
-    
+
                     if (key === 'canton' || key === 'provincia' || key === 'distrito' || key === 'genero') {
                         // Renderizar dropdowns para canton, provincia, distrito y genero
                         return (
                             <div key={key} className="col-md-3 mb-3">
-                                <label className="form-label">{key}</label>
+                                <label className="form-label">{label}</label>
                                 {!editMode ? (
                                     <div className="form-control">{value}</div>
                                 ) : (
@@ -130,10 +146,10 @@ const MiPerfil: React.FC = () => {
                             </div>
                         );
                     }
-    
+
                     return (
                         <div key={key} className="col-md-3 mb-3">
-                            <label className="form-label">{key}</label>
+                            <label className="form-label">{label}</label>
                             {!editMode ? (
                                 <div className="form-control">{value}</div>
                             ) : (
@@ -150,17 +166,21 @@ const MiPerfil: React.FC = () => {
                     );
                 })}
             </div>
-            {!editMode ? (
-                <button onClick={handleEditClick} className="btn btn-primary me-2">Editar</button>
-            ) : (
-                <>
-                    <button onClick={handleCancelClick} className="btn btn-secondary me-2">Cancelar</button>
-                    <button onClick={handleSaveClick} className="btn btn-success">Guardar</button>
-                </>
-            )}
+
+            <div className="button-container"> {/* Nuevo div para los botones */}
+                {!editMode ? (
+                    <button onClick={handleEditClick} className="btn btn-primary me-2">Editar</button>
+                ) : (
+                    <>
+                        <button onClick={handleCancelClick} className="btn btn-secondary me-2">Cancelar</button>
+                        <button onClick={handleSaveClick} className="btn btn-success">Guardar</button>
+                    </>
+                )}
+            </div>
+            <br />
         </div>
     );
-    
+
 };
 
 export default MiPerfil;
