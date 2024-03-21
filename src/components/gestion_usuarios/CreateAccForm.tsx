@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { signup } from '../../redux/reducers/authSlice';
 import { RootState } from '../../redux/store';
-//import '../../CSS/Components/CreateAccStyle.css'
+import '../../CSS/Components/CreateAccStyle.css';
 import { Link } from 'react-router-dom';
 
 const CreateAccountForm: React.FC = () => {
@@ -137,14 +137,6 @@ const CreateAccountForm: React.FC = () => {
                       <option value="">Seleccione un distrito...</option>
                       <option value="Katira">Katira</option>
                       <option value="Palmera">Palmera</option>
-                    </select>
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="user_type">Tipo de Usuario:</label>
-                    <select id="user_type" name="user_type" value={formData.user_type} onChange={handleChange} className="form-control">
-                      <option value="">Seleccione tipo de usuario...</option>
-                      <option value="0">0. Usuario Común</option>
-                      <option value="1">1. Usuario Administrador</option>
                     </select>
                   </div>
                 </div>

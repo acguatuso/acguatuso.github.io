@@ -5,6 +5,9 @@ import { Curso } from './curso.interface';
 import EliminarCurso from './EliminarCurso';
 import DataTableBase from '../dataTable/DataTableBase';
 import { FaAddressCard, FaEdit } from 'react-icons/fa';
+import { RootState } from '../../redux/store';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 const columns = [
   {
@@ -63,10 +66,22 @@ function GestionCursos() {
   const [cursos, setCursos] = useState<Curso[]>([]);
   const [filterText, setFilterText] = useState("");
   useEffect(() => {
-    
-
     obtenerCursos();
   }, []);
+
+  // LOGICA PARA REDIRECCIONAR SI NO SE ESTA LOGUEADO, PARA QUE NO SE PUEDA ACCEDER MENDIATE URL DIRECTA
+  // React-router-dom
+  const navigate = useNavigate();
+  // Redux Hooks & Access
+  const user = useSelector((state: RootState) => state.auth.user);
+  const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
+  console.log('Conectado: ', loggedIn);
+  // Redireccionar si está no logueado, y no hay usuario
+  useEffect(() => {
+    if (!loggedIn && !user) {
+      navigate("/");
+    }
+  }, [loggedIn, user, navigate]);
 
   // Obtiene los cursos de Firebase
     const obtenerCursos = async () => {
