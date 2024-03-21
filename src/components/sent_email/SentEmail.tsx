@@ -5,9 +5,12 @@ declare let bootstrap: any; // necesario para que typeScript no de error diciend
 
 export const SentEmail = () => {
 
-  const serviceId: string = 'service_ad6dvf4';// const serviceId: string = 'service_8ymw9gn';
-  const templateId: string = 'contact_form';// const templateId: string = 'contact_form';
-  const publicKey: string = 'ON-22qKjZUDzY0s6N';// const publicKey: string = 'Z5h6nUaQ9KoLIq2kN';
+  const serviceId: string  = 'service_ad6dvf4';
+  const templateId: string = 'contact_form';
+  const publicKey: string  = 'ON-22qKjZUDzY0s6N';
+  // const serviceId: string = 'service_8ymw9gn';
+  // const templateId: string = 'contact_form';
+  // const publicKey: string = 'Z5h6nUaQ9KoLIq2kN'; 
   const [mensajeExito, setMensajeExito] = useState('');
 
   const form: any = useRef();
@@ -36,13 +39,11 @@ export const SentEmail = () => {
   };
 
   const closeModal = () => {
-    let modalElement = document.getElementById('sentEmailModal');
-    let modalBackdropElement = document.querySelector('body > div.modal-backdrop.fade.show');
-
-    modalElement!.style.display = 'none';
-    const modal = new bootstrap.Modal(modalElement!); // Esta linea y la de abajo son necesarias para evitar hacer clic 2 veces al boton de contactar (esto cuando ya se ha enviado un correo y se quiere mandar otro correo sin recargar la pag)
-    modal.hide(); // linea de abajo: Oculta el modal de manera "oficial"
-    modalBackdropElement?.remove(); //remueve el elemento encargado en colocar una capa oscura.
+    const modalElement = document.getElementById('sentEmailModal');
+    const modalInstance = bootstrap.Modal.getInstance(modalElement);
+    if (modalInstance) {
+      modalInstance.hide();
+    }
   }
 
   const cleanForm = () => {
