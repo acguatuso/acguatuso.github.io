@@ -166,15 +166,15 @@ export const FormularioCursos = (props: formProps) => {
                   <form action="">
                     <div className="row">
                       <div className="col">
-                        <label className="form-label" htmlFor="nombre">Nombre</label>
+                        <label className="form-label text-dark" htmlFor="nombre">Nombre</label>
                         <input type="text" className="form-control" id="nombre" name="nombre" value={nombreCurso} onChange={handleNombreCursoChange}  placeholder="Nombre del curso" required/>
                       </div>
                       <div className="col">
-                        <label className="form-label" htmlFor="descripcion">Descripción</label>
+                        <label className="form-label text-dark" htmlFor="descripcion">Descripción</label>
                         <input type="text" className="form-control" id="descripcion" name="descripcion" value={descripcionCurso} onChange={handleDescripcionCursoChange} placeholder="Descripción del curso" required/>
                       </div>
                       <div className="col">
-                        <label className="form-label" htmlFor="modalidad">Modalidad</label>
+                        <label className="form-label text-dark" htmlFor="modalidad">Modalidad</label>
                         <select id="modalidad" className="form-select" name="modalidad" value={modalidad} onChange={handleModalidadChange} required>
                           <option disabled value="">Selecciona una modalidad</option>
                           <option value="Presencial">Presencial</option>
@@ -184,25 +184,25 @@ export const FormularioCursos = (props: formProps) => {
                     </div>
                     <div className="row">
                       <div className="col">
-                        <label className="form-label" htmlFor="fechaInicio">Fecha de Inicio</label>
+                        <label className="form-label text-dark" htmlFor="fechaInicio">Fecha de Inicio</label>
                         <input type="date" className="form-control" id="fechaInicio" name="fechaInicio" value={fechaInicio ? fechaInicio.toISOString().substring(0, 10) : ''} onChange={handleFechaInicioChange} required/>
                       </div>
                       <div className="col">
-                        <label className="form-label" htmlFor="fechaFin">Fecha de Fin</label>
+                        <label className="form-label text-dark" htmlFor="fechaFin">Fecha de Fin</label>
                         <input type="date" className="form-control" id="fechaFin" name="fechaFin" value={fechaFin ? fechaFin.toISOString().substring(0, 10) : ''} onChange={handleFechaFinChange} required/>
                       </div>
                       <div className="col">
-                        <label className="form-label" htmlFor="horario">Horario</label>
+                        <label className="form-label text-dark" htmlFor="horario">Horario</label>
                         <input type="text" className="form-control" id="horario" name="horario" value={horario} onChange={handleHorarioChange}placeholder="Ej: Lunes: 8:00am - 9:00am" required/>
                       </div>
                     </div>
                     <div className="row">
                       <div className="col">
-                        <label className="form-label" htmlFor="linkClase">Link de Clase</label>
+                        <label className="form-label text-dark" htmlFor="linkClase">Link de Clase</label>
                         <input type="url" className="form-control" id="linkClase" name="linkClase" value={linkCurso} onChange={handleLinkCursoChange}/>
                       </div>
                       <div className="col">
-                        <label className="form-label" htmlFor="imagen">Imagen Ilustrativa</label>
+                        <label className="form-label text-dark" htmlFor="imagen">Imagen Ilustrativa</label>
                         <input type="file" className="form-control" id="imagen" name="imagen" onChange={ (event) => setFileImage(event.target.files![0])}/>
                       </div>
                     </div>
