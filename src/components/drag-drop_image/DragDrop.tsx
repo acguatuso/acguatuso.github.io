@@ -108,7 +108,7 @@ export const DragDrop = () => {
                     <>
                         Drag & Drop aquí o {" "}
                         <span className="select" role="button" onClick={selectFile}>
-                            Adjunta la imágen
+                            Adjunta la imagen
                         </span>
                     </>
                 )}

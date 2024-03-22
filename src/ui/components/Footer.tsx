@@ -5,6 +5,7 @@ import { useEffect} from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchEmpresaData } from '../../redux/reducers/empresaSlice';
 import { FormEmailLoggedIn, SentEmail } from '../../components';
+import { ContactenosFooter } from './ContactenosFooter';
 
 
 export const Footer = () => {
@@ -109,12 +110,7 @@ export const Footer = () => {
                             <p>
                                 <i className='fa-brands fa-whatsapp me-3'></i> {empresaData?.whatsapp}
                             </p>
-                            {!loggedIn && (
-                                <SentEmail />
-                            )}
-                            {loggedIn && (
-                                <FormEmailLoggedIn />
-                            )}
+                            <ContactenosFooter />
                         </div>
                         {/* Fin Columna 4 */}
                     </div>

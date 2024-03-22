@@ -14,7 +14,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <>
       <Navbar />
       {children}
-      {/* <Footer />*/} {/*No debe de aparecer en la pag del Admin. Solo en la del cliente */}
+      <Footer /> {/*No debe de aparecer en la pag del Admin. Solo en la del cliente */}
     </>
   );
 };
