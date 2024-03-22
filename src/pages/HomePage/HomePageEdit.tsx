@@ -1,13 +1,20 @@
-import { useState, ChangeEvent, FormEvent } from 'react';
+import { useEffect, useState, ChangeEvent, FormEvent } from 'react';
 import { DragDrop } from '../../components/drag-drop_image/DragDrop';
 import { updateFirebaseDoc } from '../../api/updateFirebaseDoc/updateFirebaseDoc';
 
-
-export const HomePageEdit = ({ onClose }: { onClose: () => void }) => {
+export const HomePageEdit = ({ onClose, initialTitulo, initialDescription }: { onClose: () => void; initialTitulo: string; initialDescription: string; }) => {
     const [titulo, setTitulo] = useState('');
     const [descripcion, setDescripcion] = useState('');
     const [editImage, setEditImage] = useState(false);
     const [showEditImageBoton, setShowEditImageBoton] = useState(true);
+    const [originalTitulo, setOriginalTitulo] = useState(''); 
+
+
+    useEffect(() => {
+        setOriginalTitulo(initialTitulo);
+        setTitulo(initialTitulo);
+        setDescripcion(initialDescription);
+    }, [initialTitulo, initialDescription])
 
     const rutaDocumentoFirebase = 'Home/8Yl9xbZuRNFTUItTEKGU'
     

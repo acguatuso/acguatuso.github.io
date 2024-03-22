@@ -6,6 +6,8 @@ import { getFirebaseDoc } from '../../api/getFirebaseDoc/getFirebaseDoc';
 import { useNavigate } from 'react-router';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
+import { ref, getDownloadURL }from 'firebase/storage';
+import { firebase_storage } from '../../firebase';
 
 export const HomePageApp = () => {
 
@@ -25,15 +27,22 @@ export const HomePageApp = () => {
             navigate("/");
         }
 
-        const rutaDocumentoFirebase = 'Home/8Yl9xbZuRNFTUItTEKGU';
-
         
+        const imageRef = ref(firebase_storage, 'Home/imagen-inicio');
+        getDownloadURL(imageRef)
+            .then((url) => {
+                setImageUrl(url);
+            })
+            .catch((error) => {
+                console.error('Error descargando la imagen:', error);
+            });
         (async () => {
             const docSnap = await getFirebaseDoc('/Home/8Yl9xbZuRNFTUItTEKGU');
 
             setTitulo(docSnap?.titulo);
             setDescripcion(docSnap?.descripcion);
-            setImageUrl(docSnap?.image_url);
+
+            //setInitialTitulo(docSnap?titulo);
 
         })()
     }, [loggedIn, user, navigate, showEditPage]);
@@ -78,7 +87,7 @@ export const HomePageApp = () => {
                             />
                         </div>
                         {showEditPage && (
-                            <HomePageEdit onClose={handleCloseEdit}/>
+                            <HomePageEdit onClose={handleCloseEdit} initialTitulo={titulo} initialDescription={descripcion}/>
 
                         ) }
                     </div>

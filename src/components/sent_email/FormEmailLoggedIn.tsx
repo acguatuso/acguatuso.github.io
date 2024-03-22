@@ -9,12 +9,16 @@ declare let bootstrap: any; // necesario para que typeScript no de error diciend
 export const FormEmailLoggedIn = () => {
 
 
+
     const serviceId: string  = 'service_ad6dvf4';
     const templateId: string = 'contact_form';
     const publicKey: string  = 'ON-22qKjZUDzY0s6N';
+    
+    /*Email de Cantonal*/
     // const serviceId: string = 'service_8ymw9gn';
     // const templateId: string = 'contact_form';
     // const publicKey: string = 'Z5h6nUaQ9KoLIq2kN'; 
+    /*Email de Cantonal*/
 
     const [mensajeExito, setMensajeExito] = useState('');
 
@@ -98,7 +102,7 @@ export const FormEmailLoggedIn = () => {
 
             </div>
             <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={cleanForm}>Cerrar</button>
               <button type="submit" className="btn btn-primary" form="modal-details" >Enviar</button>
             </div>
           </div>

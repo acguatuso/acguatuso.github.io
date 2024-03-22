@@ -8,9 +8,12 @@ export const SentEmail = () => {
   const serviceId: string  = 'service_ad6dvf4';
   const templateId: string = 'contact_form';
   const publicKey: string  = 'ON-22qKjZUDzY0s6N';
+
+      /*Email de Cantonal*/
   // const serviceId: string = 'service_8ymw9gn';
   // const templateId: string = 'contact_form';
   // const publicKey: string = 'Z5h6nUaQ9KoLIq2kN'; 
+      /*Email de Cantonal*/
   const [mensajeExito, setMensajeExito] = useState('');
 
   const form: any = useRef();
@@ -47,6 +50,7 @@ export const SentEmail = () => {
   }
 
   const cleanForm = () => {
+    console.log("LIMPIANDO EL FORM")
     form.current.reset();
   };
 
@@ -90,7 +94,7 @@ export const SentEmail = () => {
 
             </div>
             <div className="modal-footer">
-              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cerrar</button>
+              <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={cleanForm}>Cerrar</button>
               <button type="submit" className="btn btn-primary" form="modal-details">Enviar</button>
             </div>
           </div>
