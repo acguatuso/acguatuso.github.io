@@ -18,8 +18,16 @@ export const HomePageApp = () => {
     // Redux Hooks & Access
     const user = useSelector((state: RootState) => state.auth.user);
     const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
+    const [showEditPage, setShowEditPage] = useState(false);
 
     useEffect(() => {
+        if (!loggedIn && !user) {
+            navigate("/");
+        }
+
+        const rutaDocumentoFirebase = 'Home/8Yl9xbZuRNFTUItTEKGU';
+
+        
         (async () => {
             const docSnap = await getFirebaseDoc('/Home/8Yl9xbZuRNFTUItTEKGU');
 
@@ -28,16 +36,8 @@ export const HomePageApp = () => {
             setImageUrl(docSnap?.image_url);
 
         })()
-    }, []);
+    }, [loggedIn, user, navigate, showEditPage]);
 
-    // Redireccionar si está no logueado, y no hay usuario
-    useEffect(() => {
-        if (!loggedIn && !user) {
-            navigate("/");
-        }
-    }, [loggedIn, user, navigate]);
-
-    const [showEditPage, setShowEditPage] = useState(false);
     const editRef = useRef<any>(null);
 
 
@@ -48,31 +48,43 @@ export const HomePageApp = () => {
         }
     };
 
+    const handleCloseEdit = () => {
+        setShowEditPage(false);
+    }
+
+
     return (
-        <div className="container mt-5">
-            {/* Boton de editar */}
-            <div className='text-start mb-5'>
-                <button type="button" className='btn btn-success' onClick={handleEditClick}>Editar</button>
-            </div>
+        <>
+            {loggedIn && (
+                <div className="container mt-5">
+                    {/* Boton de editar */}
+                    <div className='text-start mb-5'>
+                        <button type="button" className='btn btn-success' onClick={handleEditClick}>Editar</button>
+                    </div>
 
-            <div className="row text-start">
-                {/* Contenido del lado izquierdo */}
-                <div className="col-sm-5">
-                    <h2 className='fw-bold color-title mb-3'>{titulo}</h2>
-                    <p>{descripcion} </p>
-                </div>
+                    <div className="row text-start">
+                        {/* Contenido del lado izquierdo */}
+                        <div className="col-sm-5">
+                            <h2 className='fw-bold color-title mb-3'>{titulo}</h2>
+                            <p>{descripcion} </p>
+                        </div>
 
-                {/* Contenido del lado derecho */}
-                <div className="col-sm-7" ref={editRef}>
-                    <img
-                        src={image_url}
-                        alt="Imagen de página de inicio,"
-                        className='img-fluid rounded'
-                    />
+                        {/* Contenido del lado derecho */}
+                        <div className="col-sm-7" ref={editRef}>
+                            <img
+                                src={image_url}
+                                alt="Imagen de página de inicio,"
+                                className='img-fluid rounded'
+                            />
+                        </div>
+                        {showEditPage && (
+                            <HomePageEdit onClose={handleCloseEdit}/>
+
+                        ) }
+                    </div>
                 </div>
-                {showEditPage && <HomePageEdit />}
-            </div>
-        </div>
+            )}
+        </>
 
     )
 }

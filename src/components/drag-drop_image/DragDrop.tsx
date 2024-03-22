@@ -1,5 +1,6 @@
 import { useRef, useState } from "react";
 import './DragDrop.css'
+import { uploadFirebaseImage } from "../../api/uploadFirebaseImage/uploadFirebaseImage";
 
 interface ImageState {
     name: string;
@@ -12,6 +13,8 @@ export const DragDrop = () => {
     const [isDragging, setIsDragging] = useState(false);
     const fileInputRef = useRef<HTMLInputElement | null>(null);
 
+    const [imageUpload, setImageUpload] = useState<File | null >(null);
+
     function selectFile() {
         if (fileInputRef.current) {
             fileInputRef.current.click();
@@ -20,19 +23,24 @@ export const DragDrop = () => {
 
     function onFileSelect(event:any){
         const file = event.target.files[0];
+        //console.log(file);
+        
         if(!file || file.type.split('/')[0] !== 'image') return;
         
+        setImageUpload(file);
         setImage({
             name: file.name,
             url: URL.createObjectURL(file),
         });
-        event.target.value = ''; 
+
+
     }
 
     function deleteImage(){
         if (image) {
             URL.revokeObjectURL(image.url);
             setImage(null);
+            setImageUpload(null);
 
             if (fileInputRef.current) {
                 fileInputRef.current.value = '';
@@ -57,14 +65,29 @@ export const DragDrop = () => {
         const file = event.dataTransfer.files[0];
         if(!file || file.type.split('/')[0] !== 'image') return;
 
+        setImageUpload(file);
         setImage({
             name: file.name,
             url: URL.createObjectURL(file),
         });
+
+        
     }
 
-    function uploadImage() {
-        console.log('Image: ', image);
+
+    async function uploadFile(file:any) {
+        uploadFirebaseImage(file, 'Home/imagen-inicio');
+    }
+
+    async function uploadImage() {
+        //console.log('Image: ', imageUpload);
+        try{
+            const result = await uploadFile(imageUpload);
+            console.log(result);
+            deleteImage();
+        } catch(error){
+            console.error(error);
+        }   
     }
 
   return (
@@ -74,6 +97,7 @@ export const DragDrop = () => {
             <div className="top">
                 <p>Subir imagen</p>
             </div>
+            { !image &&
             <div className='drag-area' onDragOver={onDragOver} onDragLeave={onDragLeave} onDrop={onDrop}>
                 {isDragging ? (
                     <span className="select">
@@ -91,6 +115,7 @@ export const DragDrop = () => {
 
                 <input type="file" name="file" className="file" ref={fileInputRef} onChange={onFileSelect}></input>
             </div>
+            }
             {image && (
                 <div className="container">
                     <div className="image">
@@ -99,7 +124,7 @@ export const DragDrop = () => {
                     </div>
                 </div>
             )}
-            {image && (
+            {imageUpload && (
                 <button type='button' className='btn btn-success' onClick={uploadImage}>
                     Subir
                 </button>
