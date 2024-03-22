@@ -1,9 +1,10 @@
-import { useState, ChangeEvent, useEffect } from 'react';
+import { useState, ChangeEvent, useEffect, useRef } from 'react';
 import { addFirebaseDoc } from "../../api/addFirebaseDoc/addFirebaseDoc";
 import { updateFirebaseDoc } from '../../api/updateFirebaseDoc/updateFirebaseDoc';
 import { Curso } from './curso.interface';
 import './CursosMain.css'
 import { uploadFirebaseImage } from '../../api/uploadFirebaseImage/uploadFirebaseImage';
+declare let bootstrap: any; // necesario para que typeScript no de error diciendo que no reconoce bootstrap
 
 interface formProps{
     id: string
@@ -24,6 +25,7 @@ export const FormularioCursos = (props: formProps) => {
     const [horario, setHorario] = useState('');
     const [fileImage, setFileImage] = useState<File>()
     const [mensajeExito, setMensajeExito] = useState('');
+    const form: any = useRef();
 
     useEffect(() => {
         if (props.curso !== null) {
@@ -105,10 +107,11 @@ export const FormularioCursos = (props: formProps) => {
         setLinkCurso('');
         setHorario('');
         setMensajeExito('');
+        cleanForm();
+        closeModal();
       }, 5000); // El mensaje de éxito se mostrará durante 5 segundos (5000 milisegundos)
     };
-
-    
+ 
 
     const handleEditarCurso = () => {
         if (props.curso !== null) {
@@ -133,9 +136,25 @@ export const FormularioCursos = (props: formProps) => {
 
             setTimeout(() => {
               setMensajeExito('');
+              cleanForm();
+              closeModal();
             }, 5000); // El mensaje de éxito se mostrará durante 5 segundos (5000 milisegundos)
         } 
     }
+
+    const closeModal = () => {
+      let modalElement = document.getElementById(`${props.id}`);
+      let modalBackdropElement = document.querySelector('body > div.modal-backdrop.fade.show');
+
+      modalElement!.style.display = 'none';
+      const modal = new bootstrap.Modal(modalElement!); // Esta linea y la de abajo son necesarias para evitar hacer clic 2 veces al boton de contactar (esto cuando ya se ha enviado un correo y se quiere mandar otro correo sin recargar la pag)
+      modal.hide(); // linea de abajo: Oculta el modal de manera "oficial"
+      modalBackdropElement?.remove(); //remueve el elemento encargado en colocar una capa oscura.
+    }
+
+    const cleanForm = () => {
+      form.current.reset();
+    };
 
     const handleSubmit = () => {
         switch (true) {
@@ -163,7 +182,7 @@ export const FormularioCursos = (props: formProps) => {
                 <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div className="modal-body text-start">
-                  <form action="">
+                  <form ref={form} id='modal-details-form' onSubmit={handleSubmit}>
                     <div className="row">
                       <div className="col">
                         <label className="form-label text-dark" htmlFor="nombre">Nombre</label>
@@ -203,14 +222,14 @@ export const FormularioCursos = (props: formProps) => {
                       </div>
                       <div className="col">
                         <label className="form-label text-dark" htmlFor="imagen">Imagen Ilustrativa</label>
-                        <input type="file" className="form-control" id="imagen" name="imagen" onChange={ (event) => setFileImage(event.target.files![0])}/>
+                        <input type="file" className="form-control" id="imagen" name="imagen" onChange={ (event) => setFileImage(event.target.files![0])} required/>
                       </div>
                     </div>
                   </form>
               </div>
               <div className="modal-footer border-0">
                   <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                  <button type="button" className="btn btn-primary" onClick={handleSubmit} data-bs-dismiss="modal">{props.submitButton}</button>
+                  <button type="submit" className="btn btn-primary" form='modal-details-form'>{props.submitButton}</button>
               </div>
             </div>
           </div>
