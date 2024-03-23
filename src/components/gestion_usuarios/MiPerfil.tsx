@@ -30,6 +30,8 @@ const MiPerfil: React.FC = () => {
     const [distritos, setDistritos] = useState([]);
     const [provincia, setSelectedProvincia] = useState()
 
+    // React-router-dom
+    const navigate = useNavigate();
 
     // Redux Hooks & Access
     const dispatch = useDispatch();
@@ -38,38 +40,48 @@ const MiPerfil: React.FC = () => {
     const paisInfo = useSelector((state: RootState) => state.paisInfo.data);
 
 
-    useEffect(() => {
-        // Realiza la solicitud de la información del país al montar el componente
-        dispatch(fetchPaisInfoAsync() as any);
-    }, [dispatch]);
-
     // Efecto para cargar las provincias cuando se carga la información del país
     // Efecto para inicializar el formulario cuando el usuario cambia
     useEffect(() => {
-        if (paisInfo) {
+        if (!loggedIn && !user) {
+            navigate("/");
+        }
+        if (user && paisInfo) {
             const provincias = obtenerNombresProvincias(paisInfo);
             setProvincias(provincias);
-        }
-        if (user) {
+
+            // Verifica que user.provincia y user.canton no sean undefined antes de continuar
+            if (user.provincia && user.canton) {
+                if (paisInfo[user.provincia]) {
+                    const cantonesProvincia = obtenerNombresCantonesDeProvincia(user.provincia, paisInfo!);
+                    setCantones(cantonesProvincia);
+
+                    // Verifica que paisInfo[user.provincia] y paisInfo[user.provincia].cantones no sean undefined antes de continuar
+                    if (paisInfo[user.provincia].cantones) {
+                        const distritosCanton = obtenerNombresDistritosDeCanton(user.canton, user.provincia, paisInfo!);
+                        setDistritos(distritosCanton);
+                    } else {
+                        // Manejar el caso en el que paisInfo[user.provincia].cantones sea undefined
+                        console.error("La propiedad 'cantones' de la provincia seleccionada es undefined.");
+                    }
+                } else {
+                    // Manejar el caso en el que paisInfo[user.provincia] sea undefined
+                    console.error("La provincia seleccionada no está definida en la información del país.");
+                }
+            } else {
+                // Manejar el caso en el que user.provincia o user.canton sean undefined
+                console.error("La provincia o el cantón del usuario no están definidos.");
+            }
+
             // Clonar el objeto user para evitar mutar el estado original
             setFormData({ ...user });
-
-            // Establecer la provincia seleccionada
-            setSelectedProvincia(user.provincia);
-
-            // Obtener los cantones de la provincia seleccionada y establecerlos en el estado
-            const cantonesProvincia = obtenerNombresCantonesDeProvincia(user.provincia, paisInfo!);
-            setCantones(cantonesProvincia);
-
-            // Obtener los distritos del cantón seleccionado y establecerlos en el estado
-            const distritosCanton = obtenerNombresDistritosDeCanton(user.canton, user.provincia, paisInfo!);
-            setDistritos(distritosCanton);
         }
-    }, [user, paisInfo]);
+    }, [user, paisInfo, navigate]);
+
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-    
+
         // Si el campo cambiado es un dropdown (select), actualiza el estado correspondiente y también el estado formData
         if (name === 'provincia') {
             setSelectedProvincia(value);
@@ -96,9 +108,13 @@ const MiPerfil: React.FC = () => {
             });
         }
     };
-    
+
 
     const handleEditClick = () => {
+       
+            // Realiza la solicitud de la información del país al montar el componente
+            dispatch(fetchPaisInfoAsync() as any);
+       
         setEditMode(true);
     };
 
@@ -128,16 +144,6 @@ const MiPerfil: React.FC = () => {
         setEditMode(false);
     };
 
-    // LOGICA PARA REDIRECCIONAR SI NO SE ESTA LOGUEADO, PARA QUE NO SE PUEDA ACCEDER MENDIATE URL DIRECTA
-    // React-router-dom
-    const navigate = useNavigate();
-    // Redux Hooks & Access
-    // Redireccionar si está no logueado, y no hay usuario
-    useEffect(() => {
-        if (!loggedIn && !user) {
-            navigate("/");
-        }
-    }, [loggedIn, user, navigate]);
 
     return (
         <div className="container shadow-lg">

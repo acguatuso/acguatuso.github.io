@@ -140,7 +140,7 @@ const CreateAccountForm: React.FC = () => {
                   </div>
                   <div className="mb-3">
                     <label htmlFor="telefono">Teléfono:</label>
-                    <input type="text" id="telefono" name="telefono" value={formData.telefono} onChange={handleChange} className="form-control" placeholder="Ej: 8888-8888" pattern="\d*" title="Solo se permiten números" />
+                    <input type="text" id="telefono" name="telefono" value={formData.telefono} onChange={handleChange} className="form-control" placeholder="Ej: 8888-8888" pattern="\d*" title="Solo se permiten números." />
                   </div>
                   <div className="mb-3">
                     <label htmlFor="canton">Cantón:</label>

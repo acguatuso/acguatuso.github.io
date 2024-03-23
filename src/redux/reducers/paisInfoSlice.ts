@@ -101,6 +101,9 @@ export function obtenerNombresProvincias(paisInfo: PaisInformacion): string[] {
 
 // Función para obtener los cantones de una provincia seleccionada
 export function obtenerNombresCantonesDeProvincia(provincia: string, paisInfo: PaisInformacion): string[] {
+    if (!paisInfo || !paisInfo[provincia] || !paisInfo[provincia].cantones) {
+        return []; // o puedes manejar esto según sea necesario en tu aplicación
+    }
     const provinciaSeleccionada = paisInfo[provincia];
     return Object.keys(provinciaSeleccionada.cantones);
 }
