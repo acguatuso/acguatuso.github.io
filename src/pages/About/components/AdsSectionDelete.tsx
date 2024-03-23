@@ -6,9 +6,6 @@ import { useAppDispatch } from "../../../hooks/hooks";
 import { deleteSection } from "../../../redux/reducers/aboutSlice";
 import { idDelete } from './about.interface';
 
-
-
-
 export const AdsSectionDelete = (prop: idDelete ) => {
     const dispatch = useAppDispatch()
     const handleDelete = async() =>{

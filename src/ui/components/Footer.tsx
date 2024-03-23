@@ -11,16 +11,15 @@ import { ContactenosFooter } from './ContactenosFooter';
 export const Footer = () => {
 
     const dispatch = useDispatch();
-    
-    // Redux Hooks & Access
-    const user = useSelector((state: RootState) => state.auth.user);
-    const empresaData = useSelector((state: RootState) => state.empresa.data);
-    const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
-    
     useEffect(() => {
         dispatch(fetchEmpresaData() as any );
-    },[]);
 
+    },[]);
+    // Redux Hooks & Access
+    const user = useSelector((state: RootState) => state.auth.user);
+    const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
+    const empresaData = useSelector((state: RootState) => state.empresa.data);
+    //console.log(empresaData,'footer')
   return (
 
     <div className='footer-container'>
@@ -69,25 +68,25 @@ export const Footer = () => {
                             </h6>
 
                             <p className="mb-1">
-                                 { empresaData?.horarioLunes }
+                                 { `Lunes: ${empresaData?.horarios[0]}` }
                             </p>
                             <p className="mb-1">
-                                { empresaData?.horarioMartes }
+                                { `Martes: ${empresaData?.horarios[1]}` }
                             </p>
                             <p className="mb-1">
-                                { empresaData?.horarioMiercoles }
+                                { `Miércoles: ${empresaData?.horarios[2]}` }
                             </p>
                             <p className="mb-1">
-                                { empresaData?.horarioJueves }
+                                { `Jueves: ${empresaData?.horarios[3]}` }
                             </p>
                             <p className="mb-1">
-                                { empresaData?.horarioViernes }
+                                { `Viernes: ${empresaData?.horarios[4]}` }
                             </p>
                             <p className="mb-1">
-                                { empresaData?.horarioSabado }
+                                { `Sábado: ${empresaData?.horarios[5]}` }
                             </p>
                             <p className="mb-1">
-                                { empresaData?.horarioDomingo }
+                                { `Domingo: ${empresaData?.horarios[6]}` }
                             </p>
                         </div>
                         {/* Columna 2 Horarios*/}
@@ -105,10 +104,10 @@ export const Footer = () => {
                                 <i className='fas fa-envelope me-3'></i> { empresaData?.correo }
                             </p>
                             <p>
-                                <i className='fas fa-phone me-3'></i> { empresaData?.telefonoFijo }
+                                <i className='fas fa-phone me-3'></i> { empresaData?.telefonos[0] }
                             </p>
                             <p>
-                                <i className='fa-brands fa-whatsapp me-3'></i> {empresaData?.whatsapp}
+                                <i className='fa-brands fa-whatsapp me-3'></i> {empresaData?.telefonos[1]}
                             </p>
                             <ContactenosFooter />
                         </div>

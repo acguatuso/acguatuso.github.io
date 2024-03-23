@@ -12,16 +12,16 @@ export const EditInformationSection = () => {
         facebook: empresa!.facebookUrl,
         titulo: empresa!.titulo_footer,
         subtitulo: empresa!.subtitulo_footer,
-        telefono: empresa!.telefonoFijo,
-        whatsapp: empresa!.whatsapp,
+        telefono: empresa!.telefonos[0],
+        whatsapp: empresa!.telefonos[1],    
         direccionCorta: empresa!.direccionCorta,
-        horarioLunes: empresa!.horarioLunes,
-        horarioMartes: empresa!.horarioMartes,
-        horarioMiercoles: empresa!.horarioMiercoles,
-        horarioJueves: empresa!.horarioJueves,
-        horarioViernes: empresa!.horarioViernes,
-        horarioSabado: empresa!.horarioSabado,
-        horarioDomingo: empresa!.horarioDomingo,
+        horarioLunes: empresa!.horarios[0],
+        horarioMartes: empresa!.horarios[1],
+        horarioMiercoles: empresa!.horarios[2],
+        horarioJueves: empresa!.horarios[3],
+        horarioViernes: empresa!.horarios[4],
+        horarioSabado: empresa!.horarios[5],
+        horarioDomingo: empresa!.horarios[6],
     }
     const [forms, setForms] = useState(initialState)
   
@@ -44,18 +44,23 @@ export const EditInformationSection = () => {
         facebookUrl: forms.facebook,
         titulo_footer:forms.titulo,
         subtitulo_footer: forms.subtitulo,
-        telefonoFijo: forms.telefono,
-        whatsapp: forms.whatsapp,
+        telefonos: [
+            forms.telefono,
+            forms.whatsapp
+        ],
         direccionCorta: forms.direccionCorta,
-        horarioLunes: forms.horarioLunes,
-        horarioMartes: forms.horarioMartes,
-        horarioMiercoles: forms.horarioMiercoles,
-        horarioJueves: forms.horarioJueves,
-        horarioViernes: forms.horarioViernes,
-        horarioSabado: forms.horarioSabado,
-        horarioDomingo: forms.horarioDomingo
+        horarios: [ 
+            forms.horarioLunes,
+            forms.horarioMartes,
+            forms.horarioMiercoles,
+            forms.horarioJueves,
+            forms.horarioViernes,
+            forms.horarioSabado,
+            forms.horarioDomingo
+        ]
+
     }
-    console.log(data, 'handleUpdateInformation')
+    //console.log(data, 'handleUpdateInformation')
     await updateFirebaseDoc('/Empresa/ZktZQqsBnqVVoL4dfRHv',data)
     dispatch(setEmpresaData(data))
   }

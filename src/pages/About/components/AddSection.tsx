@@ -71,7 +71,7 @@ export const AddSection = () => {
   }
     return (
     <>
-    <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target="#add-section">
+    <button type="button" className="btn btn-primary mb-2" data-bs-toggle="modal" data-bs-target="#add-section">
       Crear Sección
     </button>    
     <div className="modal fade" id="add-section" data-bs-backdrop="static" data-bs-keyboard="false"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
