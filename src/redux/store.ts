@@ -4,7 +4,7 @@ import storage from 'redux-persist/lib/storage'; // defaults to localStorage for
 import authReducer from './reducers/authSlice';
 import empresaReducer from './reducers/empresaSlice';
 import aboutReducer from './reducers/aboutSlice';
-import paisReducer from './reducers/paisInfoSlice';
+import paisInfoReducer from './reducers/paisInfoSlice';
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
@@ -20,7 +20,7 @@ const persistConfig = {
 const persistedAuthReducer = persistReducer(persistConfig, authReducer);
 const persistedEmpresaReducer = persistReducer(persistConfig, empresaReducer);
 const persistedAboutReducer = persistReducer(persistConfig, aboutReducer);
-const persistedPaisInfoReducer = persistReducer(persistConfig, paisReducer);
+const persistedPaisInfoReducer = persistReducer(persistConfig, paisInfoReducer);
 
 const store = configureStore({
   reducer: {

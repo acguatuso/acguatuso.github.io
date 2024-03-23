@@ -33,7 +33,7 @@ const initialState: EmpresaState = {
     data: {} as EmpresaData,
 };
 
-const empresaInfo = createSlice({
+const empresaSlice = createSlice({
     name: 'empresa',
     initialState,
     reducers: {
@@ -83,6 +83,6 @@ export const fetchEmpresaData = (): AppThunk => async dispatch => {
         console.error("Error al obtener los datos de la empresa:", error);
     }
 };
-
-export const { setEmpresaData } = empresaInfo.actions;
-export default empresaInfo.reducer;
+export const empresaSelector = (state: RootState) => state.empresa.data
+export const { setEmpresaData } = empresaSlice.actions;
+export default empresaSlice.reducer;
