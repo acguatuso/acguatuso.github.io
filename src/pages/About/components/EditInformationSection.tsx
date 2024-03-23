@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react"
 import { useAppDispatch, useAppSelector } from '../../../hooks/hooks';
-import { setEmpresaData, EmpresaData, empresaSelector } from '../../../redux/reducers/empresaSlice';
+import { setEmpresaData, EmpresaData } from '../../../redux/reducers/empresaSlice';
 import { updateFirebaseDoc } from "../../../api/updateFirebaseDoc/updateFirebaseDoc";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
 
 export const EditInformationSection = () => {
-    const empresa = useAppSelector(empresaSelector)
+    const empresa =  useSelector((state: RootState) => state.empresa.data);
     //console.log(empresa)
     const dispatch = useAppDispatch()
     const initialState = {

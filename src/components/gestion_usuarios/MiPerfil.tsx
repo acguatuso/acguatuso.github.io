@@ -111,10 +111,8 @@ const MiPerfil: React.FC = () => {
 
 
     const handleEditClick = () => {
-       
-            // Realiza la solicitud de la información del país al montar el componente
-            dispatch(fetchPaisInfoAsync() as any);
-       
+        // Realiza la solicitud de la información del país al montar el componente
+        dispatch(fetchPaisInfoAsync() as any);
         setEditMode(true);
     };
 

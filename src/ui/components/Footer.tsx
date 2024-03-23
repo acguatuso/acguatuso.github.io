@@ -4,9 +4,7 @@ import { RootState } from '../../redux/store';
 import { useEffect} from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchEmpresaData } from '../../redux/reducers/empresaSlice';
-import { FormEmailLoggedIn, SentEmail } from '../../components';
 import { ContactenosFooter } from './ContactenosFooter';
-
 
 export const Footer = () => {
 
@@ -19,6 +17,7 @@ export const Footer = () => {
     const user = useSelector((state: RootState) => state.auth.user);
     const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
     const empresaData = useSelector((state: RootState) => state.empresa.data);
+    console.log(empresaData);
     //console.log(empresaData,'footer')
   return (
 
