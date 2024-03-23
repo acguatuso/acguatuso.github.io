@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { signup } from '../../redux/reducers/authSlice';
 import { RootState } from '../../redux/store';
 import '../../CSS/Components/CreateAccStyle.css';
 import { Link } from 'react-router-dom';
+import { obtenerNombresCantonesDeProvincia, obtenerNombresDistritosDeCanton, obtenerNombresProvincias } from '../../redux/reducers/paisInfoSlice';
 
 const CreateAccountForm: React.FC = () => {
   const initialState = {
@@ -20,21 +21,55 @@ const CreateAccountForm: React.FC = () => {
     genero: '',
     user_type: ''
   };
+  // Estado para almacenar las provincias, cantones y distritos
+  const [provincias, setProvincias] = useState([]);
+  const [cantones, setCantones] = useState([]);
+  const [distritos, setDistritos] = useState([]);
+  const [provincia, setSelectedProvincia] = useState()
 
   // Redux Hooks & Access
   const dispatch = useDispatch();
   const emailVerified = useSelector((state: RootState) => state.auth.emailVerified);
   const notification = useSelector((state: RootState) => state.auth.notification);
   const error = useSelector((state: RootState) => state.auth.error);
-
+  const paisInfo = useSelector((state: RootState) => state.paisInfo.data);
   const [formData, setFormData] = useState(initialState);
+
+  useEffect(() => {
+    if (paisInfo) {
+        const provincias = obtenerNombresProvincias(paisInfo);
+        setProvincias(provincias);
+    }
+}, [paisInfo]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
-    setFormData({
-      ...formData,
-      [name]: value
-    });
+
+    // Si el campo cambiado es un dropdown (select), actualiza el estado correspondiente y también el estado formData
+    if (name === 'provincia') {
+      setSelectedProvincia(value);
+      const cantonesProvincia = obtenerNombresCantonesDeProvincia(value, paisInfo!);
+      setCantones(cantonesProvincia);
+      setDistritos([]); // Limpiar la selección de distrito
+      setFormData({
+        ...formData,
+        [name]: value // Actualiza el valor de provincia en formData
+      });
+    } else if (name === 'canton') {
+      setFormData({
+        ...formData,
+        [name]: value,
+        distrito: '' // Limpiar la selección de distrito al cambiar el cantón
+      });
+      const distritosCanton = obtenerNombresDistritosDeCanton(value, provincia, paisInfo!);
+      setDistritos(distritosCanton);
+    } else {
+      // Si el campo cambiado no es un dropdown, actualiza solo el estado formData
+      setFormData({
+        ...formData,
+        [name]: value
+      });
+    }
   };
 
   const handleSignUp = (e: React.FormEvent<HTMLFormElement>) => {
@@ -88,7 +123,9 @@ const CreateAccountForm: React.FC = () => {
                     <label htmlFor="provincia">Provincia:</label>
                     <select id="provincia" name="provincia" value={formData.provincia} onChange={handleChange} className="form-control">
                       <option value="">Seleccione una provincia...</option>
-                      <option value="Alajuela">Alajuela</option>
+                      {provincias.map((prov: string, index: number) => (
+                        <option key={index} value={prov}>{prov}</option>
+                      ))}
                     </select>
                   </div>
                   <div className="mb-3">
@@ -109,7 +146,9 @@ const CreateAccountForm: React.FC = () => {
                     <label htmlFor="canton">Cantón:</label>
                     <select id="canton" name="canton" value={formData.canton} onChange={handleChange} className="form-control">
                       <option value="">Seleccione un cantón...</option>
-                      <option value="San Carlos">San Carlos</option>
+                      {cantones.map((canton: string, index: number) => (
+                        <option key={index} value={canton}>{canton}</option>
+                      ))}
                     </select>
                   </div>
                   <div className="mb-3">
@@ -135,8 +174,9 @@ const CreateAccountForm: React.FC = () => {
                     <label htmlFor="distrito">Distrito:</label>
                     <select id="distrito" name="distrito" value={formData.distrito} onChange={handleChange} className="form-control">
                       <option value="">Seleccione un distrito...</option>
-                      <option value="Katira">Katira</option>
-                      <option value="Palmera">Palmera</option>
+                      {distritos.map((distrito: string, index: number) => (
+                        <option key={index} value={distrito}>{distrito}</option>
+                      ))}
                     </select>
                   </div>
                 </div>
