@@ -20,9 +20,7 @@ interface Provincia {
 
 // Definir el tipo para el JSON
 type PaisInformacion = {
-    provincias: {
-        [provinciaId: string]: Provincia;
-    };
+    [provincia:string]: Provincia;   
 };
 
 // Definir el estado inicial
@@ -62,6 +60,11 @@ const paisInfo = createSlice({
     },
 });
 
+// Exportar reducer y acciones del slice
+export const { fetchDataStart, fetchDataSuccess, fetchDataFailure } = paisInfo.actions;
+export default paisInfo.reducer;
+
+
 // Definir la función para obtener la información del país de forma asíncrona
 export const fetchPaisInfoAsync = () => async (dispatch: any) => {
     dispatch(paisInfo.actions.fetchDataStart());
@@ -74,6 +77,7 @@ export const fetchPaisInfoAsync = () => async (dispatch: any) => {
         // Adaptar los datos para permitir el acceso por nombre
         const newData: PaisInformacion = {} ;
         Object.values(data.provincias).forEach((provincia) => {
+            //console.log(provincia)
             const cantonesByName: { [nombre: string]: Canton } = {};
             Object.values(provincia.cantones).forEach((canton) => {
                 cantonesByName[canton.nombre] = canton;
@@ -90,6 +94,30 @@ export const fetchPaisInfoAsync = () => async (dispatch: any) => {
     }
 };
 
-// Exportar reducer y acciones del slice
-export const { fetchDataStart, fetchDataSuccess, fetchDataFailure } = paisInfo.actions;
-export default paisInfo.reducer;
+// Función para obtener los nombres de las provincias
+export function obtenerNombresProvincias(paisInfo: PaisInformacion): string[] {
+    return Object.keys(paisInfo);
+}
+
+// Función para obtener los cantones de una provincia seleccionada
+export function obtenerNombresCantonesDeProvincia(provincia: string, paisInfo: PaisInformacion): string[] {
+    const provinciaSeleccionada = paisInfo[provincia];
+    return Object.keys(provinciaSeleccionada.cantones);
+}
+
+// Función para obtener los nombres de los distritos de un cantón seleccionado
+export function obtenerNombresDistritosDeCanton(canton: string, provincia: string, paisInfo: PaisInformacion): string[] {
+    const provinciaSeleccionada = paisInfo[provincia];
+    const cantonSeleccionado = provinciaSeleccionada.cantones[canton];
+
+    // Extraer los nombres de los distritos del objeto JSON
+    const nombresDistritos: string[] = [];
+    for (const key in cantonSeleccionado.distritos) {
+        if (Object.prototype.hasOwnProperty.call(cantonSeleccionado.distritos, key)) {
+            nombresDistritos.push(cantonSeleccionado.distritos[key]);
+        }
+    }
+
+    return nombresDistritos;
+}
+

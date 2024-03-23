@@ -4,12 +4,8 @@ import { RootState } from '../../redux/store';
 import { editarDoc } from '../../redux/reducers/authSlice';
 import { useNavigate } from 'react-router-dom';
 import '../../CSS/Components/MiPerfil.css'
-import { fetchPaisInfoAsync } from '../../redux/reducers/paisInfoSlice';
+import { fetchPaisInfoAsync, obtenerNombresCantonesDeProvincia, obtenerNombresDistritosDeCanton, obtenerNombresProvincias } from '../../redux/reducers/paisInfoSlice';
 
-// Opciones de ejemplo para los dropdowns
-const provincias = ['San José', 'Alajuela', 'Cartago', 'Heredia', 'Guanacaste', 'Puntarenas', 'Limón'];
-const cantones = ['Canton 1', 'Canton 2', 'Canton 3']; // Ejemplo de opciones de cantones
-const distritos = ['Distrito 1', 'Distrito 2', 'Distrito 3']; // Ejemplo de opciones de distritos
 const generos = ['Masculino', 'Femenino', 'Otro']; // Ejemplo de opciones de género
 const labels: { [key: string]: string } = {
     correo: 'Correo Electrónico',
@@ -28,34 +24,79 @@ const labels: { [key: string]: string } = {
 const MiPerfil: React.FC = () => {
     const [editMode, setEditMode] = useState(false);
     const [formData, setFormData] = useState<any>(null); // Cambié el tipo a 'any' para simplificar
+    // Estado para almacenar las provincias, cantones y distritos
+    const [provincias, setProvincias] = useState([]);
+    const [cantones, setCantones] = useState([]);
+    const [distritos, setDistritos] = useState([]);
+    const [provincia, setSelectedProvincia] = useState()
+
 
     // Redux Hooks & Access
     const dispatch = useDispatch();
     const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
     const user = useSelector((state: RootState) => state.auth.user);
-    
+    const paisInfo = useSelector((state: RootState) => state.paisInfo.data);
+
 
     useEffect(() => {
-      // Realiza la solicitud de la información del país al montar el componente
-      dispatch(fetchPaisInfoAsync() as any);
+        // Realiza la solicitud de la información del país al montar el componente
+        dispatch(fetchPaisInfoAsync() as any);
     }, [dispatch]);
-    const paisInfo = useSelector((state: RootState) => state.paisInfo.data);
-    console.log(paisInfo);
 
+    // Efecto para cargar las provincias cuando se carga la información del país
     // Efecto para inicializar el formulario cuando el usuario cambia
     useEffect(() => {
-        if (user) {
-            setFormData({ ...user }); // Clonar el objeto user para evitar mutar el estado original
+        if (paisInfo) {
+            const provincias = obtenerNombresProvincias(paisInfo);
+            setProvincias(provincias);
         }
-    }, [user]);
+        if (user) {
+            // Clonar el objeto user para evitar mutar el estado original
+            setFormData({ ...user });
+
+            // Establecer la provincia seleccionada
+            setSelectedProvincia(user.provincia);
+
+            // Obtener los cantones de la provincia seleccionada y establecerlos en el estado
+            const cantonesProvincia = obtenerNombresCantonesDeProvincia(user.provincia, paisInfo!);
+            setCantones(cantonesProvincia);
+
+            // Obtener los distritos del cantón seleccionado y establecerlos en el estado
+            const distritosCanton = obtenerNombresDistritosDeCanton(user.canton, user.provincia, paisInfo!);
+            setDistritos(distritosCanton);
+        }
+    }, [user, paisInfo]);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
-        setFormData({
-            ...formData,
-            [name]: value
-        });
+    
+        // Si el campo cambiado es un dropdown (select), actualiza el estado correspondiente y también el estado formData
+        if (name === 'provincia') {
+            setSelectedProvincia(value);
+            const cantonesProvincia = obtenerNombresCantonesDeProvincia(value, paisInfo!);
+            setCantones(cantonesProvincia);
+            setDistritos([]); // Limpiar la selección de distrito
+            setFormData({
+                ...formData,
+                [name]: value // Actualiza el valor de provincia en formData
+            });
+        } else if (name === 'canton') {
+            setFormData({
+                ...formData,
+                [name]: value,
+                distrito: '' // Limpiar la selección de distrito al cambiar el cantón
+            });
+            const distritosCanton = obtenerNombresDistritosDeCanton(value, provincia, paisInfo!);
+            setDistritos(distritosCanton);
+        } else {
+            // Si el campo cambiado no es un dropdown, actualiza solo el estado formData
+            setFormData({
+                ...formData,
+                [name]: value
+            });
+        }
     };
+    
 
     const handleEditClick = () => {
         setEditMode(true);
@@ -70,13 +111,11 @@ const MiPerfil: React.FC = () => {
     };
 
     const handleSaveClick = () => {
-        //console.log(formData);
-        //console.log(user?.correo);
         if (!formData.cedula || !formData.nombre) {
             alert('Por favor, complete todos los campos obligatorios.');
             return;
         }
-    
+
         // Validar formato de número de teléfono
         const numberPattern = /^[0-9]+$/;
         if ((formData.telefono && !numberPattern.test(formData.telefono)) || (formData.cedula && !numberPattern.test(formData.cedula))) {
@@ -93,7 +132,6 @@ const MiPerfil: React.FC = () => {
     // React-router-dom
     const navigate = useNavigate();
     // Redux Hooks & Access
-    console.log('Conectado: ', loggedIn);
     // Redireccionar si está no logueado, y no hay usuario
     useEffect(() => {
         if (!loggedIn && !user) {
@@ -104,7 +142,7 @@ const MiPerfil: React.FC = () => {
     return (
         <div className="container shadow-lg">
             <br />
-            <h2 >Mi Datos Personales</h2>
+            <h2>Mis Datos Personales</h2>
             <br />
             <div className="row">
                 {formData && Object.entries(formData).map(([key, value]) => {
@@ -134,8 +172,8 @@ const MiPerfil: React.FC = () => {
                         );
                     }
 
-                    if (key === 'canton' || key === 'provincia' || key === 'distrito' || key === 'genero') {
-                        // Renderizar dropdowns para canton, provincia, distrito y genero
+                    if (key === 'provincia' || key === 'canton' || key === 'distrito' || key === 'genero') {
+                        // Renderizar dropdowns para cantón, provincia, distrito y género
                         return (
                             <div key={key} className="col-md-3 mb-3">
                                 <label className="form-label">{label}</label>
@@ -149,7 +187,7 @@ const MiPerfil: React.FC = () => {
                                         onChange={handleChange}
                                         className="form-select"
                                     >
-                                        <option value="">Seleccionar {key}</option>
+                                        <option value="">Seleccionar {label}</option>
                                         {key === 'provincia' && provincias.map((prov, index) => (
                                             <option key={index} value={prov}>{prov}</option>
                                         ))}
@@ -188,7 +226,7 @@ const MiPerfil: React.FC = () => {
                 })}
             </div>
 
-            <div className="button-container"> {/* Nuevo div para los botones */}
+            <div className="button-container">
                 {!editMode ? (
                     <button onClick={handleEditClick} className="btn btn-primary me-2">Editar</button>
                 ) : (
@@ -201,6 +239,8 @@ const MiPerfil: React.FC = () => {
             <br />
         </div>
     );
+
+
 
 };
 
