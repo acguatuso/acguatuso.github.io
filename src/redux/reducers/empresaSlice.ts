@@ -1,8 +1,7 @@
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppThunk, RootState } from '../store';
-//import { getFirebaseDocs } from "../../api/getFirebaseDocs/getFirebaseDocs";
-import { getFirebaseDoc } from "../../api/getFirebaseDoc/getFirebaseDoc";
+import { getFirebaseDocs } from "../../api/getFirebaseDocs/getFirebaseDocs";
 
 export interface EmpresaData {
     //nombre: string,
@@ -44,11 +43,10 @@ const empresaSlice = createSlice({
 });
 
 
-
-
 export const fetchEmpresaData = (): AppThunk => async dispatch => {
     try{
-        const docSnap = await getFirebaseDoc('/Empresa/ZktZQqsBnqVVoL4dfRHv');
+        const docRef = await getFirebaseDocs('Empresa');
+        const docSnap = docRef[0];
         //console.log(docSnap,'docSnap')
         if(docSnap){
             const empresaData: EmpresaData = {
