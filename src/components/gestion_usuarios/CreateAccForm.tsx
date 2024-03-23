@@ -4,7 +4,7 @@ import { signup } from '../../redux/reducers/authSlice';
 import { RootState } from '../../redux/store';
 import '../../CSS/Components/CreateAccStyle.css';
 import { Link } from 'react-router-dom';
-import { obtenerNombresCantonesDeProvincia, obtenerNombresDistritosDeCanton, obtenerNombresProvincias } from '../../redux/reducers/paisInfoSlice';
+import { fetchPaisInfoAsync, obtenerNombresCantonesDeProvincia, obtenerNombresDistritosDeCanton, obtenerNombresProvincias } from '../../redux/reducers/paisInfoSlice';
 
 const CreateAccountForm: React.FC = () => {
   const initialState = {
@@ -35,10 +35,14 @@ const CreateAccountForm: React.FC = () => {
   const paisInfo = useSelector((state: RootState) => state.paisInfo.data);
   const [formData, setFormData] = useState(initialState);
 
+  
+
   useEffect(() => {
+    // Realiza la solicitud de la información del país al montar el componente
+   dispatch(fetchPaisInfoAsync() as any);
     if (paisInfo) {
-        const provincias = obtenerNombresProvincias(paisInfo);
-        setProvincias(provincias);
+      const provincias = obtenerNombresProvincias(paisInfo);
+      setProvincias(provincias);
     }
 }, [paisInfo]);
 
@@ -52,24 +56,24 @@ const CreateAccountForm: React.FC = () => {
       setCantones(cantonesProvincia);
       setDistritos([]); // Limpiar la selección de distrito
       setFormData({
-        ...formData,
-        [name]: value // Actualiza el valor de provincia en formData
+          ...formData,
+          [name]: value // Actualiza el valor de provincia en formData
       });
-    } else if (name === 'canton') {
+  } else if (name === 'canton') {
       setFormData({
-        ...formData,
-        [name]: value,
-        distrito: '' // Limpiar la selección de distrito al cambiar el cantón
+          ...formData,
+          [name]: value,
+          distrito: '' // Limpiar la selección de distrito al cambiar el cantón
       });
       const distritosCanton = obtenerNombresDistritosDeCanton(value, provincia, paisInfo!);
       setDistritos(distritosCanton);
-    } else {
+  } else {
       // Si el campo cambiado no es un dropdown, actualiza solo el estado formData
       setFormData({
-        ...formData,
-        [name]: value
+          ...formData,
+          [name]: value
       });
-    }
+  }
   };
 
   const handleSignUp = (e: React.FormEvent<HTMLFormElement>) => {
