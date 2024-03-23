@@ -26,7 +26,7 @@ export interface adsSection{
   image_url: string,
   subtitulo: string,
   titulo: string
-  download_url?: string
+  download_url: string
 
 }
 

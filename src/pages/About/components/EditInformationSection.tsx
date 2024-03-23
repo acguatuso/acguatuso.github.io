@@ -1,30 +1,13 @@
 import { useEffect, useState } from "react"
 import { useAppDispatch, useAppSelector } from '../../../hooks/hooks';
-import { setEmpresaData, fetchEmpresaData, EmpresaData, empresaSelector } from '../../../redux/reducers/empresaSlice';
+import { setEmpresaData, EmpresaData, empresaSelector } from '../../../redux/reducers/empresaSlice';
 import { updateFirebaseDoc } from "../../../api/updateFirebaseDoc/updateFirebaseDoc";
 
 export const EditInformationSection = () => {
     const empresa = useAppSelector(empresaSelector)
     //console.log(empresa)
     const dispatch = useAppDispatch()
-    const [forms, setForms] = useState({
-        correo: '',
-        facebook: '',
-        titulo: '',
-        subtitulo: '',
-        telefono: '',
-        whatsapp: '',
-        direccionCorta: '',
-        horarioLunes: '',
-        horarioMartes: '',
-        horarioMiercoles: '',
-        horarioJueves: '',
-        horarioViernes: '',
-        horarioSabado: '',
-        horarioDomingo: '',
-  })
-  useEffect(() => {
-    setForms({
+    const initialState = {
         correo: empresa!.correo,
         facebook: empresa!.facebookUrl,
         titulo: empresa!.titulo_footer,
@@ -39,8 +22,8 @@ export const EditInformationSection = () => {
         horarioViernes: empresa!.horarioViernes,
         horarioSabado: empresa!.horarioSabado,
         horarioDomingo: empresa!.horarioDomingo,
-    })
-  }, [empresa])
+    }
+    const [forms, setForms] = useState(initialState)
   
   const handleSet = (evt: any) => {
     setForms(
@@ -50,6 +33,9 @@ export const EditInformationSection = () => {
         }
 
     )
+  }
+  const handleReset = () => {
+    setForms(initialState)
   }
 
   const handleUpdate = async () => {
@@ -84,7 +70,7 @@ export const EditInformationSection = () => {
         <div className="modal-content">
         <div className="modal-header">
             <h1 className="modal-title fs-5" id="staticBackdropLabel">Editar Información</h1>
-            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={handleReset}></button>
         </div>
         <div className="modal-body">
             <div className="accordion" id="accordionPanelsStayOpenExample">
@@ -170,7 +156,7 @@ export const EditInformationSection = () => {
             </div>                                                               
         </div>
         <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleReset}>Cancelar</button>
             <button type="button" className="btn btn-primary" data-bs-dismiss='modal' onClick={()=> handleUpdate()} >Guardar Cambios</button>
         </div>
         </div>

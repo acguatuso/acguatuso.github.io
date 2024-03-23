@@ -5,7 +5,7 @@ import { AppThunk, RootState } from '../store';
 import { getFirebaseDoc } from "../../api/getFirebaseDoc/getFirebaseDoc";
 
 export interface EmpresaData {
-    nombre: string,
+    //nombre: string,
     correo: string;
     facebookUrl: string;
     titulo_footer:string;
@@ -50,7 +50,7 @@ export const fetchEmpresaData = (): AppThunk => async dispatch => {
         const docSnap = await getFirebaseDoc('/Empresa/ZktZQqsBnqVVoL4dfRHv');
         if(docSnap){
             const empresaData: EmpresaData = {
-                nombre: docSnap.nombre,
+                //nombre: docSnap.nombre,
                 correo: docSnap.correo,
                 facebookUrl: docSnap.redes[0].red_url,
                 titulo_footer: docSnap.titulo_principal,

@@ -12,8 +12,7 @@ export const AdsSection = () => {
     useEffect(() => { 
         setSections(about.sections)
     }, [about])
-    //console.log(about)
-    //console.log(sections)
+
     return (
     <>   
     {
@@ -32,7 +31,7 @@ export const AdsSection = () => {
                             <p className='lead'>{element.descripcion}</p>
                         </div>         
                         <AdsSectionEditModal
-                            key={`${element.id}-adssection`} 
+                            key={`${element.id}-adssection1`} 
                             id = {element.id}
                             posicion_id={element.posicion_id}           
                             descripcion= {element.descripcion} 
@@ -40,10 +39,10 @@ export const AdsSection = () => {
                             image_url= {element.image_url}
                             subtitulo= {element.subtitulo}
                             titulo= {element.titulo}
-                            download_url={element.download_url}                    
+                            download_url={element!.download_url}                    
                         />     
                         <AdsSectionDelete
-                            key={`${element.id}-delete`}
+                            key={`${element.id}-delete1`}
                             id={element.id}
                             image_url={element.image_url}
                         />
@@ -60,10 +59,10 @@ export const AdsSection = () => {
                             <p className='lead'>{element.descripcion}</p>
                         </div>
                         <div className="col">        
-                            <img  className='img-thumbnail' src={element!.download_url}/>
+                            <img  className='img-thumbnail' src={element.download_url}/>
                         </div>
                         <AdsSectionEditModal                
-                            key={`${element.id}-adssection`} 
+                            key={`${element.id}-adssection2`} 
                             id = {element.id}
                             posicion_id={element.posicion_id}           
                             descripcion= {element.descripcion} 
@@ -71,9 +70,10 @@ export const AdsSection = () => {
                             image_url= {element.image_url}
                             subtitulo= {element.subtitulo}
                             titulo= {element.titulo}
+                            download_url={element.download_url}
                         />
                         <AdsSectionDelete 
-                            key={`${element.id}-delete`}
+                            key={`${element.id}-delete2`}
                             id={element.id}
                             image_url={element.image_url}
                         /> 
