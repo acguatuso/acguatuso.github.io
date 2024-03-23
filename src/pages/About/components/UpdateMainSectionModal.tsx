@@ -1,31 +1,27 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import {  updateMainSection } from './about.interface';
 import { updateFirebaseDoc } from '../../../api/updateFirebaseDoc/updateFirebaseDoc';
 import { uploadFirebaseImage } from '../../../api/uploadFirebaseImage/uploadFirebaseImage';
 import { useAppDispatch, useAppSelector } from '../../../hooks/hooks';
-import { aboutSelector,headAboutSelector,mainSection } from '../../../redux/reducers/aboutSlice';
-
+import { aboutSelector,mainSection } from '../../../redux/reducers/aboutSlice';
+import { Toast } from '../../../components/Toast/Toast';
+import { showToast } from '../../../components/Toast/toastMethods';
 
 export const UpdateMainSectionModal = () => {
   const about = useAppSelector(aboutSelector)
-  //console.log(about.head)
   const dispatch = useAppDispatch()
-
-  const [forms, setForms] = useState({
-    titulo: '',
-    subtitulo: '',   
-  })
-  useEffect(() => {
-    setForms({
-      titulo: about.head.titulo_principal,
-      subtitulo: about.head.subtitulo_principal
-    })  
-  
+  const initialState = {   
+    titulo: about.head.titulo_principal,
+    subtitulo: about.head.subtitulo_principal
     
-  }, [about])
+  }
+  const [forms, setForms] = useState(initialState)
   
-
   const [imageUpload, setImageUpload] = useState<File>()
+
+  const handleReset = () => {
+    setForms(initialState)
+  }
 
   const handleChange = (evt: any) => {
     setForms({
@@ -38,6 +34,13 @@ export const UpdateMainSectionModal = () => {
     setImageUpload(evt.target.files[0])
     handleChange(evt)
   }
+  
+// const showToast = () => {
+//     //aparece el toast
+//     const element = document.getElementById('toast-update')
+//     const element2 = new bootstrap.Toast(element)
+//     element2.show()
+// }
   
 const handleUpdate = async () => {
     let res: string | undefined = about.head.download_url_principal
@@ -53,10 +56,13 @@ const handleUpdate = async () => {
   //update de la bd
   await updateFirebaseDoc('/Empresa/ZktZQqsBnqVVoL4dfRHv',data)
   //update del selector
-  dispatch(mainSection(data))    
+  dispatch(mainSection(data))   
+  showToast('toast-update')
 }          
   return (
   <>
+
+
     <div className="text-center rounded mb-5">  
       <img src={about.head.download_url_principal} className="img-fluid" />      
       <h1 className="display-1 text-black">{about.head.titulo_principal}</h1>
@@ -65,7 +71,7 @@ const handleUpdate = async () => {
         Actualizar Inicio
       </button>  
     </div>
-      
+
     <div className="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
       <div className="modal-dialog modal-xl">
         <div className="modal-content">
@@ -73,7 +79,7 @@ const handleUpdate = async () => {
               <h1 className="modal-title fs-5 text-black" id={`title-modal-add`} >
               Actualizar Inicio          
               </h1>
-              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" ></button>
+              <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={handleReset}></button>
           </div>
           <div className="modal-body">
             <div className='form-row text-black'>                      
@@ -86,12 +92,18 @@ const handleUpdate = async () => {
             </div>
           </div>
           <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" >Cancelar</button>
+            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleReset}>Cancelar</button>
             <button type="button" className="btn btn-primary"  data-bs-dismiss="modal" onClick={()=>handleUpdate()}>Guardar Cambios</button>
           </div>
         </div>
       </div>
     </div>
+    <Toast 
+    id='toast-update' 
+    message='¡Se ha actualizado con éxito la sección principal!' 
+    title='Seccion Principal'
+    />
   </>
   )
 }
+

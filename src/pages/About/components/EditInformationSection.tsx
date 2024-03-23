@@ -1,46 +1,29 @@
 import { useEffect, useState } from "react"
 import { useAppDispatch, useAppSelector } from '../../../hooks/hooks';
-import { setEmpresaData, fetchEmpresaData, EmpresaData, empresaSelector } from '../../../redux/reducers/empresaSlice';
+import { setEmpresaData, EmpresaData, empresaSelector } from '../../../redux/reducers/empresaSlice';
 import { updateFirebaseDoc } from "../../../api/updateFirebaseDoc/updateFirebaseDoc";
 
 export const EditInformationSection = () => {
     const empresa = useAppSelector(empresaSelector)
     //console.log(empresa)
     const dispatch = useAppDispatch()
-    const [forms, setForms] = useState({
-        correo: '',
-        facebook: '',
-        titulo: '',
-        subtitulo: '',
-        telefono: '',
-        whatsapp: '',
-        direccionCorta: '',
-        horarioLunes: '',
-        horarioMartes: '',
-        horarioMiercoles: '',
-        horarioJueves: '',
-        horarioViernes: '',
-        horarioSabado: '',
-        horarioDomingo: '',
-  })
-  useEffect(() => {
-    setForms({
+    const initialState = {
         correo: empresa!.correo,
         facebook: empresa!.facebookUrl,
         titulo: empresa!.titulo_footer,
         subtitulo: empresa!.subtitulo_footer,
-        telefono: empresa!.telefonoFijo,
-        whatsapp: empresa!.whatsapp,
+        telefono: empresa!.telefonos[0],
+        whatsapp: empresa!.telefonos[1],    
         direccionCorta: empresa!.direccionCorta,
-        horarioLunes: empresa!.horarioLunes,
-        horarioMartes: empresa!.horarioMartes,
-        horarioMiercoles: empresa!.horarioMiercoles,
-        horarioJueves: empresa!.horarioJueves,
-        horarioViernes: empresa!.horarioViernes,
-        horarioSabado: empresa!.horarioSabado,
-        horarioDomingo: empresa!.horarioDomingo,
-    })
-  }, [empresa])
+        horarioLunes: empresa!.horarios[0],
+        horarioMartes: empresa!.horarios[1],
+        horarioMiercoles: empresa!.horarios[2],
+        horarioJueves: empresa!.horarios[3],
+        horarioViernes: empresa!.horarios[4],
+        horarioSabado: empresa!.horarios[5],
+        horarioDomingo: empresa!.horarios[6],
+    }
+    const [forms, setForms] = useState(initialState)
   
   const handleSet = (evt: any) => {
     setForms(
@@ -51,6 +34,9 @@ export const EditInformationSection = () => {
 
     )
   }
+  const handleReset = () => {
+    setForms(initialState)
+  }
 
   const handleUpdate = async () => {
     const data: EmpresaData = {
@@ -58,18 +44,23 @@ export const EditInformationSection = () => {
         facebookUrl: forms.facebook,
         titulo_footer:forms.titulo,
         subtitulo_footer: forms.subtitulo,
-        telefonoFijo: forms.telefono,
-        whatsapp: forms.whatsapp,
+        telefonos: [
+            forms.telefono,
+            forms.whatsapp
+        ],
         direccionCorta: forms.direccionCorta,
-        horarioLunes: forms.horarioLunes,
-        horarioMartes: forms.horarioMartes,
-        horarioMiercoles: forms.horarioMiercoles,
-        horarioJueves: forms.horarioJueves,
-        horarioViernes: forms.horarioViernes,
-        horarioSabado: forms.horarioSabado,
-        horarioDomingo: forms.horarioDomingo
+        horarios: [ 
+            forms.horarioLunes,
+            forms.horarioMartes,
+            forms.horarioMiercoles,
+            forms.horarioJueves,
+            forms.horarioViernes,
+            forms.horarioSabado,
+            forms.horarioDomingo
+        ]
+
     }
-    console.log(data, 'handleUpdateInformation')
+    //console.log(data, 'handleUpdateInformation')
     await updateFirebaseDoc('/Empresa/ZktZQqsBnqVVoL4dfRHv',data)
     dispatch(setEmpresaData(data))
   }
@@ -84,7 +75,7 @@ export const EditInformationSection = () => {
         <div className="modal-content">
         <div className="modal-header">
             <h1 className="modal-title fs-5" id="staticBackdropLabel">Editar Información</h1>
-            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={handleReset}></button>
         </div>
         <div className="modal-body">
             <div className="accordion" id="accordionPanelsStayOpenExample">
@@ -170,7 +161,7 @@ export const EditInformationSection = () => {
             </div>                                                               
         </div>
         <div className="modal-footer">
-            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+            <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleReset}>Cancelar</button>
             <button type="button" className="btn btn-primary" data-bs-dismiss='modal' onClick={()=> handleUpdate()} >Guardar Cambios</button>
         </div>
         </div>

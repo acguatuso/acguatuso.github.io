@@ -5,29 +5,32 @@ import { AppThunk, RootState } from '../store';
 import { getFirebaseDoc } from "../../api/getFirebaseDoc/getFirebaseDoc";
 
 export interface EmpresaData {
-    nombre: string,
+    //nombre: string,
     correo: string;
     facebookUrl: string;
     titulo_footer:string;
     subtitulo_footer: string;
-    telefonoFijo: string;
-    whatsapp: string;
     direccionCorta: string;
-    horarioLunes: string;
-    horarioMartes: string;
-    horarioMiercoles: string;
-    horarioJueves: string;
-    horarioViernes: string;
-    horarioSabado: string;
-    horarioDomingo: string;
+    // telefonoFijo: string;
+    // whatsapp: string;
+    telefonos: string[]
+    // horarioLunes: string;
+    // horarioMartes: string;
+    // horarioMiercoles: string;
+    // horarioJueves: string;
+    // horarioViernes: string;
+    // horarioSabado: string;
+    // horarioDomingo: string;
+
+    horarios: string[]
 }
 
 interface EmpresaState {
-    data: EmpresaData | null;
+    data: EmpresaData;
 }
 
 const initialState: EmpresaState = {
-    data: null,
+    data: {} as EmpresaData,
 };
 
 const empresaSlice = createSlice({
@@ -40,35 +43,46 @@ const empresaSlice = createSlice({
     },
 });
 
-export const empresaSelector = (state: RootState) => state.empresa.data
-export const { setEmpresaData } = empresaSlice.actions;
-export default empresaSlice.reducer;
+
 
 
 export const fetchEmpresaData = (): AppThunk => async dispatch => {
     try{
         const docSnap = await getFirebaseDoc('/Empresa/ZktZQqsBnqVVoL4dfRHv');
+        //console.log(docSnap,'docSnap')
         if(docSnap){
             const empresaData: EmpresaData = {
-                nombre: docSnap.nombre,
+                //nombre: docSnap.nombre,
                 correo: docSnap.correo,
                 facebookUrl: docSnap.redes[0].red_url,
                 titulo_footer: docSnap.titulo_principal,
                 subtitulo_footer: docSnap.subtitulo_principal,
-                telefonoFijo: docSnap.telefonos[0],
-                whatsapp: docSnap.telefonos[1],
                 direccionCorta: docSnap.direccion_corta,
-                horarioLunes: docSnap.horarios[0],
-                horarioMartes: docSnap.horarios[1],
-                horarioMiercoles: docSnap.horarios[2],
-                horarioJueves: docSnap.horarios[3],
-                horarioViernes: docSnap.horarios[4],
-                horarioSabado: docSnap.horarios[5],
-                horarioDomingo: docSnap.horarios[6],
+                telefonos: [
+                    docSnap.telefonos[0],
+                    docSnap.telefonos[1]
+                ],
+                // telefonoFijo: docSnap.telefonos[0],
+                // whatsapp: docSnap.telefonos[1],
+
+                horarios: [                
+                    docSnap.horarios[0],
+                    docSnap.horarios[1],
+                    docSnap.horarios[2],
+                    docSnap.horarios[3],
+                    docSnap.horarios[4],
+                    docSnap.horarios[5],
+                    docSnap.horarios[6]
+                ]
+                
             };
+            //console.log(empresaData, 'empresadata')
             dispatch(setEmpresaData(empresaData));
         }
     } catch (error){
         console.error("Error al obtener los datos de la empresa:", error);
     }
 };
+export const empresaSelector = (state: RootState) => state.empresa.data
+export const { setEmpresaData } = empresaSlice.actions;
+export default empresaSlice.reducer;

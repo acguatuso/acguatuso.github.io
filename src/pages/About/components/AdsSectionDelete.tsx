@@ -1,21 +1,22 @@
 import { deleteFirebaseDoc } from "../../../api/deleteFirebaseDoc/deleteFirebaseDoc"
 import { deleteFirebaseImages } from "../../../api/deleteFirebaseImage/deleteFirebaseImage";
+import { Toast } from "../../../components/Toast/Toast";
+import { showToast } from "../../../components/Toast/toastMethods";
 import { useAppDispatch } from "../../../hooks/hooks";
 import { deleteSection } from "../../../redux/reducers/aboutSlice";
 import { idDelete } from './about.interface';
-
-
-
 
 export const AdsSectionDelete = (prop: idDelete ) => {
     const dispatch = useAppDispatch()
     const handleDelete = async() =>{
         console.log(prop!.id,'handleDelete')
         await deleteFirebaseDoc(`/Empresa/ZktZQqsBnqVVoL4dfRHv/secciones/${prop!.id}`)
-        if(prop.image_url == ''){
-            await deleteFirebaseImages(prop.image_url)
-        }
+        
+        console.log(prop.image_url)
+        await deleteFirebaseImages(prop.image_url)
+        
         dispatch(deleteSection(prop))
+        showToast('delete-modal-section')
     }
     
     return (
@@ -42,19 +43,11 @@ export const AdsSectionDelete = (prop: idDelete ) => {
         </div>
     </div> 
 
-        {/* <Modal
-
-        id={'ad-section-modal-delete'}
-        buttonStyle={"btn btn-danger btn-sm"}
-        modalTitle="Eliminar"
-        buttonName={'Eliminar'}
-        modalName={'Eliminar'}
-        body={'¿Estás seguro que desea eliminar está sección?'}
-        secondaryButtonText={'Cancelar'}
-        primaryButtonText={'Aceptar'}
-        classPrimaryButton="btn btn-danger"
-        classSecondaryButton="btn btn-secondary"
-        /> */}
+    <Toast
+    id='delete-modal-section' 
+    message='¡Se ha eliminado con éxito la sección!' 
+    title='Seccion de avisos'
+    />
     </>
   )
 }

@@ -18,13 +18,11 @@ export const About = () => {
   // const fetch = async()=> {
 
   // }
-  const [sections, setSections] = useState<adsSection[]>([])
+
   useEffect(() => {
     (async () => {
       await dispatch(fetchMainSection())
-      const res2 = await dispatch(fetchSections())
-      //console.log(res2.payload,'res2')
-      setSections(res2.payload as adsSection[])
+      await dispatch(fetchSections())
     })()
   }, [])
   
@@ -45,9 +43,7 @@ export const About = () => {
   return (
     <>
       <div className="p-3 mb-2 bg-white text-dark border" id="about-container">
-        <UpdateMainSectionModal
-        />
-
+        <UpdateMainSectionModal/>
         <AddSection />
 
         <div className="container-fluid">
@@ -60,3 +56,8 @@ export const About = () => {
   )
 }
 export default About;
+
+// todo
+// agregar toast listo en updatemain, addsection
+// cuando se edita en la seccion la imagen vacia, hace que si hay imagen la quite
+// el borrar no esta eliminando las imagenes
