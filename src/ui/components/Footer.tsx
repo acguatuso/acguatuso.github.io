@@ -4,7 +4,6 @@ import { RootState } from '../../redux/store';
 import { useEffect} from 'react';
 import { useDispatch } from 'react-redux';
 import { fetchEmpresaData } from '../../redux/reducers/empresaSlice';
-import { FormEmailLoggedIn, SentEmail } from '../../components';
 import { ContactenosFooter } from './ContactenosFooter';
 
 
@@ -16,15 +15,12 @@ export const Footer = () => {
 
     },[]);
     // Redux Hooks & Access
-    const user = useSelector((state: RootState) => state.auth.user);
-    const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
-    const empresaData = useSelector((state: RootState) => state.empresa.data);
-    //console.log(empresaData,'footer')
+    const empresaData = useSelector((state: RootState) => state.empresa.dataEmpresa);
+    const state = useSelector((state: RootState) => state);
+    console.log(state,'footer')
   return (
 
     <div className='footer-container'>
-
-        {user && (
         <footer className='text-center text-lg-start bg-body-tertiary text-muted footer-ancho footer-container'>
 
             {/* Seccion: Redes Sociales */}
@@ -124,7 +120,7 @@ export const Footer = () => {
             </div>
             {/* Copyright */}
         </footer>
-        )}
+        
     </div>
   )
 }

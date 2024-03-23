@@ -12,13 +12,13 @@ export const Navbar = () => {
     const dispatch = useDispatch();
     const user = useSelector((state: RootState) => state.auth.user);
     const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
-    const empresaData = useSelector((state: RootState) => state.empresa.data);
+    const empresaData = useSelector((state: RootState) => state.empresa.dataEmpresa);
 
     const navigate = useNavigate();
 
     useEffect(() => {
         dispatch(fetchEmpresaData() as any );
-    },[]);
+    },[dispatch]);
 
     const handleLogOut = () => {
         dispatch(logOut());

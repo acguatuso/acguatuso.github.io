@@ -39,7 +39,7 @@ const CreateAccountForm: React.FC = () => {
 
   useEffect(() => {
     // Realiza la solicitud de la información del país al montar el componente
-   dispatch(fetchPaisInfoAsync() as any);
+    dispatch(fetchPaisInfoAsync() as any);
     if (paisInfo) {
       const provincias = obtenerNombresProvincias(paisInfo);
       setProvincias(provincias);

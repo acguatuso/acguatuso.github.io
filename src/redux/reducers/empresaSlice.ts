@@ -4,32 +4,21 @@ import { AppThunk, RootState } from '../store';
 import { getFirebaseDocs } from "../../api/getFirebaseDocs/getFirebaseDocs";
 
 export interface EmpresaData {
-    //nombre: string,
     correo: string;
     facebookUrl: string;
     titulo_footer:string;
     subtitulo_footer: string;
     direccionCorta: string;
-    // telefonoFijo: string;
-    // whatsapp: string;
     telefonos: string[]
-    // horarioLunes: string;
-    // horarioMartes: string;
-    // horarioMiercoles: string;
-    // horarioJueves: string;
-    // horarioViernes: string;
-    // horarioSabado: string;
-    // horarioDomingo: string;
-
     horarios: string[]
 }
 
 interface EmpresaState {
-    data: EmpresaData;
+    dataEmpresa: EmpresaData;
 }
 
 const initialState: EmpresaState = {
-    data: {} as EmpresaData,
+    dataEmpresa: {} as EmpresaData,
 };
 
 const empresaSlice = createSlice({
@@ -37,7 +26,7 @@ const empresaSlice = createSlice({
     initialState,
     reducers: {
         setEmpresaData(state, action: PayloadAction<EmpresaData>){
-            state.data = action.payload;
+            state.dataEmpresa = action.payload;
         },        
     },
 });
@@ -81,6 +70,6 @@ export const fetchEmpresaData = (): AppThunk => async dispatch => {
         console.error("Error al obtener los datos de la empresa:", error);
     }
 };
-export const empresaSelector = (state: RootState) => state.empresa.data
+export const empresaSelector = (state: RootState) => state.empresa.dataEmpresa
 export const { setEmpresaData } = empresaSlice.actions;
 export default empresaSlice.reducer;

@@ -14,6 +14,7 @@ export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, RootState, unk
 const persistConfig = {
   key: 'root',
   storage,
+  blacklist: ['auth'],
 };
 
 // Se deben de inicializar el persistReducer que vamos a usar

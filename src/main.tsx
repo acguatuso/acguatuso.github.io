@@ -1,14 +1,21 @@
 import React from 'react'
-import ReactDOM from 'react-dom/client'
+import { createRoot } from 'react-dom/client'
 import { Provider } from 'react-redux'; // Importa Provider desde react-redux
 import { PersistGate } from 'redux-persist/integration/react';
 import store, { persistor } from './redux/store';
 import App from './App.tsx';
 
-ReactDOM.createRoot(document.getElementById('root')!).render(
+// Componente de indicador de carga (spinner)
+const LoadingSpinner = () => (
+  <div className="loading-spinner">
+    <div className="spinner"></div>
+  </div>
+);
+
+createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={store}>
-      <PersistGate loading={null} persistor={persistor}>
+      <PersistGate loading={<LoadingSpinner />} persistor={persistor}>
         <App />
       </PersistGate>
     </Provider>
