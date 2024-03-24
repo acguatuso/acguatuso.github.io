@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import {  useSelector } from 'react-redux';
 import { signup } from '../../redux/reducers/authSlice';
 import { RootState } from '../../redux/store';
 import '../../CSS/Components/CreateAccStyle.css';
 import { Link } from 'react-router-dom';
 import { fetchPaisInfoAsync, obtenerNombresCantonesDeProvincia, obtenerNombresDistritosDeCanton, obtenerNombresProvincias } from '../../redux/reducers/paisInfoSlice';
+import { useAppDispatch } from '../../hooks/hooks';
 
 const CreateAccountForm: React.FC = () => {
   const initialState = {
@@ -27,7 +28,7 @@ const CreateAccountForm: React.FC = () => {
   const [provincia, setSelectedProvincia] = useState()
 
   // Redux Hooks & Access
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   const emailVerified = useSelector((state: RootState) => state.auth.emailVerified);
   const notification = useSelector((state: RootState) => state.auth.notification);
   const error = useSelector((state: RootState) => state.auth.error);
@@ -38,7 +39,7 @@ const CreateAccountForm: React.FC = () => {
 
   useEffect(() => {
     // Realiza la solicitud de la información del país al montar el componente
-    dispatch(fetchPaisInfoAsync() as any);
+    dispatch(fetchPaisInfoAsync());
     if (paisInfo) {
       const provincias = obtenerNombresProvincias(paisInfo);
       setProvincias(provincias);

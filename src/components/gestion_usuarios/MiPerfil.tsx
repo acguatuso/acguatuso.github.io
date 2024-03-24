@@ -4,7 +4,8 @@ import { RootState } from '../../redux/store';
 import { editarDoc } from '../../redux/reducers/authSlice';
 import { useNavigate } from 'react-router-dom';
 import '../../CSS/Components/MiPerfil.css'
-import { fetchPaisInfoAsync, obtenerNombresCantonesDeProvincia, obtenerNombresDistritosDeCanton, obtenerNombresProvincias } from '../../redux/reducers/paisInfoSlice';
+import { obtenerNombresCantonesDeProvincia, obtenerNombresDistritosDeCanton, obtenerNombresProvincias } from '../../redux/reducers/paisInfoSlice';
+import { useAppDispatch } from '../../hooks/hooks';
 
 const generos = ['Masculino', 'Femenino', 'Otro']; // Ejemplo de opciones de género
 const labels: { [key: string]: string } = {
@@ -34,7 +35,7 @@ const MiPerfil: React.FC = () => {
     const navigate = useNavigate();
 
     // Redux Hooks & Access
-    const dispatch = useDispatch();
+    const dispatch = useAppDispatch()
     const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
     const user = useSelector((state: RootState) => state.auth.user);
     const paisInfo = useSelector((state: RootState) => state.paisInfo.datosPais);
@@ -46,31 +47,18 @@ const MiPerfil: React.FC = () => {
         if (!loggedIn && !user) {
             navigate("/");
         }
+
+        // Verifica que user, paisInfo no sea undefined antes de continuar
+        // Verifica que paisInfo[user.provincia] y paisInfo[user.provincia].cantones no sean undefined antes de continuar
         if (user && paisInfo) {
             const provincias = obtenerNombresProvincias(paisInfo);
             setProvincias(provincias);
 
-            // Verifica que user.provincia y user.canton no sean undefined antes de continuar
-            if (user.provincia && user.canton) {
-                if (paisInfo[user.provincia]) {
-                    const cantonesProvincia = obtenerNombresCantonesDeProvincia(user.provincia, paisInfo!);
-                    setCantones(cantonesProvincia);
-
-                    // Verifica que paisInfo[user.provincia] y paisInfo[user.provincia].cantones no sean undefined antes de continuar
-                    if (paisInfo[user.provincia].cantones) {
-                        const distritosCanton = obtenerNombresDistritosDeCanton(user.canton, user.provincia, paisInfo!);
-                        setDistritos(distritosCanton);
-                    } else {
-                        // Manejar el caso en el que paisInfo[user.provincia].cantones sea undefined
-                        console.error("La propiedad 'cantones' de la provincia seleccionada es undefined.");
-                    }
-                } else {
-                    // Manejar el caso en el que paisInfo[user.provincia] sea undefined
-                    console.error("La provincia seleccionada no está definida en la información del país.");
-                }
-            } else {
-                // Manejar el caso en el que user.provincia o user.canton sean undefined
-                console.error("La provincia o el cantón del usuario no están definidos.");
+            if (paisInfo[user.provincia] && paisInfo[user.provincia].cantones && paisInfo[user.provincia].cantones[user.canton].distritos) {
+                const cantonesProvincia = obtenerNombresCantonesDeProvincia(user.provincia, paisInfo!);
+                setCantones(cantonesProvincia);
+                const distritosCanton = obtenerNombresDistritosDeCanton(user.canton, user.provincia, paisInfo!);
+                setDistritos(distritosCanton);
             }
 
             // Clonar el objeto user para evitar mutar el estado original
@@ -112,9 +100,6 @@ const MiPerfil: React.FC = () => {
 
     const handleEditClick = () => {
 
-        // Realiza la solicitud de la información del país al montar el componente
-        dispatch(fetchPaisInfoAsync() as any);
-
         setEditMode(true);
     };
 
@@ -140,7 +125,7 @@ const MiPerfil: React.FC = () => {
         }
 
         // Dispatch de la acción para actualizar los datos del usuario en Firebase Firestore
-        dispatch(editarDoc(formData, user?.correo || '') as any);
+        dispatch(editarDoc(formData, user!.correo!));
         setEditMode(false);
     };
 

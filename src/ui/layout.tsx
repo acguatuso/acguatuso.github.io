@@ -1,6 +1,9 @@
 // Layout.tsx
 import React, { ReactNode, useEffect, useState } from 'react';
 import { Footer, Navbar } from '.';
+import { fetchEmpresaData } from '../redux/reducers/empresaSlice';
+import { fetchPaisInfoAsync } from '../redux/reducers/paisInfoSlice';
+import { useAppDispatch } from '../hooks/hooks';
 
 interface LayoutProps {
   children: ReactNode;
@@ -11,12 +14,22 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   const [isLoaded, setIsLoaded] = useState(false);
-
+  // Redux Hooks & Access
+  const dispatch = useAppDispatch();
+  
   useEffect(() => {
     // Simulando una carga asíncrona
     setTimeout(() => {
       setIsLoaded(true);
-    }, 3000); // Cambia este valor según tus necesidades de tiempo de carga
+    }, 1500); // Cambia este valor según tus necesidades de tiempo de carga
+
+    async () => {
+      // Realiza la solicitud de la información de la empresa
+      await dispatch(fetchEmpresaData());
+
+      // Realiza la solicitud de la información del país al montar el componente
+      await dispatch(fetchPaisInfoAsync());
+    }
   }, [setTimeout, setIsLoaded]);
 
   return (

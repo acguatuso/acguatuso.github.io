@@ -1,19 +1,12 @@
 import './Footer.css';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import { useEffect} from 'react';
-import { useDispatch } from 'react-redux';
-import { fetchEmpresaData } from '../../redux/reducers/empresaSlice';
 import { ContactenosFooter } from './ContactenosFooter';
 
 
 export const Footer = () => {
 
-    const dispatch = useDispatch();
-    useEffect(() => {
-        dispatch(fetchEmpresaData() as any );
-
-    },[dispatch]);
+    
     // Redux Hooks & Access
     const empresaData = useSelector((state: RootState) => state.empresa.dataEmpresa);
     //console.log(state,'footer')

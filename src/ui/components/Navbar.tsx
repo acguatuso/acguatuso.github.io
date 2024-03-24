@@ -3,8 +3,6 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { logOut } from '../../redux/reducers/authSlice';
 import './Navbar.css';
-import { useEffect } from 'react';
-import { fetchEmpresaData } from '../../redux/reducers/empresaSlice';
 
 export const Navbar = () => {
 
@@ -15,10 +13,6 @@ export const Navbar = () => {
     const empresaData = useSelector((state: RootState) => state.empresa.dataEmpresa);
 
     const navigate = useNavigate();
-
-    useEffect(() => {
-        dispatch(fetchEmpresaData() as any );
-    },[dispatch]);
 
     const handleLogOut = () => {
         dispatch(logOut());
