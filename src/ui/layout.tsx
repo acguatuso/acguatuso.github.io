@@ -23,13 +23,13 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
       setIsLoaded(true);
     }, 1500); // Cambia este valor según tus necesidades de tiempo de carga
 
-    async () => {
+   
       // Realiza la solicitud de la información de la empresa
-      await dispatch(fetchEmpresaData());
+       dispatch(fetchEmpresaData());
 
       // Realiza la solicitud de la información del país al montar el componente
-      await dispatch(fetchPaisInfoAsync());
-    }
+       dispatch(fetchPaisInfoAsync());
+    
   }, [setTimeout, setIsLoaded]);
 
   return (

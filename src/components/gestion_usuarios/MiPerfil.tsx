@@ -57,7 +57,8 @@ const MiPerfil: React.FC = () => {
             if (paisInfo[user.provincia] && paisInfo[user.provincia].cantones && paisInfo[user.provincia].cantones[user.canton].distritos) {
                 const cantonesProvincia = obtenerNombresCantonesDeProvincia(user.provincia, paisInfo!);
                 setCantones(cantonesProvincia);
-                const distritosCanton = obtenerNombresDistritosDeCanton(user.canton, user.provincia, paisInfo!);
+                const distritosCanton = obtenerNombresDistritosDeCanton(paisInfo[user.provincia].cantones[user.canton].distritos);
+                //console.log(distritosCanton)
                 setDistritos(distritosCanton);
             }
 

@@ -109,18 +109,9 @@ export function obtenerNombresCantonesDeProvincia(provincia: string, paisInfo: P
 }
 
 // Función para obtener los nombres de los distritos de un cantón seleccionado
-export function obtenerNombresDistritosDeCanton(canton: string, provincia: string, paisInfo: PaisInformacion): string[] {
-    const provinciaSeleccionada = paisInfo[provincia];
-    const cantonSeleccionado = provinciaSeleccionada.cantones[canton];
-
-    // Extraer los nombres de los distritos del objeto JSON
-    const nombresDistritos: string[] = [];
-    for (const key in cantonSeleccionado.distritos) {
-        if (Object.prototype.hasOwnProperty.call(cantonSeleccionado.distritos, key)) {
-            nombresDistritos.push(cantonSeleccionado.distritos[key]);
-        }
-    }
-
+export function obtenerNombresDistritosDeCanton(distritos: { [key: number]: string }): string[] {
+    // Convertir los valores del objeto JSON en un array
+    const nombresDistritos: string[] = Object.values(distritos);
     return nombresDistritos;
 }
 
