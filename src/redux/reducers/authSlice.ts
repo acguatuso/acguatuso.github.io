@@ -158,7 +158,7 @@ export const signup = (formData: any): AppThunk => async dispatch => {
     console.log(userCredential.user.email)
 
     // Agrega el documento a fibrease(Usuarios) collection
-    agregarDoc(formData);
+    await agregarDoc(formData);
 
     // Envía el correo de verificación
     await sendEmailVerification(userCredential.user);

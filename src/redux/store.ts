@@ -14,7 +14,6 @@ export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, RootState, unk
 const persistConfig = {
   key: 'root',
   storage,
-  blacklist: ['auth'],
 };
 
 // Se deben de inicializar el persistReducer que vamos a usar
@@ -29,7 +28,6 @@ const store = configureStore({
     empresa: persistedEmpresaReducer,
     about: persistedAboutReducer,
     paisInfo: persistedPaisInfoReducer,
-
     // aca van más reducers una vez persistidos
   }, middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

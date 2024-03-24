@@ -6,6 +6,7 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import '../../CSS/Components/LoginAccStyle.css';
 import ForgotPassword from './ForgotPassword';
+import { fetchEmpresaData } from '../../redux/reducers/empresaSlice';
 
 const LoginAccountForm: React.FC = () => {
   // React-router-dom
@@ -23,7 +24,8 @@ const LoginAccountForm: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
   const error = useSelector((state: RootState) => state.auth.error);
   const emailVerified = useSelector((state: RootState) => state.auth.emailVerified);
-
+  //const states = useSelector((state: RootState) => state);
+  //console.log(states, 'login')
 
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Evita que se envíe la solicitud HTTP predeterminada
@@ -47,10 +49,12 @@ const LoginAccountForm: React.FC = () => {
 
   // Redireccionar si está logueado, hay usuario y email verificado
   useEffect(() => {
+    dispatch(fetchEmpresaData() as any);
+
     if (loggedIn && user && emailVerified) {
       navigate("/home");
     }
-  }, [loggedIn, user, emailVerified, navigate]);
+  }, [loggedIn, user, emailVerified, navigate, dispatch]);
 
   return (
     <>

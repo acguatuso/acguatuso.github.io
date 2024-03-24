@@ -47,7 +47,7 @@ export const Navbar = () => {
 
                         </NavLink>)}
                         <h4 className="navbar-text-white d-none d-sm-inline-block">
-                            {empresaData?.nombre ?? 'Unión Cantonal de Asociaciones Guatuso'}
+                            {empresaData?.titulo_footer ?? 'Unión Cantonal de Asociaciones Guatuso'}
                         </h4>
                     {/* <h4 className='navbar-text-white'>{ empresaData?.nombre ?? 'Unión Cantonal de Asociaciones Guatuso'}</h4> */}
                     <button className="navbar-toggler navbar-dark navbar-toggler-custom" type="button" data-bs-toggle="collapse" data-bs-target="#navbarTogglerDemo01" aria-controls="navbarTogglerDemo01" aria-expanded="false" aria-label="Toggle navigation">

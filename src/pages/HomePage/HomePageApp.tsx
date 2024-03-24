@@ -20,13 +20,14 @@ export const HomePageApp = () => {
     // Redux Hooks & Access
     const user = useSelector((state: RootState) => state.auth.user);
     const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
+    //console.log(loggedIn)
     const [showEditPage, setShowEditPage] = useState(false);
+    const editRef = useRef<any>(null);
 
     useEffect(() => {
         if (!loggedIn && !user) {
             navigate("/");
         }
-
         
         const imageRef = ref(firebase_storage, 'Home/imagen-inicio');
         getDownloadURL(imageRef)
@@ -46,9 +47,6 @@ export const HomePageApp = () => {
 
         })()
     }, [loggedIn, user, navigate, showEditPage]);
-
-    const editRef = useRef<any>(null);
-
 
     const handleEditClick = () => {
         setShowEditPage(true);

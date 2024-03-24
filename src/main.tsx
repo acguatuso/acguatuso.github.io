@@ -5,17 +5,11 @@ import { PersistGate } from 'redux-persist/integration/react';
 import store, { persistor } from './redux/store';
 import App from './App.tsx';
 
-// Componente de indicador de carga (spinner)
-const LoadingSpinner = () => (
-  <div className="loading-spinner">
-    <div className="spinner"></div>
-  </div>
-);
 
 createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <Provider store={store}>
-      <PersistGate loading={<LoadingSpinner />} persistor={persistor}>
+      <PersistGate persistor={persistor}>
         <App />
       </PersistGate>
     </Provider>

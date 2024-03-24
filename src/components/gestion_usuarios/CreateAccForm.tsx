@@ -8,7 +8,7 @@ import { fetchPaisInfoAsync, obtenerNombresCantonesDeProvincia, obtenerNombresDi
 
 const CreateAccountForm: React.FC = () => {
   const initialState = {
-    name: '',
+    nombre: '',
     email: '',
     password: '',
     cedula: '',
@@ -18,8 +18,7 @@ const CreateAccountForm: React.FC = () => {
     distrito: '',
     direccion: '',
     fechaNacimiento: '',
-    genero: '',
-    user_type: ''
+    genero: ''
   };
   // Estado para almacenar las provincias, cantones y distritos
   const [provincias, setProvincias] = useState([]);
@@ -32,7 +31,7 @@ const CreateAccountForm: React.FC = () => {
   const emailVerified = useSelector((state: RootState) => state.auth.emailVerified);
   const notification = useSelector((state: RootState) => state.auth.notification);
   const error = useSelector((state: RootState) => state.auth.error);
-  const paisInfo = useSelector((state: RootState) => state.paisInfo.data);
+  const paisInfo = useSelector((state: RootState) => state.paisInfo.datosPais);
   const [formData, setFormData] = useState(initialState);
 
   
@@ -84,6 +83,7 @@ const CreateAccountForm: React.FC = () => {
 
     if (!isFormFilled) {
       alert("Por favor llene todos los campos");
+      console.log(formData)
       return;
     }
 
@@ -116,8 +116,8 @@ const CreateAccountForm: React.FC = () => {
               <div className="row">
                 <div className="col">
                   <div className="mb-3">
-                    <label htmlFor="name">Nombre Completo:</label>
-                    <input type="text" id="name" name="name" value={formData.name} onChange={handleChange} className="form-control" placeholder="Ej: Juan Pérez" />
+                    <label htmlFor="nombre">Nombre Completo:</label>
+                    <input type="text" id="nombre" name="nombre" value={formData.nombre} onChange={handleChange} className="form-control" placeholder="Ej: Juan Pérez" />
                   </div>
                   <div className="mb-3">
                     <label htmlFor="fechaNacimiento">Fecha de Nacimiento:</label>
@@ -134,7 +134,7 @@ const CreateAccountForm: React.FC = () => {
                   </div>
                   <div className="mb-3">
                     <label htmlFor="direccion">Dirección Exacta:</label>
-                    <input type="text" id="direccion" name="direccion" value={formData.direccion} onChange={handleChange} className="form-control" placeholder="Ej: 123 Calle Principal, Barrio Los Ángeles" required pattern="[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}" />
+                    <input type="text" id="direccion" name="direccion" value={formData.direccion} onChange={handleChange} className="form-control" placeholder="Ej: 123 Calle Principal, Barrio Los Ángeles" required />
                   </div>
                 </div>
                 <div className="col">

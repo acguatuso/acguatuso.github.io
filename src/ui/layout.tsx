@@ -1,5 +1,5 @@
 // Layout.tsx
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useEffect, useState } from 'react';
 import { Footer, Navbar } from '.';
 
 interface LayoutProps {
@@ -10,11 +10,20 @@ interface LayoutProps {
 // lo que se renderiza en children son los demaś componentes unicamente
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
+  const [isLoaded, setIsLoaded] = useState(false);
+
+  useEffect(() => {
+    // Simulando una carga asíncrona
+    setTimeout(() => {
+      setIsLoaded(true);
+    }, 3000); // Cambia este valor según tus necesidades de tiempo de carga
+  }, [setTimeout, setIsLoaded]);
+
   return (
     <>
       <Navbar />
       {children}
-      <Footer /> {/*No debe de aparecer en la pag del Admin. Solo en la del cliente */}
+      {isLoaded && <Footer />}
     </>
   );
 };

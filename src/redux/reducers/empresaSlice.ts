@@ -3,7 +3,7 @@ import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppThunk, RootState } from '../store';
 import { getFirebaseDocs } from "../../api/getFirebaseDocs/getFirebaseDocs";
 
-export interface EmpresaData {
+export type EmpresaData = {
     correo: string;
     facebookUrl: string;
     titulo_footer:string;
@@ -13,12 +13,12 @@ export interface EmpresaData {
     horarios: string[]
 }
 
-interface EmpresaState {
-    dataEmpresa: EmpresaData;
+type EmpresaState = {
+    dataEmpresa: EmpresaData | null;
 }
 
 const initialState: EmpresaState = {
-    dataEmpresa: {} as EmpresaData,
+    dataEmpresa: null,
 };
 
 const empresaSlice = createSlice({

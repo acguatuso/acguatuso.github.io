@@ -37,7 +37,7 @@ const MiPerfil: React.FC = () => {
     const dispatch = useDispatch();
     const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
     const user = useSelector((state: RootState) => state.auth.user);
-    const paisInfo = useSelector((state: RootState) => state.paisInfo.data);
+    const paisInfo = useSelector((state: RootState) => state.paisInfo.datosPais);
 
 
     // Efecto para cargar las provincias cuando se carga la información del país

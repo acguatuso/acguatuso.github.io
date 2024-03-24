@@ -25,14 +25,14 @@ type PaisInformacion = {
 
 // Definir el estado inicial
 type InitialState = {
-    data: PaisInformacion | null;
+    datosPais: PaisInformacion | null;
     loading: boolean;
     error: string | null | any;
 };
 
 // Estado inicial
 const initialState: InitialState = {
-    data: null,
+    datosPais: null,
     loading: false,
     error: null,
 };
@@ -50,7 +50,7 @@ const paisInfo = createSlice({
         // Acción para manejar la carga exitosa de la información
         fetchDataSuccess(state, action) {
             state.loading = false;
-            state.data = action.payload;
+            state.datosPais = action.payload;
         },
         // Acción para manejar los errores durante la carga de la información
         fetchDataFailure(state, action) {

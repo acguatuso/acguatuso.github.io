@@ -13,11 +13,10 @@ export const Footer = () => {
     useEffect(() => {
         dispatch(fetchEmpresaData() as any );
 
-    },[]);
+    },[dispatch]);
     // Redux Hooks & Access
     const empresaData = useSelector((state: RootState) => state.empresa.dataEmpresa);
-    const state = useSelector((state: RootState) => state);
-    console.log(state,'footer')
+    //console.log(state,'footer')
   return (
 
     <div className='footer-container'>
