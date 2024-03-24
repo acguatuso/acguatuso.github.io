@@ -119,7 +119,9 @@ export const DragDrop = () => {
             {image && (
                 <div className="container">
                     <div className="image">
-                        <span className="delete" onClick={deleteImage}>&times;</span>
+                        <span className="delete" onClick={deleteImage}>
+                        <i className="fas fa-trash-alt"></i>  
+                        </span>
                         <img src={image.url} alt={image.name}/>
                     </div>
                 </div>

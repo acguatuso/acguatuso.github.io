@@ -1,3 +1,4 @@
+import './styles.css';
 import DataTable, { TableProps, createTheme } from "react-data-table-component";
 
 createTheme("dark", {
@@ -13,7 +14,7 @@ function DataTableBase<T>(props: TableProps<T>): JSX.Element {
       pagination
       paginationPerPage={10}
       paginationRowsPerPageOptions={[5, 10, 15, 20, 25]}
-      theme="dark"
+      noDataComponent="No hay información para mostrar."
       striped
       fixedHeader
       fixedHeaderScrollHeight="80vh"

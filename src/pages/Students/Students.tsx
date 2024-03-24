@@ -5,38 +5,53 @@ import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../../redux/store";
 import { useSelector } from "react-redux";
+import { getFirebaseDocs } from "../../api/getFirebaseDocs/getFirebaseDocs";
+import { Student } from "./Student.interface";
 
 const columns = [
-  {
-    name: "Número",
-    selector: (row: any) => row.id,
-    sortable: true,
-  },
+  // {
+  //   name: "Número",
+  //   selector: (row: any) => row.id,
+  //   sortable: true,
+  // },
   {
     name: "Nombre",
-    selector: (row: any) => row.name,
+    selector: (row: any) => row.nombre,
     sortable: true,
   },
 
   {
     name: "Cédula",
-    selector: (row: any) => row.idCR,
+    selector: (row: any) => row.cedula,
     sortable: true,
   },
   {
     name: "Télefono",
-    selector: (row: any) => row.phone,
+    selector: (row: any) => row.telefono,
     sortable: true,
   },
   {
     name: "Correo",
-    selector: (row: any) => row.email,
+    selector: (row: any) => row.correo,
     sortable: true,
     width: "250px",
   },
   {
+    name: "Estado",
+    cell: (row: any) => (
+      <div className="form-check form-switch">
+        <input
+          className="form-check-input"
+          type="checkbox"
+          role="switch"
+        ></input>
+      </div>
+    ),
+    width: "5vw",
+  },
+  {
     name: "Ver",
-    cell: (row: { name: any }) => (
+    cell: (row: any) => (
       <button
         className="btn btn-primary"
         onClick={() => handleButtonClick(row.name)}
@@ -48,9 +63,9 @@ const columns = [
   },
   {
     name: "Editar",
-    cell: (row: { name: any }) => (
+    cell: (row: any) => (
       <button
-        className="btn btn-primary"
+        className="btn btn-warning"
         onClick={() => handleButtonClick(row.name)}
       >
         <FaEdit />
@@ -60,9 +75,9 @@ const columns = [
   },
   {
     name: "Eliminar",
-    cell: (row: { name: any }) => (
+    cell: (row: any) => (
       <button
-        className="btn btn-primary"
+        className="btn btn-danger"
         onClick={() => handleButtonClick(row.name)}
       >
         <MdDelete />
@@ -73,36 +88,57 @@ const columns = [
 ];
 
 const Students = () => {
-  const [jsonData, setJsonData] = useState([]);
-  const [filteredData, setFilteredData] = useState([]);
+  // const [jsonData, setJsonData] = useState([]);
+  const [filteredData, setFilteredData] = useState<Student[]>([]);
   const [filterText, setFilterText] = useState("");
 
   useEffect(() => {
-    fetch("/src/pages/Students/data.json")
-      .then((response) => response.json())
-      .then((data) => {
-        setJsonData(data);
-        setFilteredData(data);
-      })
-      .catch((error) => console.error("Error fetching JSON:", error));
+    // fetch("/src/pages/Students/data.json")
+    //   .then((response) => response.json())
+    //   .then((data) => {
+    //     setJsonData(data);
+    //     setFilteredData(data);
+    //   })
+    //   .catch((error) => console.error("Error fetching JSON:", error));
+    getStudents();
   }, []);
 
-  useEffect(() => {
-    const filtered = jsonData.filter((item) =>
-      item.name.toLowerCase().includes(filterText.toLowerCase())
-    );
-    setFilteredData(filtered);
-  }, [filterText, jsonData]);
+  // useEffect(() => {
+  //   const filtered = filteredData.filter((item) =>
+  //     item.nombre.toLowerCase().includes(filterText.toLowerCase())
+  //   );
+  //   setFilteredData(filtered);
+  // }, [filterText, []]);
 
-  const addStudent = () => {
-    const newEntry = {
-      id: jsonData.length + 1,
-      name: "New Student",
-      idCR: "1234567",
-      phone: "12345678",
-      email: "new.student@example.com",
-    };
-    setJsonData([newEntry, ...jsonData]);
+  // const addStudent = () => {
+  //   const newEntry = {
+  //     id: jsonData.length + 1,
+  //     name: "New Student",
+  //     idCR: "1234567",
+  //     phone: "12345678",
+  //     email: "new.student@example.com",
+  //   };
+  //   setJsonData([newEntry, ...jsonData]);
+  // };
+
+  const getStudents = async () => {
+    const data = await getFirebaseDocs("Usuarios");
+    var formatedData: Student[] = [];
+    formatedData = data.map((student: any) => ({
+      canton: student.canton,
+      cedula: student.cedula,
+      correo: student.correo,
+      direccion: student.direccion,
+      distrito: student.distrito,
+      estado: student.estado,
+      fechaNacimiento: student.fechaNacimiento,
+      genero: student.genero,
+      nombre: student.nombre,
+      provincia: student.provincia,
+      telefono: student.telefono,
+      user_type: student.user_type,
+    }));
+    setFilteredData(formatedData);
   };
 
   // LOGICA PARA REDIRECCIONAR SI NO SE ESTA LOGUEADO, PARA QUE NO SE PUEDA ACCEDER MENDIATE URL DIRECTA
@@ -111,7 +147,7 @@ const Students = () => {
   // Redux Hooks & Access
   const user = useSelector((state: RootState) => state.auth.user);
   const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
-  console.log('Conectado: ', loggedIn);
+
   // Redireccionar si está no logueado, y no hay usuario
   useEffect(() => {
     if (!loggedIn && !user) {
@@ -129,16 +165,9 @@ const Students = () => {
           <button
             className="btn btn-dark py-0 ms-2 mt-3"
             style={{ height: "35px" }}
-            onClick={() => addStudent()}
+            onClick={() => console.log("adding.....")}
           >
             Crear Estudiante
-          </button>
-          <button
-            className="btn btn-dark py-0 ms-2 mt-3"
-            style={{ height: "35px" }}
-            onClick={() => console.log("desactivando.....")}
-          >
-            Desactivar Estudiante
           </button>
         </div>
         <div className="col-3">
