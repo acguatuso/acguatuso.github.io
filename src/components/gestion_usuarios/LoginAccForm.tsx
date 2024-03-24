@@ -6,6 +6,7 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import '../../CSS/Components/LoginAccStyle.css';
 import ForgotPassword from './ForgotPassword';
+import NotificationModal from '../Modal/NotificationModal';
 
 const LoginAccountForm: React.FC = () => {
   // React-router-dom
@@ -16,6 +17,7 @@ const LoginAccountForm: React.FC = () => {
   const [password, setPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState(false);
   const [isForgotPasswordModalOpen, setIsForgotPasswordModalOpen] = useState(false);
+  const [showLoginSuccessModal, setShowLoginSuccessModal] = useState(false);
 
   // Redux Hooks & Access
   const dispatch = useDispatch();
@@ -49,7 +51,15 @@ const LoginAccountForm: React.FC = () => {
   // Redireccionar si está logueado, hay usuario y email verificado
   useEffect(() => {
     if (loggedIn && user && emailVerified) {
-      navigate("/home");
+      // Mostrar el modal de éxito de inicio de sesión
+      setShowLoginSuccessModal(true);
+      const timeoutId = setTimeout(() => {
+        setShowLoginSuccessModal(false); // Ocultar el modal después del tiempo especificado
+        navigate("/home"); // Redirige al usuario a la página de inicio
+      }, 3 * 1000); // Convierte los segundos a milisegundos
+  
+      // Limpia el temporizador si el componente se desmonta antes de que se complete
+      return () => clearTimeout(timeoutId);
     }
   }, [loggedIn, user, emailVerified]);
 
@@ -89,6 +99,12 @@ const LoginAccountForm: React.FC = () => {
                   <button type="submit" className="btn btn-primary">Iniciar Sesión</button>
                 </form>
               )}
+              {user && (
+                <div>
+                  <label>Credenciales Correctas!</label>
+                  <label>Hola {user.nombre}!</label>
+                </div>
+              )}
             </div>
             <br />
             <div>
@@ -103,6 +119,13 @@ const LoginAccountForm: React.FC = () => {
           </div>
         </div>
       </div>
+      {/* Componente del modal de éxito de inicio de sesión */}
+      <NotificationModal
+        texto="¡Inicio de sesión exitoso!"
+        mostrar={showLoginSuccessModal}
+        onConfirm={() => setShowLoginSuccessModal(false)}
+        segundos={3} // Duración del modal en segundos
+      />
     </>
   );
 

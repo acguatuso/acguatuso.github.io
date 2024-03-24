@@ -1,11 +1,12 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { editarDoc } from '../../redux/reducers/authSlice';
 import { useNavigate } from 'react-router-dom';
 import '../../CSS/Components/MiPerfil.css'
 import { obtenerNombresCantonesDeProvincia, obtenerNombresDistritosDeCanton, obtenerNombresProvincias } from '../../redux/reducers/paisInfoSlice';
 import { useAppDispatch } from '../../hooks/hooks';
+import NotificationModal from '../Modal/NotificationModal';
 
 const generos = ['Masculino', 'Femenino', 'Otro']; // Ejemplo de opciones de género
 const labels: { [key: string]: string } = {
@@ -25,12 +26,13 @@ const labels: { [key: string]: string } = {
 const MiPerfil: React.FC = () => {
     const [editMode, setEditMode] = useState(false);
     const [formData, setFormData] = useState<any>(null); // Cambié el tipo a 'any' para simplificar
+    const [mostrarModal, setMostrarModal] = useState(false);
     // Estado para almacenar las provincias, cantones y distritos
     const [provincias, setProvincias] = useState([]);
     const [cantones, setCantones] = useState([]);
     const [distritos, setDistritos] = useState([]);
-    const [provincia, setSelectedProvincia] = useState()
-
+    const [provincia, setSelectedProvincia] = useState('')
+    const [canton, setSelectedCanton] = useState('')
     // React-router-dom
     const navigate = useNavigate();
 
@@ -82,13 +84,16 @@ const MiPerfil: React.FC = () => {
                 [name]: value // Actualiza el valor de provincia en formData
             });
         } else if (name === 'canton') {
+            setSelectedCanton(value);
+            const distritosCanton = obtenerNombresDistritosDeCanton(paisInfo[provincia].cantones[value].distritos);
+            //console.log(distritosCanton)
+            setDistritos(distritosCanton);
             setFormData({
                 ...formData,
                 [name]: value,
                 distrito: '' // Limpiar la selección de distrito al cambiar el cantón
             });
-            const distritosCanton = obtenerNombresDistritosDeCanton(value, provincia, paisInfo!);
-            setDistritos(distritosCanton);
+            
         } else {
             // Si el campo cambiado no es un dropdown, actualiza solo el estado formData
             setFormData({
@@ -111,8 +116,8 @@ const MiPerfil: React.FC = () => {
             setFormData({ ...user });
         }
     };
-
-    const handleSaveClick = () => {
+     // Función para abrir el modal de confirmación antes de guardar los cambios
+     const handleSaveClick = () => {
         if (!formData.cedula || !formData.nombre) {
             alert('Por favor, complete todos los campos obligatorios.');
             return;
@@ -125,9 +130,20 @@ const MiPerfil: React.FC = () => {
             return;
         }
 
+        // Abre el modal de confirmación
+        setMostrarModal(true);
+    };
+
+    // Función para guardar los cambios después de confirmar en el modal
+    const handleConfirmSave = () => {
         // Dispatch de la acción para actualizar los datos del usuario en Firebase Firestore
         dispatch(editarDoc(formData, user!.correo!));
         setEditMode(false);
+        setMostrarModal(false); // Cierra el modal después de guardar
+    };
+
+    const handleCancelSave = () => {
+        setMostrarModal(false); // Cierra el modal sin guardar los cambios
     };
 
 
@@ -228,6 +244,14 @@ const MiPerfil: React.FC = () => {
                     </>
                 )}
             </div>
+
+            {/* Modal de confirmación para guardar */}
+            <NotificationModal
+                texto="¿Está seguro que desea guardar los cambios?"
+                mostrar={mostrarModal}
+                onClose={handleCancelSave}
+                onConfirm={handleConfirmSave}
+            />
             <br />
         </div>
     );

@@ -1,11 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import {  useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { signup } from '../../redux/reducers/authSlice';
 import { RootState } from '../../redux/store';
 import '../../CSS/Components/CreateAccStyle.css';
 import { Link } from 'react-router-dom';
 import { fetchPaisInfoAsync, obtenerNombresCantonesDeProvincia, obtenerNombresDistritosDeCanton, obtenerNombresProvincias } from '../../redux/reducers/paisInfoSlice';
 import { useAppDispatch } from '../../hooks/hooks';
+import NotificationModal from '../Modal/NotificationModal';
 
 const CreateAccountForm: React.FC = () => {
   const initialState = {
@@ -26,6 +27,7 @@ const CreateAccountForm: React.FC = () => {
   const [cantones, setCantones] = useState([]);
   const [distritos, setDistritos] = useState([]);
   const [provincia, setSelectedProvincia] = useState()
+  const [showModal, setShowModal] = useState(false);
 
   // Redux Hooks & Access
   const dispatch = useAppDispatch();
@@ -35,7 +37,7 @@ const CreateAccountForm: React.FC = () => {
   const paisInfo = useSelector((state: RootState) => state.paisInfo.datosPais);
   const [formData, setFormData] = useState(initialState);
 
-  
+
 
   useEffect(() => {
     // Realiza la solicitud de la información del país al montar el componente
@@ -44,7 +46,7 @@ const CreateAccountForm: React.FC = () => {
       const provincias = obtenerNombresProvincias(paisInfo);
       setProvincias(provincias);
     }
-}, [paisInfo]);
+  }, [paisInfo]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -56,24 +58,24 @@ const CreateAccountForm: React.FC = () => {
       setCantones(cantonesProvincia);
       setDistritos([]); // Limpiar la selección de distrito
       setFormData({
-          ...formData,
-          [name]: value // Actualiza el valor de provincia en formData
+        ...formData,
+        [name]: value // Actualiza el valor de provincia en formData
       });
-  } else if (name === 'canton') {
+    } else if (name === 'canton') {
       setFormData({
-          ...formData,
-          [name]: value,
-          distrito: '' // Limpiar la selección de distrito al cambiar el cantón
+        ...formData,
+        [name]: value,
+        distrito: '' // Limpiar la selección de distrito al cambiar el cantón
       });
-      const distritosCanton = obtenerNombresDistritosDeCanton(value, provincia, paisInfo!);
+      const distritosCanton = obtenerNombresDistritosDeCanton(paisInfo[provincia].cantones[value].distritos);
       setDistritos(distritosCanton);
-  } else {
+    } else {
       // Si el campo cambiado no es un dropdown, actualiza solo el estado formData
       setFormData({
-          ...formData,
-          [name]: value
+        ...formData,
+        [name]: value
       });
-  }
+    }
   };
 
   const handleSignUp = (e: React.FormEvent<HTMLFormElement>) => {
@@ -83,12 +85,15 @@ const CreateAccountForm: React.FC = () => {
     const isFormFilled = Object.values(formData).every(value => value.trim() !== '');
 
     if (!isFormFilled) {
-      alert("Por favor llene todos los campos");
-      console.log(formData)
+      setShowModal(true); // Mostrar el modal
+      setTimeout(() => {
+        setShowModal(false); // Ocultar el modal después de 3 segundos
+      }, 3000);
+      console.log(formData);
       return;
     }
 
-    dispatch(signup(formData) as any);
+    dispatch(signup(formData));
   };
 
   return (
@@ -196,6 +201,12 @@ const CreateAccountForm: React.FC = () => {
         <label>¿Ya tiene cuenta?</label>
         <Link to="/iniciar-sesion">Iniciar Sesión</Link>
       </div>
+      <NotificationModal
+        texto="Por favor llene todos los campos"
+        mostrar={showModal}
+        onConfirm={() => setShowModal(false)}
+        segundos={3} // Duración del modal en segundos
+      />
     </div>
   );
 };
