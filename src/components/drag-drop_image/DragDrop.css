@@ -99,5 +99,10 @@
 
 .dragDrop-component .delete {
     z-index: 999;
-    color: #0086fe;
+    color: #ff2d2d;
+}
+
+.dragDrop-component .delete:hover {
+    transform: scale(1.2); /* Cambiar el tamaño a 1.2 veces el original */
+    transition: transform 0.3s ease; /* Suavizar la transición del cambio de tamaño */
 }
