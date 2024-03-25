@@ -7,6 +7,11 @@ export interface Curso {
     fechaCreacion: Timestamp;
     fecha_inicio: Timestamp;
     fecha_finalizacion: Timestamp;
-    horario: string;
+    horario: Horario[];
     link_plataforma: string;
+}
+
+export interface Horario { 
+    dia: string;
+    hora: string;
 }

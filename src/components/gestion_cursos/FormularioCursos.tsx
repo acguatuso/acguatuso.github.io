@@ -1,10 +1,11 @@
-import { useState, ChangeEvent, useEffect, useRef } from 'react';
+import { useState, ChangeEvent, useEffect} from 'react';
 import { addFirebaseDoc } from "../../api/addFirebaseDoc/addFirebaseDoc";
 import { updateFirebaseDoc } from '../../api/updateFirebaseDoc/updateFirebaseDoc';
-import { Curso } from './curso.interface';
+import { Curso, Horario } from './curso.interface';
 import './CursosMain.css'
 import { uploadFirebaseImage } from '../../api/uploadFirebaseImage/uploadFirebaseImage';
-declare let bootstrap: any; // necesario para que typeScript no de error diciendo que no reconoce bootstrap
+import { Toast } from '../Toast/Toast';
+import { MdDelete } from 'react-icons/md';
 
 interface formProps{
     id: string
@@ -22,10 +23,11 @@ export const FormularioCursos = (props: formProps) => {
     const [fechaInicio, setFechaInicio] = useState<Date | null>(null);
     const [fechaFin, setFechaFin] = useState<Date | null>(null);
     const [linkCurso, setLinkCurso] = useState('');
-    const [horario, setHorario] = useState('');
+    const [horarios, setHorarios] = useState<Horario[]>([{ dia: '', hora: '' }]); // Lista de Horarios
+    const [selectedDia, setSelectedDia] = useState('');
+    const [newHorario, setNewHorario] = useState('');
     const [fileImage, setFileImage] = useState<File>()
     const [mensajeExito, setMensajeExito] = useState('');
-    const form: any = useRef();
 
     useEffect(() => {
         if (props.curso !== null) {
@@ -35,7 +37,7 @@ export const FormularioCursos = (props: formProps) => {
             setFechaInicio(props.curso.fecha_inicio.toDate());
             setFechaFin(props.curso.fecha_finalizacion.toDate());
             setLinkCurso(props.curso.link_plataforma);
-            setHorario(props.curso.horario);
+            setHorarios(props.curso.horario || [{ dia: '', hora: '' }]);
         }
     }, [props.curso]);
    
@@ -65,11 +67,44 @@ export const FormularioCursos = (props: formProps) => {
       setFechaFin(new Date(fechaSeleccionada));
     };
   
-    const handleHorarioChange = (e: ChangeEvent<HTMLInputElement>) => {
-      setHorario(e.target.value);
+    const handleHorariosChange = (index: number, key: keyof Horario, value: string) => {
+        const newHorarios = [...horarios];
+        newHorarios[index][key] = value;
+        if (key === 'dia') {
+            setSelectedDia(value);
+        } else if (key === 'hora') {
+            setNewHorario(value);
+        }
+        setHorarios(newHorarios);
+        console.log(horarios)
     };
-  
-    const handleCrearCurso = () => {
+
+    const handleAddHorario = (): void => {
+        if (selectedDia && newHorario) {
+            setNewHorario(''); 
+            setSelectedDia(''); 
+            setHorarios([...horarios, { dia: '', hora: '' }]);
+            console.log(horarios);
+        }
+    };
+
+    const handleRemoveHorario = (index: number) => {
+        const newHorarios = [...horarios];
+        newHorarios.splice(index, 1);
+        setHorarios(newHorarios);
+    };
+
+    const handleReset = () => {
+        setNombreCurso('');
+        setDescripcionCurso('');
+        setModalidad('');
+        setFechaInicio(null);
+        setFechaFin(null);
+        setLinkCurso('');
+        setHorarios([{ dia: '', hora: '' }]);
+    };
+
+    const handleCrearCurso = async() => {
       const fechaCreacion = new Date();
       if(fileImage != null){
         uploadFirebaseImage(fileImage, `/Cursos/${nombreCurso}/image1`)
@@ -82,7 +117,7 @@ export const FormularioCursos = (props: formProps) => {
           fecha_inicio: fechaInicio,
           fecha_finalizacion: fechaFin,
           link_plataforma: linkCurso,
-          horario: horario,
+          horario: horarios,
           fechaCreacion: fechaCreacion,
           image_url: `/Cursos/${nombreCurso}/`,
           aprobados: [],
@@ -92,28 +127,25 @@ export const FormularioCursos = (props: formProps) => {
           estado: 0,
   
       };
-      addFirebaseDoc('Cursos', cursoData);
+      console.log(cursoData)
+      const res = await addFirebaseDoc('Cursos', cursoData);
+      console.log(res)
   
       // Después de enviar los datos, mostrar el mensaje de éxito
       setMensajeExito("Curso agregado con éxito!");
   
       // Limpiar el formulario y cerrar el modal después de unos segundos
       setTimeout(() => {
-        setNombreCurso('');
-        setDescripcionCurso('');
-        setModalidad('');
-        setFechaInicio(null);
-        setFechaFin(null);
-        setLinkCurso('');
-        setHorario('');
         setMensajeExito('');
-        cleanForm();
-        closeModal();
       }, 5000); // El mensaje de éxito se mostrará durante 5 segundos (5000 milisegundos)
     };
  
 
     const handleEditarCurso = () => {
+        if(fileImage != null){
+            uploadFirebaseImage(fileImage, `/Cursos/${nombreCurso}/image1`)
+            setFileImage(undefined);
+        }
         if (props.curso !== null) {
             // Llamar a la función para actualizar el curso en Firebase
             updateFirebaseDoc(`/Cursos/${props.curso.id}`, {
@@ -123,7 +155,7 @@ export const FormularioCursos = (props: formProps) => {
                 fecha_inicio: fechaInicio,
                 fecha_finalizacion: fechaFin,
                 link_plataforma: linkCurso,
-                horario: horario,
+                horario: horarios,
                 image_url: `/Cursos/${nombreCurso}/`,
                 aprobados: [],
                 reprobados: [],
@@ -136,25 +168,9 @@ export const FormularioCursos = (props: formProps) => {
 
             setTimeout(() => {
               setMensajeExito('');
-              cleanForm();
-              closeModal();
             }, 5000); // El mensaje de éxito se mostrará durante 5 segundos (5000 milisegundos)
         } 
     }
-
-    const closeModal = () => {
-      let modalElement = document.getElementById(`${props.id}`);
-      let modalBackdropElement = document.querySelector('body > div.modal-backdrop.fade.show');
-
-      modalElement!.style.display = 'none';
-      const modal = new bootstrap.Modal(modalElement!); // Esta linea y la de abajo son necesarias para evitar hacer clic 2 veces al boton de contactar (esto cuando ya se ha enviado un correo y se quiere mandar otro correo sin recargar la pag)
-      modal.hide(); // linea de abajo: Oculta el modal de manera "oficial"
-      modalBackdropElement?.remove(); //remueve el elemento encargado en colocar una capa oscura.
-    }
-
-    const cleanForm = () => {
-      form.current.reset();
-    };
 
     const handleSubmit = () => {
         switch (true) {
@@ -168,79 +184,128 @@ export const FormularioCursos = (props: formProps) => {
                 console.error('ID de modal no reconocido:', props.id);
         }
     };
-
+    
     return (
       <>
-      <button type="button" className={props.styleButton}  data-bs-toggle="modal" data-bs-target={`#${props.id}`}>
-    {props.nombreButton}
-    </button>
-      <div className="modal fade" id={props.id} data-bs-backdrop="static" data-bs-keyboard="false"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
-          <div className="modal-dialog modal-xl">
-            <div className="modal-content">
-              <div className="modal-header border-0">
-                <h1 className="modal-title fs-5 text-dark" id="staticBackdropLabel">{props.titulo}</h1>
-                <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div className="modal-body text-start">
-                  <form ref={form} id='modal-details-form' onSubmit={handleSubmit}>
-                    <div className="row">
-                      <div className="col">
-                        <label className="form-label text-dark" htmlFor="nombre">Nombre</label>
-                        <input type="text" className="form-control" id="nombre" name="nombre" value={nombreCurso} onChange={handleNombreCursoChange}  placeholder="Nombre del curso" required/>
-                      </div>
-                      <div className="col">
-                        <label className="form-label text-dark" htmlFor="descripcion">Descripción</label>
-                        <input type="text" className="form-control" id="descripcion" name="descripcion" value={descripcionCurso} onChange={handleDescripcionCursoChange} placeholder="Descripción del curso" required/>
-                      </div>
-                      <div className="col">
-                        <label className="form-label text-dark" htmlFor="modalidad">Modalidad</label>
-                        <select id="modalidad" className="form-select" name="modalidad" value={modalidad} onChange={handleModalidadChange} required>
-                          <option disabled value="">Selecciona una modalidad</option>
-                          <option value="Presencial">Presencial</option>
-                          <option value="Virtual">Virtual</option>
-                        </select>
-                      </div>
+        <button type="button" className={props.styleButton}  data-bs-toggle="modal" data-bs-target={`#${props.id}`}>
+            {props.nombreButton}
+        </button>
+        <div className="modal fade" id={props.id} data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-labelledby="staticBackdropLabel" aria-hidden="true">
+            <div className="modal-dialog modal-lg">
+                <div className="modal-content">
+                    <div className="modal-header border-0">
+                        <h1 className="modal-title fs-5" id="staticBackdropLabel">{props.titulo}</h1>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={handleReset}></button>
                     </div>
-                    <div className="row">
-                      <div className="col">
-                        <label className="form-label text-dark" htmlFor="fechaInicio">Fecha de Inicio</label>
-                        <input type="date" className="form-control" id="fechaInicio" name="fechaInicio" value={fechaInicio ? fechaInicio.toISOString().substring(0, 10) : ''} onChange={handleFechaInicioChange} required/>
-                      </div>
-                      <div className="col">
-                        <label className="form-label text-dark" htmlFor="fechaFin">Fecha de Fin</label>
-                        <input type="date" className="form-control" id="fechaFin" name="fechaFin" value={fechaFin ? fechaFin.toISOString().substring(0, 10) : ''} onChange={handleFechaFinChange} required/>
-                      </div>
-                      <div className="col">
-                        <label className="form-label text-dark" htmlFor="horario">Horario</label>
-                        <input type="text" className="form-control" id="horario" name="horario" value={horario} onChange={handleHorarioChange}placeholder="Ej: Lunes: 8:00am - 9:00am" required/>
-                      </div>
+                    <div className="modal-body text-start">
+                        <form id='form-modal-cursos'>
+                            <div className="accordion" id="accordionExample">
+                                <div className="accordion-item">
+                                    <h2 className="accordion-header" id="informacionHeading">
+                                        <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#informacionCollapse" aria-expanded="true" aria-controls="informacionCollapse">
+                                        Información
+                                        </button>
+                                    </h2>
+                                    <div id="informacionCollapse" className="accordion-collapse collapse" aria-labelledby="informacionHeading">
+                                        <div className="accordion-body">
+                                            <div className="row">
+                                                <div className="col">
+                                                    <label className="form-label text-dark" htmlFor="nombre">Nombre</label>
+                                                    <input type="text" className="form-control" id="nombre" name="nombre" value={nombreCurso} onChange={handleNombreCursoChange}  placeholder="Nombre del curso" required/>
+                                                </div>
+                                                <div className="col">
+                                                    <label className="form-label text-dark" htmlFor="descripcion">Descripción</label>
+                                                    <input type="text" className="form-control" id="descripcion" name="descripcion" value={descripcionCurso} onChange={handleDescripcionCursoChange} placeholder="Descripción del curso" required/>
+                                                </div>
+                                                <div className="col">
+                                                    <label className="form-label text-dark" htmlFor="modalidad">Modalidad</label>
+                                                    <select id="modalidad" className="form-select" name="modalidad" value={modalidad} onChange={handleModalidadChange} required>
+                                                    <option disabled value="">Selecciona una modalidad</option>
+                                                    <option value="Presencial">Presencial</option>
+                                                    <option value="Virtual">Virtual</option>
+                                                    </select>
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col">
+                                                    <label className="form-label text-dark" htmlFor="fechaInicio">Fecha de Inicio</label>
+                                                    <input type="date" className="form-control" id="fechaInicio" name="fechaInicio" value={fechaInicio ? fechaInicio.toISOString().substring(0, 10) : ''} onChange={handleFechaInicioChange} required/>
+                                                </div>
+                                                <div className="col">
+                                                    <label className="form-label text-dark" htmlFor="fechaFin">Fecha de Fin</label>
+                                                    <input type="date" className="form-control" id="fechaFin" name="fechaFin" value={fechaFin ? fechaFin.toISOString().substring(0, 10) : ''} onChange={handleFechaFinChange} required/>
+                                                </div>
+                                            </div>
+                                            <div className="row">
+                                                <div className="col">
+                                                    <label className="form-label text-dark" htmlFor="linkClase">Link de Clase</label>
+                                                    <input type="url" className="form-control" id="linkClase" name="linkClase" value={linkCurso} onChange={handleLinkCursoChange}/>
+                                                </div>
+                                                <div className="col">
+                                                    <label className="form-label text-dark" htmlFor="imagen">Imagen Ilustrativa</label>
+                                                    <input type="file" className="form-control" id="imagen" name="imagen" onChange={ (event) => setFileImage(event.target.files![0])}/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div className="accordion-item">
+                                    <h2 className="accordion-header" id="horariosHeading">
+                                        <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#horariosCollapse" aria-expanded="false" aria-controls="horariosCollapse">
+                                        Horarios
+                                        </button>
+                                    </h2>
+                                    <div id="horariosCollapse" className="accordion-collapse collapse" aria-labelledby="horariosHeading">
+                                        <div className="accordion-body">
+                                        {horarios.map((horario, index) => (
+                                            <div key={index} className="input-group mb-3">
+                                                <select className="form-select input-group-text text-start" value={horario.dia} onChange={(e) => handleHorariosChange(index, 'dia', e.target.value)} required>
+                                                    <option disabled value="">Selecciona un día</option>
+                                                    <option value="Lunes">Lunes</option>
+                                                    <option value="Martes">Martes</option>
+                                                    <option value="Miércoles">Miércoles</option>
+                                                    <option value="Jueves">Jueves</option>
+                                                    <option value="Viernes">Viernes</option>
+                                                    <option value="Sábado">Sábado</option>
+                                                    <option value="Domingo">Domingo</option>
+                                                </select>
+                                                <input type="text" className="form-control" value={horario.hora} onChange={(e) => handleHorariosChange(index, 'hora', e.target.value)} aria-label="horario" aria-describedby="inputGroup-sizing-default8" required/>
+                                                <button type="button" className="btn btn-danger" onClick={() => handleRemoveHorario(index)}> <MdDelete/> </button>
+                                            </div>
+                                        ))}  
+                                        <div className='text-end'>
+                                          <button type="button" className="btn btn-primary" onClick={handleAddHorario}>
+                                             Agregar Horario
+                                          </button>
+                                        </div>
+                                    
+                                        
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
                     </div>
-                    <div className="row">
-                      <div className="col">
-                        <label className="form-label text-dark" htmlFor="linkClase">Link de Clase</label>
-                        <input type="url" className="form-control" id="linkClase" name="linkClase" value={linkCurso} onChange={handleLinkCursoChange}/>
-                      </div>
-                      <div className="col">
-                        <label className="form-label text-dark" htmlFor="imagen">Imagen Ilustrativa</label>
-                        <input type="file" className="form-control" id="imagen" name="imagen" onChange={ (event) => setFileImage(event.target.files![0])} required/>
-                      </div>
+                    <div className="modal-footer border-0">
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleReset}>Cancelar</button>
+                        <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={handleSubmit}>{props.submitButton}</button>
                     </div>
-                  </form>
-              </div>
-              <div className="modal-footer border-0">
-                  <button type="button" className="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
-                  <button type="submit" className="btn btn-primary" form='modal-details-form'>{props.submitButton}</button>
-              </div>
+                </div>
             </div>
-          </div>
         </div>
-        
-         {mensajeExito && (
-          <div className="alert alert-success centered-alert" role="alert">
-            {mensajeExito}
-            {/* <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button> */}
-          </div>
-        )}
+        {/* <Toast 
+        id='toast-form-cursos' 
+        message={mensajeExito} 
+        title='Seccion de avisos'
+        /> */}
+        <div>
+          {mensajeExito && (
+            <div className="alert alert-success centered-alert" role="alert">
+              {mensajeExito}
+              <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+          )}
+        </div>
       </>
 )}
 

@@ -15,10 +15,17 @@ const columns = [
     selector: (row: any) => row.nombre,
     sortable: true,
   },
-
   {
     name: "Horario",
-    selector: (row: any) => row.horario,
+    cell: (row: any) => (
+      <div className='text-start'>
+        {row.horario.map((h: any, index: number) => (
+        <div key={index}>
+            {h.dia}: {h.hora}
+        </div>
+        ))}
+      </div>
+    ),
     sortable: true,
   },
   {
@@ -45,7 +52,7 @@ const columns = [
       id={`course-section-modal-edit-${row.id}`}
       titulo={`Editar Curso: ${row.nombre}`}
       nombreButton={<FaEdit />}
-      styleButton={"btn btn-primary"}
+      styleButton={"btn btn-warning"}
       submitButton={"Guardar Cambios"}
       curso={row}
       />
@@ -113,7 +120,7 @@ function GestionCursos() {
       </div>
       <div className="d-flex justify-content-between mb-2">
         <div className="d-flex">
-          <FormularioCursos 
+          <FormularioCursos
           id={"course-section-modal-add"}
           titulo={"Crear un Nuevo Curso"}
           nombreButton={"Crear un Nuevo Curso"}
@@ -133,7 +140,7 @@ function GestionCursos() {
         </div>
       </div>
       <div>
-        <DataTableBase columns={columns} data={cursos}></DataTableBase>
+          <DataTableBase columns={columns} data={cursos}></DataTableBase>
       </div>
 
     </>
