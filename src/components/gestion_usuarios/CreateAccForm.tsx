@@ -8,26 +8,42 @@ import { fetchPaisInfoAsync, obtenerNombresCantonesDeProvincia, obtenerNombresDi
 import { useAppDispatch } from '../../hooks/hooks';
 import NotificationModal from '../Modal/NotificationModal';
 
+interface FormData {
+  correo: string;
+  cedula: string;
+  telefono: string;
+  provincia: string | null;
+  canton: string | null;
+  distrito: string | null;
+  direccion: string;
+  fechaNacimiento: string;
+  genero: string;
+  nombre: string;
+  password: string;
+  // Otros campos si los hubiera
+}
+const initialState = {
+  nombre: '',
+  correo: '',
+  password: '',
+  cedula: '',
+  telefono: '',
+  provincia: '',
+  canton: '',
+  distrito: '',
+  direccion: '',
+  fechaNacimiento: '',
+  genero: ''
+};
+
 const CreateAccountForm: React.FC = () => {
-  const initialState = {
-    nombre: '',
-    email: '',
-    password: '',
-    cedula: '',
-    telefono: '',
-    provincia: '',
-    canton: '',
-    distrito: '',
-    direccion: '',
-    fechaNacimiento: '',
-    genero: ''
-  };
+  
   // Estado para almacenar las provincias, cantones y distritos
-  const [provincias, setProvincias] = useState([]);
-  const [cantones, setCantones] = useState([]);
-  const [distritos, setDistritos] = useState([]);
-  const [provincia, setSelectedProvincia] = useState()
-  const [showModal, setShowModal] = useState(false);
+  const [provincias, setProvincias] = useState<string[]>([]);
+  const [cantones, setCantones] = useState<string[]>([]);
+  const [distritos, setDistritos] = useState<string[]>([]);
+  const [provincia, setSelectedProvincia] = useState<string>('')
+  const [showModal, setShowModal] = useState<boolean>(false);
 
   // Redux Hooks & Access
   const dispatch = useAppDispatch();
@@ -35,9 +51,7 @@ const CreateAccountForm: React.FC = () => {
   const notification = useSelector((state: RootState) => state.auth.notification);
   const error = useSelector((state: RootState) => state.auth.error);
   const paisInfo = useSelector((state: RootState) => state.paisInfo.datosPais);
-  const [formData, setFormData] = useState(initialState);
-
-
+  const [formData, setFormData] = useState<FormData>(initialState);
 
   useEffect(() => {
     // Realiza la solicitud de la información del país al montar el componente
@@ -46,7 +60,7 @@ const CreateAccountForm: React.FC = () => {
       const provincias = obtenerNombresProvincias(paisInfo);
       setProvincias(provincias);
     }
-  }, [paisInfo]);
+  }, [paisInfo, dispatch]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
@@ -67,7 +81,8 @@ const CreateAccountForm: React.FC = () => {
         [name]: value,
         distrito: '' // Limpiar la selección de distrito al cambiar el cantón
       });
-      const distritosCanton = obtenerNombresDistritosDeCanton(paisInfo[provincia].cantones[value].distritos);
+      
+      const distritosCanton = obtenerNombresDistritosDeCanton(paisInfo![provincia].cantones[value].distritos);
       setDistritos(distritosCanton);
     } else {
       // Si el campo cambiado no es un dropdown, actualiza solo el estado formData
@@ -131,7 +146,7 @@ const CreateAccountForm: React.FC = () => {
                   </div>
                   <div className="mb-3">
                     <label htmlFor="provincia">Provincia:</label>
-                    <select id="provincia" name="provincia" value={formData.provincia} onChange={handleChange} className="form-control">
+                    <select id="provincia" name="provincia" value={formData.provincia!} onChange={handleChange} className="form-control">
                       <option value="">Seleccione una provincia...</option>
                       {provincias.map((prov: string, index: number) => (
                         <option key={index} value={prov}>{prov}</option>
@@ -146,7 +161,7 @@ const CreateAccountForm: React.FC = () => {
                 <div className="col">
                   <div className="mb-3">
                     <label htmlFor="email">Correo:</label>
-                    <input type="email" id="email" name="email" value={formData.email} onChange={handleChange} className="form-control" placeholder="Ej: correo@example.com" />
+                    <input type="email" id="email" name="email" value={formData.correo} onChange={handleChange} className="form-control" placeholder="Ej: correo@example.com" />
                   </div>
                   <div className="mb-3">
                     <label htmlFor="telefono">Teléfono:</label>
@@ -154,7 +169,7 @@ const CreateAccountForm: React.FC = () => {
                   </div>
                   <div className="mb-3">
                     <label htmlFor="canton">Cantón:</label>
-                    <select id="canton" name="canton" value={formData.canton} onChange={handleChange} className="form-control">
+                    <select id="canton" name="canton" value={formData.canton!} onChange={handleChange} className="form-control">
                       <option value="">Seleccione un cantón...</option>
                       {cantones.map((canton: string, index: number) => (
                         <option key={index} value={canton}>{canton}</option>
@@ -182,7 +197,7 @@ const CreateAccountForm: React.FC = () => {
                   </div>
                   <div className="mb-3">
                     <label htmlFor="distrito">Distrito:</label>
-                    <select id="distrito" name="distrito" value={formData.distrito} onChange={handleChange} className="form-control">
+                    <select id="distrito" name="distrito" value={formData.distrito!} onChange={handleChange} className="form-control">
                       <option value="">Seleccione un distrito...</option>
                       {distritos.map((distrito: string, index: number) => (
                         <option key={index} value={distrito}>{distrito}</option>

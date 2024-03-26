@@ -23,6 +23,8 @@ const labels: { [key: string]: string } = {
 };
 
 interface FormData {
+    [key: string]: string | null | undefined;
+    nombre: string;
     correo: string;
     cedula: string;
     telefono: string;
@@ -30,15 +32,34 @@ interface FormData {
     canton: string | null;
     distrito: string | null;
     direccion: string;
-    fechaNacimiento: string;
+    fechaNacimiento: string | any | null;
     genero: string;
-    nombre: string;
     // Otros campos si los hubiera
 }
 
 const MiPerfil: React.FC = () => {
+    // Redux Hooks & Access
+    const dispatch = useAppDispatch()
+    const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
+    const user = useSelector((state: RootState) => state.auth.user);
+    const paisInfo = useSelector((state: RootState) => state.paisInfo.datosPais);
+
+    // Clonar el objeto user para evitar mutar el estado original -> recomendable cuando se edita
+    const initialState: FormData = {
+        nombre: user!.nombre! as string,
+        correo: user?.correo! as string,
+        cedula: user?.cedula! as string,
+        telefono: user?.telefono! as string,
+        provincia: user?.provincia! as string | null,
+        canton: user?.canton! as string | null,
+        distrito: user?.distrito! as string | null,
+        direccion: user?.direccion! as string,
+        fechaNacimiento: user?.fechaNacimiento! as string | null,
+        genero: user?.genero! as string,
+    };
+    
     const [editMode, setEditMode] = useState(false);
-    const [formData, setFormData] = useState<FormData>(); // Cambié el tipo a 'any' para simplificar
+    const [formData, setFormData] = useState<FormData>(initialState);
     const [mostrarModal, setMostrarModal] = useState(false);
     const [mostrarFaltanDatosModal, setFaltanDatosModal] = useState(false);
 
@@ -51,13 +72,6 @@ const MiPerfil: React.FC = () => {
     const [distrito, setSelectedDistrito] = useState('');
     // React-router-dom
     const navigate = useNavigate();
-
-    // Redux Hooks & Access
-    const dispatch = useAppDispatch()
-    const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
-    const user = useSelector((state: RootState) => state.auth.user);
-    const paisInfo = useSelector((state: RootState) => state.paisInfo.datosPais);
-
 
     // Efecto para cargar las provincias cuando se carga la información del país
     // Efecto para inicializar el formulario cuando el usuario cambia
@@ -79,13 +93,10 @@ const MiPerfil: React.FC = () => {
                 //console.log(distritosCanton)
                 setDistritos(distritosCanton);
             }
-
-            // Clonar el objeto user para evitar mutar el estado original
-            setFormData({ ...user });
         }
-    }, [user, paisInfo, navigate,setProvincias, obtenerNombresProvincias, obtenerNombresCantonesDeProvincia, obtenerNombresDistritosDeCanton]);
+    }, [user, paisInfo, navigate, setProvincias, obtenerNombresProvincias, obtenerNombresCantonesDeProvincia, obtenerNombresDistritosDeCanton]);
 
-    const cargarCantones = (value: string, name: keyof FormData) => {
+    const cargarCantones = (value: string, name: string) => {
         setSelectedProvincia(value);
         const cantonesProvincia = obtenerNombresCantonesDeProvincia(value, paisInfo!);
         setCantones(cantonesProvincia);
@@ -96,9 +107,10 @@ const MiPerfil: React.FC = () => {
         });
     }
 
-    const cargarDistritos = (value: string, name: keyof FormData) => {
+    const cargarDistritos = (value: string, name: string) => {
         setSelectedCanton(value);
-        const distritosCanton = obtenerNombresDistritosDeCanton(paisInfo[provincia].cantones[value].distritos);
+        console.log(paisInfo![provincia].cantones[value].distritos)
+        const distritosCanton = obtenerNombresDistritosDeCanton(paisInfo![provincia].cantones[value].distritos);
         console.log(distritosCanton)
         setDistritos(distritosCanton);
         setFormData({
@@ -118,7 +130,7 @@ const MiPerfil: React.FC = () => {
                 cargarDistritos(value, name)
             } else {
                 // Si el campo cambiado no es un dropdown, actualiza solo el estado formData
-                console.log(value);
+                //console.log(value);
                 setSelectedDistrito(value);
                 setFormData({
                     ...formData!,
@@ -128,9 +140,9 @@ const MiPerfil: React.FC = () => {
         } catch (error) {
             // Captura y maneja el error aquí
             //console.error('Error al acceder a las propiedades:', error);
-           cargarCantones(user?.provincia!, name);
+            cargarCantones(user?.provincia!, name);
             cargarDistritos(value, name);
-        } 
+        }
 
         console.log(canton)
     };
@@ -143,14 +155,14 @@ const MiPerfil: React.FC = () => {
         setEditMode(false);
         // Reiniciar el formulario con los datos originales del usuario
         if (user) {
-            setFormData({ ...user });
+            setFormData(initialState);
         }
     };
     // Función para abrir el modal de confirmación antes de guardar los cambios
     const handleSaveClick = () => {
         console.log(canton)
         console.log(distrito)
-        if (!formData?.cedula || !formData?.nombre|| !formData?.canton || distrito==='') {
+        if (!formData?.cedula || !formData?.nombre || !formData?.canton || distrito === '') {
             setFaltanDatosModal(true);
             //alert('Por favor, complete todos los campos obligatorios.');
             return;
@@ -198,7 +210,7 @@ const MiPerfil: React.FC = () => {
                     if (key === 'fechaNacimiento') {
                         //console.log(value);
                         // Divide la fecha en partes (año, mes, día)
-                        const parts = value.split('-');
+                        const parts = value!.split('-');
                         // Reformatea la fecha en el formato deseado (día/mes/año)
                         const formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
                         // Renderizar el selector de fecha para fecha de nacimiento
@@ -212,7 +224,7 @@ const MiPerfil: React.FC = () => {
                                         title='fecha-nacimiento'
                                         type="date"
                                         name={key}
-                                        value={value} // value debe ser un string en formato 'yyyy-mm-dd'
+                                        value={value!} // value debe ser un string en formato 'yyyy-mm-dd'
                                         onChange={handleChange}
                                         className="form-control"
                                     />
@@ -232,7 +244,7 @@ const MiPerfil: React.FC = () => {
                                     <select
                                         title='form-select'
                                         name={key}
-                                        value={formData[key]}
+                                        value={formData[key]!}
                                         onChange={handleChange}
                                         className="form-select"
                                     >
@@ -263,9 +275,9 @@ const MiPerfil: React.FC = () => {
                             ) : (
                                 <input
                                     title='contraseña'
-                                    type={(key === 'password') ? 'password' : 'text'}
+                                    type='text'
                                     name={key}
-                                    value={formData[key]}
+                                    value={formData[key]!}
                                     onChange={handleChange}
                                     className="form-control"
                                 />
