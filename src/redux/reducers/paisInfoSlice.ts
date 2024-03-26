@@ -2,13 +2,14 @@
 import { createSlice } from '@reduxjs/toolkit';
 
 // Definir las interfaces para distrito, cantón y provincia
-interface Distrito {
+type Distrito = {
+    id: number;
     nombre: string;
 }
 
 interface Canton {
     nombre: string;
-    distritos: Distrito[];
+    distritos: Distrito;
 }
 
 interface Provincia {
@@ -90,7 +91,7 @@ export const fetchPaisInfoAsync = () => async (dispatch: any) => {
         dispatch(paisInfo.actions.fetchDataSuccess(newData));
     } catch (error) {
         console.error('Ocurrió un error al obtener el JSON:', error);
-        dispatch(paisInfo.actions.fetchDataFailure(error.message! || 'Ha ocurrido un error'));
+        dispatch(paisInfo.actions.fetchDataFailure(error.message || 'Ha ocurrido un error'));
     }
 };
 

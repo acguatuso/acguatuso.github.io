@@ -7,6 +7,7 @@ import { RootState } from "../../redux/store";
 import { useSelector } from "react-redux";
 import { getFirebaseDocs } from "../../api/getFirebaseDocs/getFirebaseDocs";
 import { Student } from "./Student.interface";
+import CreateAccountModal from "../../components/Modal/CreateAccountModa";
 
 const columns = [
   // {
@@ -91,6 +92,7 @@ const Students = () => {
   // const [jsonData, setJsonData] = useState([]);
   const [filteredData, setFilteredData] = useState<Student[]>([]);
   const [filterText, setFilterText] = useState("");
+  const [showCreateAccountModal, setShowCreateAccountModal] = useState(false); // Estado para controlar la visibilidad del modal
 
   useEffect(() => {
     // fetch("/src/pages/Students/data.json")
@@ -125,6 +127,7 @@ const Students = () => {
     const data = await getFirebaseDocs("Usuarios");
     var formatedData: Student[] = [];
     formatedData = data.map((student: any) => ({
+      nombre: student.nombre,
       canton: student.canton,
       cedula: student.cedula,
       correo: student.correo,
@@ -133,7 +136,6 @@ const Students = () => {
       estado: student.estado,
       fechaNacimiento: student.fechaNacimiento,
       genero: student.genero,
-      nombre: student.nombre,
       provincia: student.provincia,
       telefono: student.telefono,
       user_type: student.user_type,
@@ -155,6 +157,14 @@ const Students = () => {
     }
   }, [loggedIn, user, navigate]);
 
+  const openCreateAccountModal = () => {
+    setShowCreateAccountModal(true); // Función para abrir el modal
+  };
+
+  const closeCreateAccountModal = () => {
+    setShowCreateAccountModal(false); // Función para cerrar el modal
+  };
+
   return (
     <div style={{ top: "18%", left: "10%", right: "10%", bottom: "10%" }}>
       <div className="shadow-lg p-3">
@@ -166,7 +176,7 @@ const Students = () => {
             <button
               className="btn btn-success py-0 ms-2 mt-3 shadow-lg"
               style={{ height: "35px" }}
-              onClick={() => console.log("adding.....")}
+              onClick={openCreateAccountModal} // Asocia la función de apertura del modal al evento onClick del botón
             >
               Crear Usuario
             </button>
@@ -184,6 +194,10 @@ const Students = () => {
         </div>
         <DataTableBase columns={columns} data={filteredData} />
       </div>
+      {/* Modal para el formulario de creación de cuenta */}
+      <CreateAccountModal 
+        mostrar={showCreateAccountModal} 
+        onClose={closeCreateAccountModal} />
     </div>
   );
 };
