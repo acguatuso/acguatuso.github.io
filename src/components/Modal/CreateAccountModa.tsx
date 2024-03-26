@@ -33,7 +33,7 @@ const CreateAccountModal: React.FC<ModalProps> = ({ mostrar, onClose, segundos }
                   <CreateAccountForm />
                 </div>
                 <div className="modal-footer">
-                  {onClose && <button type="button" className="btn btn-secondary" onClick={onClose}>Cancelar</button>}
+                  {onClose && <button type="button" className="btn btn-secondary" onClick={onClose}>Cerrar</button>}
                 </div>
               </div>
             </div>

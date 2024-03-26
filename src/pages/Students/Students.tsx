@@ -127,6 +127,7 @@ const Students = () => {
     const data = await getFirebaseDocs("Usuarios");
     var formatedData: Student[] = [];
     formatedData = data.map((student: any) => ({
+      nombre: student.nombre,
       canton: student.canton,
       cedula: student.cedula,
       correo: student.correo,
@@ -135,7 +136,6 @@ const Students = () => {
       estado: student.estado,
       fechaNacimiento: student.fechaNacimiento,
       genero: student.genero,
-      nombre: student.nombre,
       provincia: student.provincia,
       telefono: student.telefono,
       user_type: student.user_type,

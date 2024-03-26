@@ -16,8 +16,8 @@ export type UserData = {
   direccion: string;
   fechaNacimiento: Timestamp | string;
   genero: string;
-  user_type: number;
-  estado: number;
+  user_type?: number;
+  estado?: number;
 }
 
 type AuthState = {
@@ -58,8 +58,6 @@ const authSlice = createSlice({
       state.error = null;
     },
     signupFailure: (state, action: PayloadAction<string>) => {
-      state.loggedIn = false;
-      state.user = null;
       state.error = action.payload;
     },
     logOut: (state) => {
@@ -154,9 +152,10 @@ const obtenerUsuario = async (userEmail: string): Promise<UserData | null> => {
 
 export const signup = (formData: any): AppThunk => async dispatch => {
   try {
-    const userCredential = await createUserWithEmailAndPassword(auth_fire, formData.email, formData.password);
-    console.log(userCredential.user.email)
-
+    console.log(formData.correo)
+    console.log(formData.password)
+    const userCredential = await createUserWithEmailAndPassword(auth_fire, formData.correo, formData.password);
+    
     // Agrega el documento a fibrease(Usuarios) collection
     await agregarDoc(formData);
 
@@ -168,8 +167,10 @@ export const signup = (formData: any): AppThunk => async dispatch => {
 
   } catch (error: any) {
     //console.log(error.message)
-    const msg = error.message.replace('Firebase: ', '');
-    dispatch(signupFailure(msg));
+    if(error.message === 'Firebase: Error (auth/email-already-in-use).'){
+      dispatch(signupFailure('El correo electrónico ya se encuentra en uso, inténte con otro porfavor.'));
+    }
+    
   }
 };
 
@@ -177,7 +178,7 @@ const agregarDoc = async (formData: any) => {
   // Datos del nuevo documento
   const nuevoDocumento: UserData = {
     nombre: formData.nombre,
-    correo: formData.email,
+    correo: formData.correo,
     cedula: formData.cedula,
     telefono: formData.telefono,
     provincia: formData.provincia,
@@ -187,7 +188,7 @@ const agregarDoc = async (formData: any) => {
     fechaNacimiento: Timestamp.fromDate(new Date(formData.fechaNacimiento)),
     genero: formData.genero,
     user_type: parseInt(formData.user_type, 10),
-    estado: 1  // toda cuenta se crea con estado ->   (1 : Activo)
+    estado: 0  // toda cuenta se crea con estado ->   (0 : Inactivo)
   };
 
   // Referencia a la coleccion de 'Usuarios'
@@ -195,9 +196,9 @@ const agregarDoc = async (formData: any) => {
 
   // Agrega el nuevo documento a la colección 'Usuarios'
   try {
-
-    const documentoRef = await addDoc(users_collection_ref, nuevoDocumento);
-    console.log("Documento agregado con ID: ", documentoRef.id);
+    //const documentoRef =
+    await addDoc(users_collection_ref, nuevoDocumento);
+    //console.log("Documento agregado con ID: ", documentoRef.id);
   } catch (error) {
     console.error("Error al agregar documento: ", error);
   }
