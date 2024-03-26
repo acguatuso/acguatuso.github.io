@@ -9,7 +9,9 @@ import { useAppDispatch } from '../../hooks/hooks';
 import NotificationModal from '../Modal/NotificationModal';
 
 interface FormData {
+  nombre: string;
   correo: string;
+  password: string;
   cedula: string;
   telefono: string;
   provincia: string | null;
@@ -18,8 +20,6 @@ interface FormData {
   direccion: string;
   fechaNacimiento: string;
   genero: string;
-  nombre: string;
-  password: string;
   // Otros campos si los hubiera
 }
 const initialState = {
@@ -37,7 +37,7 @@ const initialState = {
 };
 
 const CreateAccountForm: React.FC = () => {
-  
+
   // Estado para almacenar las provincias, cantones y distritos
   const [provincias, setProvincias] = useState<string[]>([]);
   const [cantones, setCantones] = useState<string[]>([]);
@@ -51,6 +51,8 @@ const CreateAccountForm: React.FC = () => {
   const notification = useSelector((state: RootState) => state.auth.notification);
   const error = useSelector((state: RootState) => state.auth.error);
   const paisInfo = useSelector((state: RootState) => state.paisInfo.datosPais);
+  const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
+  const user = useSelector((state: RootState) => state.auth.user);
   const [formData, setFormData] = useState<FormData>(initialState);
 
   useEffect(() => {
@@ -81,7 +83,7 @@ const CreateAccountForm: React.FC = () => {
         [name]: value,
         distrito: '' // Limpiar la selección de distrito al cambiar el cantón
       });
-      
+
       const distritosCanton = obtenerNombresDistritosDeCanton(paisInfo![provincia].cantones[value].distritos);
       setDistritos(distritosCanton);
     } else {
@@ -116,8 +118,13 @@ const CreateAccountForm: React.FC = () => {
       <div className="container">
         <div>
           <img src="/src/assets/LogoUCAG.png" alt="Bootstrap" width="200" height="150" />
-          <h2>Bienvenido!</h2>
-          <h2>Crear Cuenta de Usuario </h2>
+          {!user && !loggedIn && (
+            <>
+              <h2>Bienvenido!</h2>
+              <h2>Crear Cuenta de Usuario </h2>
+            </>
+          )}
+
         </div>
         {!emailVerified && notification && (
           <div>
@@ -160,8 +167,8 @@ const CreateAccountForm: React.FC = () => {
                 </div>
                 <div className="col">
                   <div className="mb-3">
-                    <label htmlFor="email">Correo:</label>
-                    <input type="email" id="email" name="email" value={formData.correo} onChange={handleChange} className="form-control" placeholder="Ej: correo@example.com" />
+                    <label htmlFor="correo">Correo:</label>
+                    <input type="correo" id="correo" name="correo" value={formData.correo} onChange={handleChange} className="form-control" placeholder="Ej: correo@example.com" />
                   </div>
                   <div className="mb-3">
                     <label htmlFor="telefono">Teléfono:</label>
@@ -212,10 +219,14 @@ const CreateAccountForm: React.FC = () => {
         )}
       </div>
       <br />
-      <div>
-        <label>¿Ya tiene cuenta?</label>
-        <Link to="/iniciar-sesion">Iniciar Sesión</Link>
-      </div>
+      {!user && !loggedIn && (
+        <>
+          <div>
+            <label>¿Ya tiene cuenta?</label>
+            <Link to="/iniciar-sesion">Iniciar Sesión</Link>
+          </div>
+        </>
+      )}
       <NotificationModal
         texto="Por favor llene todos los campos"
         mostrar={showModal}
