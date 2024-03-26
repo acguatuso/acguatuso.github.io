@@ -124,7 +124,7 @@ function GestionCursos() {
           id={"course-section-modal-add"}
           titulo={"Crear un Nuevo Curso"}
           nombreButton={"Crear un Nuevo Curso"}
-          styleButton='btn btn-primary py-0 ms-2 mt-3'
+          styleButton='btn btn-success py-0 ms-2 mt-3 shadow-lg'
           submitButton={"Crear Curso"}
           curso={null}
           />
@@ -132,7 +132,7 @@ function GestionCursos() {
         <div className="col-3">
           <input
             type="text"
-            className="form-control bg-secondary text-white mt-3"
+            className="form-control bg-light text-dark mt-3 me-2 border border-primary shadow-lg"
             placeholder="Filtrar por Nombre"
             value={filterText}
             onChange={(e) => setFilterText(e.target.value)}
