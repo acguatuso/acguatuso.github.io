@@ -22,17 +22,33 @@ const labels: { [key: string]: string } = {
     nombre: 'Nombre'
 };
 
+interface FormData {
+    correo: string;
+    cedula: string;
+    telefono: string;
+    provincia: string | null;
+    canton: string | null;
+    distrito: string | null;
+    direccion: string;
+    fechaNacimiento: string;
+    genero: string;
+    nombre: string;
+    // Otros campos si los hubiera
+}
 
 const MiPerfil: React.FC = () => {
     const [editMode, setEditMode] = useState(false);
-    const [formData, setFormData] = useState<any>(null); // Cambié el tipo a 'any' para simplificar
+    const [formData, setFormData] = useState<FormData>(); // Cambié el tipo a 'any' para simplificar
     const [mostrarModal, setMostrarModal] = useState(false);
+    const [mostrarFaltanDatosModal, setFaltanDatosModal] = useState(false);
+
     // Estado para almacenar las provincias, cantones y distritos
-    const [provincias, setProvincias] = useState([]);
-    const [cantones, setCantones] = useState([]);
-    const [distritos, setDistritos] = useState([]);
+    const [provincias, setProvincias] = useState<string[]>([]);
+    const [cantones, setCantones] = useState<string[]>([]);
+    const [distritos, setDistritos] = useState<string[]>([]);
     const [provincia, setSelectedProvincia] = useState('')
     const [canton, setSelectedCanton] = useState('')
+    const [distrito, setSelectedDistrito] = useState('');
     // React-router-dom
     const navigate = useNavigate();
 
@@ -67,45 +83,59 @@ const MiPerfil: React.FC = () => {
             // Clonar el objeto user para evitar mutar el estado original
             setFormData({ ...user });
         }
-    }, [user, paisInfo, navigate]);
+    }, [user, paisInfo, navigate,setProvincias, obtenerNombresProvincias, obtenerNombresCantonesDeProvincia, obtenerNombresDistritosDeCanton]);
 
+    const cargarCantones = (value: string, name: keyof FormData) => {
+        setSelectedProvincia(value);
+        const cantonesProvincia = obtenerNombresCantonesDeProvincia(value, paisInfo!);
+        setCantones(cantonesProvincia);
+        setDistritos([]); // Limpiar la selección de distrito
+        setFormData({
+            ...formData!,
+            [name]: value // Actualiza el valor de provincia en formData
+        });
+    }
+
+    const cargarDistritos = (value: string, name: keyof FormData) => {
+        setSelectedCanton(value);
+        const distritosCanton = obtenerNombresDistritosDeCanton(paisInfo[provincia].cantones[value].distritos);
+        console.log(distritosCanton)
+        setDistritos(distritosCanton);
+        setFormData({
+            ...formData!,
+            [name]: value,
+            distrito: '' // Limpiar la selección de distrito al cambiar el cantón
+        });
+    }
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
         const { name, value } = e.target;
+        try {
+            // Si el campo cambiado es un dropdown (select), actualiza el estado correspondiente y también el estado formData
+            if (name === 'provincia') {
+                cargarCantones(value, name);
+            } else if (name === 'canton') {
+                cargarDistritos(value, name)
+            } else {
+                // Si el campo cambiado no es un dropdown, actualiza solo el estado formData
+                console.log(value);
+                setSelectedDistrito(value);
+                setFormData({
+                    ...formData!,
+                    [name]: value
+                });
+            }
+        } catch (error) {
+            // Captura y maneja el error aquí
+            //console.error('Error al acceder a las propiedades:', error);
+           cargarCantones(user?.provincia!, name);
+            cargarDistritos(value, name);
+        } 
 
-        // Si el campo cambiado es un dropdown (select), actualiza el estado correspondiente y también el estado formData
-        if (name === 'provincia') {
-            setSelectedProvincia(value);
-            const cantonesProvincia = obtenerNombresCantonesDeProvincia(value, paisInfo!);
-            setCantones(cantonesProvincia);
-            setDistritos([]); // Limpiar la selección de distrito
-            setFormData({
-                ...formData,
-                [name]: value // Actualiza el valor de provincia en formData
-            });
-        } else if (name === 'canton') {
-            setSelectedCanton(value);
-            const distritosCanton = obtenerNombresDistritosDeCanton(paisInfo[provincia].cantones[value].distritos);
-            //console.log(distritosCanton)
-            setDistritos(distritosCanton);
-            setFormData({
-                ...formData,
-                [name]: value,
-                distrito: '' // Limpiar la selección de distrito al cambiar el cantón
-            });
-
-        } else {
-            // Si el campo cambiado no es un dropdown, actualiza solo el estado formData
-            setFormData({
-                ...formData,
-                [name]: value
-            });
-        }
+        console.log(canton)
     };
 
-
     const handleEditClick = () => {
-
         setEditMode(true);
     };
 
@@ -118,21 +148,27 @@ const MiPerfil: React.FC = () => {
     };
     // Función para abrir el modal de confirmación antes de guardar los cambios
     const handleSaveClick = () => {
-        if (!formData.cedula || !formData.nombre) {
-            alert('Por favor, complete todos los campos obligatorios.');
+        console.log(canton)
+        console.log(distrito)
+        if (!formData?.cedula || !formData?.nombre|| !formData?.canton || distrito==='') {
+            setFaltanDatosModal(true);
+            //alert('Por favor, complete todos los campos obligatorios.');
             return;
         }
 
         // Validar formato de número de teléfono
         const numberPattern = /^[0-9]+$/;
         if ((formData.telefono && !numberPattern.test(formData.telefono)) || (formData.cedula && !numberPattern.test(formData.cedula))) {
-            alert('El número de teléfono solo puede contener números.');
+            setFaltanDatosModal(true);
             return;
         }
 
         // Abre el modal de confirmación
         setMostrarModal(true);
     };
+    const handleAceptar = () => {
+        setFaltanDatosModal(false);
+    }
 
     // Función para guardar los cambios después de confirmar en el modal
     const handleConfirmSave = () => {
@@ -249,7 +285,12 @@ const MiPerfil: React.FC = () => {
                     </>
                 )}
             </div>
-
+            {/* Modal de que faltan datos*/}
+            <NotificationModal
+                texto="Por favor, complete todos los campos obligatorios."
+                mostrar={mostrarFaltanDatosModal}
+                onConfirm={handleAceptar}
+            />
             {/* Modal de confirmación para guardar */}
             <NotificationModal
                 texto="¿Está seguro que desea guardar los cambios?"
