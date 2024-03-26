@@ -157,30 +157,33 @@ const Students = () => {
 
   return (
     <div style={{ top: "18%", left: "10%", right: "10%", bottom: "10%" }}>
-      <h2 className="text-secondary mb-0 pt-3 ps-2">
-        Listado General de Estudiantes
-      </h2>
-      <div className="d-flex justify-content-between mb-2">
-        <div className="d-flex">
-          <button
-            className="btn btn-dark py-0 ms-2 mt-3"
-            style={{ height: "35px" }}
-            onClick={() => console.log("adding.....")}
-          >
-            Crear Estudiante
-          </button>
+      <div className="shadow-lg p-3">
+        <h2 className="text-secondary mb-0 pt-3 ps-2 ">
+          Listado General de Usuarios
+        </h2>
+        <div className="d-flex justify-content-between mb-2">
+          <div className="d-flex">
+            <button
+              className="btn btn-success py-0 ms-2 mt-3 shadow-lg"
+              style={{ height: "35px" }}
+              onClick={() => console.log("adding.....")}
+            >
+              Crear Usuario
+            </button>
+          </div>
+          <div className="col-3">
+            <input
+              type="text"
+              className="form-control bg-light text-dark mt-3 me-2 border border-primary shadow-lg"
+              placeholder="Filtrar por Nombre"
+              value={filterText}
+              onChange={(e) => setFilterText(e.target.value)}
+            />
+          </div>
+
         </div>
-        <div className="col-3">
-          <input
-            type="text"
-            className="form-control bg-secondary text-white mt-3"
-            placeholder="Filtrar por Nombre"
-            value={filterText}
-            onChange={(e) => setFilterText(e.target.value)}
-          />
-        </div>
+        <DataTableBase columns={columns} data={filteredData} />
       </div>
-      <DataTableBase columns={columns} data={filteredData} />
     </div>
   );
 };

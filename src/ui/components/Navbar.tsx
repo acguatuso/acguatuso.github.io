@@ -21,7 +21,7 @@ export const Navbar = () => {
 
     return (
 
-        <div className="navbar-container">
+        <div className="navbar-container shadow-lg">
             <nav className="navbar navbar-expand-sm fixed-top text-dark bg-dark p-2">
                 <div className="container-fluid">
                     {user && loggedIn && (
@@ -77,7 +77,7 @@ export const Navbar = () => {
                                         className={ ({isActive}) => `nav-item nav-link ${ isActive ? 'active': '' } navbar-text-white`}
                                         to="/students"
                                          >
-                                        Estudiantes
+                                        Usuarios
                                          </NavLink>
 
                                         <NavLink
