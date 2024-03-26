@@ -93,7 +93,7 @@ const MiPerfil: React.FC = () => {
                 [name]: value,
                 distrito: '' // Limpiar la selección de distrito al cambiar el cantón
             });
-            
+
         } else {
             // Si el campo cambiado no es un dropdown, actualiza solo el estado formData
             setFormData({
@@ -116,8 +116,8 @@ const MiPerfil: React.FC = () => {
             setFormData({ ...user });
         }
     };
-     // Función para abrir el modal de confirmación antes de guardar los cambios
-     const handleSaveClick = () => {
+    // Función para abrir el modal de confirmación antes de guardar los cambios
+    const handleSaveClick = () => {
         if (!formData.cedula || !formData.nombre) {
             alert('Por favor, complete todos los campos obligatorios.');
             return;
@@ -160,12 +160,17 @@ const MiPerfil: React.FC = () => {
                     // Renderizar el label con el texto personalizado
                     const label = labels[key] || key; // Usar el texto personalizado o el nombre del campo si no se encuentra en el objeto labels
                     if (key === 'fechaNacimiento') {
+                        //console.log(value);
+                        // Divide la fecha en partes (año, mes, día)
+                        const parts = value.split('-');
+                        // Reformatea la fecha en el formato deseado (día/mes/año)
+                        const formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
                         // Renderizar el selector de fecha para fecha de nacimiento
                         return (
                             <div key={key} className="col-md-3 mb-3">
                                 <label className="form-label">{label}</label>
                                 {!editMode ? (
-                                    <div className="form-control">{value}</div>
+                                    <div className="form-control">{formattedDate}</div>
                                 ) : (
                                     <input
                                         title='fecha-nacimiento'
