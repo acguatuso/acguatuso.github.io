@@ -34,13 +34,11 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
     const dispatch = useAppDispatch()
     const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
     let user = useSelector((state: RootState) => state.auth.user);
-    if (pUsuario) {
+    if (pUsuario) { // si hay un prop se trata de uin renderizado en tabla de edicion de usuario
         user = pUsuario!;
     }
     const paisInfo = useSelector((state: RootState) => state.paisInfo.datosPais);
-
     // Clonar el objeto user para evitar mutar el estado original -> recomendable cuando se edita
-
     const initialState: UserData = {
         nombre: user!.nombre! as string,
         correo: user?.correo! as string,
@@ -52,7 +50,7 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
         direccion: user?.direccion! as string,
         fechaNacimiento: user?.fechaNacimiento! as string | null,
         genero: user?.genero! as string,
-        user_type: tiposUsuario[user?.user_type as number] as string,
+        user_type: tiposUsuario[user!.user_type as number] as string,
     };
 
     const [editMode, setEditMode] = useState(false);
@@ -67,6 +65,7 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
     const [provincia, setSelectedProvincia] = useState('')
     const [canton, setSelectedCanton] = useState('')
     const [distrito, setSelectedDistrito] = useState('');
+    const [tipo, setSelectedTipo] = useState('');
     // React-router-dom
     const navigate = useNavigate();
 
@@ -91,7 +90,7 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
                 setDistritos(distritosCanton);
             }
         }
-    }, [user, paisInfo, navigate, setProvincias, obtenerNombresProvincias, obtenerNombresCantonesDeProvincia, obtenerNombresDistritosDeCanton]);
+    }, [user, paisInfo, navigate, obtenerNombresProvincias, obtenerNombresCantonesDeProvincia, obtenerNombresDistritosDeCanton]);
 
     const cargarCantones = (value: string, name: string) => {
         setSelectedProvincia(value);
@@ -106,9 +105,9 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
 
     const cargarDistritos = (value: string, name: string) => {
         setSelectedCanton(value);
-        console.log(paisInfo![provincia].cantones[value].distritos)
+        //console.log(paisInfo![provincia].cantones[value].distritos)
         const distritosCanton = obtenerNombresDistritosDeCanton(paisInfo![provincia].cantones[value].distritos);
-        console.log(distritosCanton)
+        //console.log(distritosCanton)
         setDistritos(distritosCanton);
         setFormData({
             ...formData!,
@@ -121,6 +120,10 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
         const { name, value } = e.target;
         try {
             // Si el campo cambiado es un dropdown (select), actualiza el estado correspondiente y también el estado formData
+            if(name === 'user_type') {
+                //console.log(tiposUsuario[parseInt(value)]);
+                setSelectedTipo(tiposUsuario[parseInt(value)]);
+            }
             if (name === 'provincia') {
                 cargarCantones(value, name);
             } else if (name === 'canton') {
@@ -140,12 +143,12 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
             cargarCantones(user?.provincia!, name);
             cargarDistritos(value, name);
         }
-
-        console.log(canton)
+        //console.log(canton)
     };
 
     const handleEditClick = () => {
         setEditMode(true);
+        setFormData(initialState);
     };
 
     const handleCancelClick = () => {
@@ -157,9 +160,10 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
     };
     // Función para abrir el modal de confirmación antes de guardar los cambios
     const handleSaveClick = () => {
-        console.log(canton)
-        console.log(distrito)
-        if (!formData?.cedula || !formData?.nombre || !formData?.canton || distrito === '') {
+        //console.log(canton)
+        //console.log(distrito)
+        console.log(tipo)
+        if (!formData?.cedula || !formData?.nombre || !formData?.canton || distrito === '' || tipo === '') {
             setFaltanDatosModal(true);
             //alert('Por favor, complete todos los campos obligatorios.');
             return;
@@ -171,7 +175,6 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
             setFaltanDatosModal(true);
             return;
         }
-
         // Abre el modal de confirmación
         setMostrarModal(true);
     };
@@ -190,7 +193,6 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
     const handleCancelSave = () => {
         setMostrarModal(false); // Cierra el modal sin guardar los cambios
     };
-
 
     return (
         <div className="container shadow-lg">
@@ -273,7 +275,7 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
                                                 {key === 'genero' && generos.map((genero, index) => (
                                                     <option key={index} value={genero}>{genero}</option>
                                                 ))}
-                                                {key === 'user_type' && pUsuario! && tiposUsuario.map((tipo, index) => (
+                                                {key === 'user_type' && tiposUsuario.map((tipo, index) => (
                                                     <option key={index} value={index}>{tipo}</option>
                                                 ))}
                                             </select>
