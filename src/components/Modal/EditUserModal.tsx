@@ -19,7 +19,7 @@ const MiPerfilModal: React.FC<ModalProps> = ({ mostrar, onClose, usuario }) => {
             <div className="modal-dialog modal-dialog-centered modal-lg modal-xl">
               <div className="modal-content">
                 <div className="modal-header">
-                  <h5 className="modal-title">Mi Perfil</h5>
+                  <h5 className="modal-title">Perfil de Usuario a Editar:</h5>
                   {onClose && <button type="button" className="btn-close" onClick={onClose}></button>}
                 </div>
                 <div className="modal-body">

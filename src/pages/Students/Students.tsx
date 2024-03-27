@@ -76,7 +76,7 @@ const Students = () => {
       cell: (row: any) => (
         <button
           className="btn btn-warning"
-          onClick={openEditAccountModal}
+          onClick={() =>handleButtonClick(row)}
         >
           <FaEdit />
         </button>
@@ -168,6 +168,7 @@ const Students = () => {
 
   const handleButtonClick = (usuario: Student): void => {
     console.log("Button clicked for:", usuario);
+    openEditAccountModal()
     setSelectedUser(usuario);
   };
   

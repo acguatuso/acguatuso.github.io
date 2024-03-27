@@ -7,6 +7,7 @@ import '../../CSS/Components/MiPerfil.css'
 import { obtenerNombresCantonesDeProvincia, obtenerNombresDistritosDeCanton, obtenerNombresProvincias } from '../../redux/reducers/paisInfoSlice';
 import { useAppDispatch } from '../../hooks/hooks';
 import NotificationModal from '../Modal/NotificationModal';
+import { Timestamp } from 'firebase/firestore';
 
 const generos = ['Masculino', 'Femenino', 'Otro']; // Ejemplo de opciones de género
 const labels: { [key: string]: string } = {
@@ -190,7 +191,11 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
     return (
         <div className="container shadow-lg">
             <br />
-            <h2>Mis Datos Personales</h2>
+            {!pUsuario && (
+                <>
+                    <h2>Mis Datos Personales</h2>
+                </>
+            )}
             <br />
             <div className="row">
                 {formData && Object.entries(formData).map(([key, value]) => {
@@ -200,9 +205,11 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
                     // Renderizar el label con el texto personalizado
                     const label = labels[key] || key; // Usar el texto personalizado o el nombre del campo si no se encuentra en el objeto labels
                     if (key === 'fechaNacimiento') {
+                        // Convertir fechaNacimiento a objeto Date si es un Timestamp
+                        const fechaNacimiento: string = value instanceof Timestamp ? value.toDate().toDateString() : value.toString();
                         //console.log(value);
                         // Divide la fecha en partes (año, mes, día)
-                        const parts = value!.split('-');
+                        const parts = fechaNacimiento!.split('-');
                         // Reformatea la fecha en el formato deseado (día/mes/año)
                         const formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
                         // Renderizar el selector de fecha para fecha de nacimiento
