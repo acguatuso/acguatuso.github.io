@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import { editarDoc } from '../../redux/reducers/authSlice';
+import { UserData, editarDoc } from '../../redux/reducers/authSlice';
 import { useNavigate } from 'react-router-dom';
 import '../../CSS/Components/MiPerfil.css'
 import { obtenerNombresCantonesDeProvincia, obtenerNombresDistritosDeCanton, obtenerNombresProvincias } from '../../redux/reducers/paisInfoSlice';
@@ -22,30 +22,22 @@ const labels: { [key: string]: string } = {
     nombre: 'Nombre'
 };
 
-interface FormData {
-    [key: string]: string | null | undefined;
-    nombre: string;
-    correo: string;
-    cedula: string;
-    telefono: string;
-    provincia: string | null;
-    canton: string | null;
-    distrito: string | null;
-    direccion: string;
-    fechaNacimiento: string | any | null;
-    genero: string;
-    // Otros campos si los hubiera
+interface Props {
+    pUsuario: UserData | null;
 }
 
-const MiPerfil: React.FC = () => {
+const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
     // Redux Hooks & Access
     const dispatch = useAppDispatch()
     const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
-    const user = useSelector((state: RootState) => state.auth.user);
+    let user = useSelector((state: RootState) => state.auth.user);
+    if (pUsuario) {
+        user = pUsuario!;
+    }
     const paisInfo = useSelector((state: RootState) => state.paisInfo.datosPais);
 
     // Clonar el objeto user para evitar mutar el estado original -> recomendable cuando se edita
-    const initialState: FormData = {
+    const initialState: UserData = {
         nombre: user!.nombre! as string,
         correo: user?.correo! as string,
         cedula: user?.cedula! as string,
@@ -57,9 +49,9 @@ const MiPerfil: React.FC = () => {
         fechaNacimiento: user?.fechaNacimiento! as string | null,
         genero: user?.genero! as string,
     };
-    
+
     const [editMode, setEditMode] = useState(false);
-    const [formData, setFormData] = useState<FormData>(initialState);
+    const [formData, setFormData] = useState<UserData>(initialState);
     const [mostrarModal, setMostrarModal] = useState(false);
     const [mostrarFaltanDatosModal, setFaltanDatosModal] = useState(false);
 
@@ -86,10 +78,10 @@ const MiPerfil: React.FC = () => {
             const provincias = obtenerNombresProvincias(paisInfo);
             setProvincias(provincias);
 
-            if (paisInfo[user.provincia] && paisInfo[user.provincia].cantones && paisInfo[user.provincia].cantones[user.canton].distritos) {
-                const cantonesProvincia = obtenerNombresCantonesDeProvincia(user.provincia, paisInfo!);
+            if (paisInfo[user.provincia!] && paisInfo[user.provincia!].cantones && paisInfo[user.provincia!].cantones[user.canton!].distritos) {
+                const cantonesProvincia = obtenerNombresCantonesDeProvincia(user.provincia!, paisInfo!);
                 setCantones(cantonesProvincia);
-                const distritosCanton = obtenerNombresDistritosDeCanton(paisInfo[user.provincia].cantones[user.canton].distritos);
+                const distritosCanton = obtenerNombresDistritosDeCanton(paisInfo[user.provincia!].cantones[user.canton!].distritos);
                 //console.log(distritosCanton)
                 setDistritos(distritosCanton);
             }
