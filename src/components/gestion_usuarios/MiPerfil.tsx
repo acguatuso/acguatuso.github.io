@@ -10,6 +10,7 @@ import NotificationModal from '../Modal/NotificationModal';
 import { Timestamp } from 'firebase/firestore';
 
 const generos = ['Masculino', 'Femenino', 'Otro']; // Ejemplo de opciones de género
+const tiposUsuario = ['Común', 'Administrador'];
 const labels: { [key: string]: string } = {
     correo: 'Correo Electrónico',
     cedula: 'Cédula',
@@ -20,7 +21,8 @@ const labels: { [key: string]: string } = {
     direccion: 'Dirección',
     fechaNacimiento: 'Fecha de Nacimiento',
     genero: 'Género',
-    nombre: 'Nombre'
+    nombre: 'Nombre',
+    user_type: 'Tipo de Usuario'
 };
 
 interface Props {
@@ -38,6 +40,7 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
     const paisInfo = useSelector((state: RootState) => state.paisInfo.datosPais);
 
     // Clonar el objeto user para evitar mutar el estado original -> recomendable cuando se edita
+
     const initialState: UserData = {
         nombre: user!.nombre! as string,
         correo: user?.correo! as string,
@@ -49,6 +52,7 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
         direccion: user?.direccion! as string,
         fechaNacimiento: user?.fechaNacimiento! as string | null,
         genero: user?.genero! as string,
+        user_type: tiposUsuario[user?.user_type as number] as string,
     };
 
     const [editMode, setEditMode] = useState(false);
@@ -196,11 +200,18 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
                     <h2>Mis Datos Personales</h2>
                 </>
             )}
+            {pUsuario && (
+                <>
+                    <h2>Datos de la Cuenta</h2>
+                </>
+            )}
             <br />
             <div className="row">
                 {formData && Object.entries(formData).map(([key, value]) => {
-                    if (key === 'correo' || key === 'user_type' || key === 'estado') {
+                    if ((key === 'correo') || (key === 'estado')) {
                         return null; // Salta email, user_type y estado
+                    } else if((key === 'user_type') && !pUsuario){
+                        return null; // si no hay pUsuario se salta el renderizado del dropdown
                     }
                     // Renderizar el label con el texto personalizado
                     const label = labels[key] || key; // Usar el texto personalizado o el nombre del campo si no se encuentra en el objeto labels
@@ -232,37 +243,74 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
                         );
                     }
 
-                    if (key === 'provincia' || key === 'canton' || key === 'distrito' || key === 'genero') {
+                    if (key === 'provincia' || key === 'canton' || key === 'distrito' || key === 'genero' || key === 'user_type') {
                         // Renderizar dropdowns para cantón, provincia, distrito y género
                         return (
-                            <div key={key} className="col-md-3 mb-3">
-                                <label className="form-label">{label}</label>
-                                {!editMode ? (
-                                    <div className="form-control">{value}</div>
-                                ) : (
-                                    <select
-                                        title='form-select'
-                                        name={key}
-                                        value={formData[key]!}
-                                        onChange={handleChange}
-                                        className="form-select"
-                                    >
-                                        <option value="">Seleccionar {label}</option>
-                                        {key === 'provincia' && provincias.map((prov, index) => (
-                                            <option key={index} value={prov}>{prov}</option>
-                                        ))}
-                                        {key === 'canton' && cantones.map((canton, index) => (
-                                            <option key={index} value={canton}>{canton}</option>
-                                        ))}
-                                        {key === 'distrito' && distritos.map((distrito, index) => (
-                                            <option key={index} value={distrito}>{distrito}</option>
-                                        ))}
-                                        {key === 'genero' && generos.map((genero, index) => (
-                                            <option key={index} value={genero}>{genero}</option>
-                                        ))}
-                                    </select>
+                            <>
+                                {pUsuario && ( // Verifica si pUsuario existe
+                                    <div key={key} className="col-md-3 mb-3">
+                                        <label className="form-label">{label}</label>
+                                        {!editMode ? (
+                                            <div className="form-control">{value}</div>
+                                        ) : (
+                                            <select
+                                                title='form-select'
+                                                name={key}
+                                                value={formData[key]!}
+                                                onChange={handleChange}
+                                                className="form-select"
+                                            >
+                                                <option value="">Seleccionar {label}</option>
+                                                {key === 'provincia' && provincias.map((prov, index) => (
+                                                    <option key={index} value={prov}>{prov}</option>
+                                                ))}
+                                                {key === 'canton' && cantones.map((canton, index) => (
+                                                    <option key={index} value={canton}>{canton}</option>
+                                                ))}
+                                                {key === 'distrito' && distritos.map((distrito, index) => (
+                                                    <option key={index} value={distrito}>{distrito}</option>
+                                                ))}
+                                                {key === 'genero' && generos.map((genero, index) => (
+                                                    <option key={index} value={genero}>{genero}</option>
+                                                ))}
+                                                {key === 'user_type' && pUsuario! && tiposUsuario.map((tipo, index) => (
+                                                    <option key={index} value={index}>{tipo}</option>
+                                                ))}
+                                            </select>
+                                        )}
+                                    </div>
                                 )}
-                            </div>
+                                {!pUsuario && ( // Verifica si pUsuario existe
+                                    <div key={key} className="col-md-3 mb-3">
+                                        <label className="form-label">{label}</label>
+                                        {!editMode ? (
+                                            <div className="form-control">{value}</div>
+                                        ) : (
+                                            <select
+                                                title='form-select'
+                                                name={key}
+                                                value={formData[key]!}
+                                                onChange={handleChange}
+                                                className="form-select"
+                                            >
+                                                <option value="">Seleccionar {label}</option>
+                                                {key === 'provincia' && provincias.map((prov, index) => (
+                                                    <option key={index} value={prov}>{prov}</option>
+                                                ))}
+                                                {key === 'canton' && cantones.map((canton, index) => (
+                                                    <option key={index} value={canton}>{canton}</option>
+                                                ))}
+                                                {key === 'distrito' && distritos.map((distrito, index) => (
+                                                    <option key={index} value={distrito}>{distrito}</option>
+                                                ))}
+                                                {key === 'genero' && generos.map((genero, index) => (
+                                                    <option key={index} value={genero}>{genero}</option>
+                                                ))}
+                                            </select>
+                                        )}
+                                    </div>
+                                )}
+                            </>
                         );
                     }
 
