@@ -1,14 +1,16 @@
 import React, { useState, useEffect } from 'react';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
-import { editarDoc } from '../../redux/reducers/authSlice';
+import { UserData, editarDoc } from '../../redux/reducers/authSlice';
 import { useNavigate } from 'react-router-dom';
 import '../../CSS/Components/MiPerfil.css'
 import { obtenerNombresCantonesDeProvincia, obtenerNombresDistritosDeCanton, obtenerNombresProvincias } from '../../redux/reducers/paisInfoSlice';
 import { useAppDispatch } from '../../hooks/hooks';
 import NotificationModal from '../Modal/NotificationModal';
+import { Timestamp } from 'firebase/firestore';
 
 const generos = ['Masculino', 'Femenino', 'Otro']; // Ejemplo de opciones de género
+const tiposUsuario = ['Común', 'Administrador'];
 const labels: { [key: string]: string } = {
     correo: 'Correo Electrónico',
     cedula: 'Cédula',
@@ -19,33 +21,25 @@ const labels: { [key: string]: string } = {
     direccion: 'Dirección',
     fechaNacimiento: 'Fecha de Nacimiento',
     genero: 'Género',
-    nombre: 'Nombre'
+    nombre: 'Nombre',
+    user_type: 'Tipo de Usuario'
 };
 
-interface FormData {
-    [key: string]: string | null | undefined;
-    nombre: string;
-    correo: string;
-    cedula: string;
-    telefono: string;
-    provincia: string | null;
-    canton: string | null;
-    distrito: string | null;
-    direccion: string;
-    fechaNacimiento: string | any | null;
-    genero: string;
-    // Otros campos si los hubiera
+interface Props {
+    pUsuario: UserData | null;
 }
 
-const MiPerfil: React.FC = () => {
+const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
     // Redux Hooks & Access
     const dispatch = useAppDispatch()
     const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
-    const user = useSelector((state: RootState) => state.auth.user);
+    let user = useSelector((state: RootState) => state.auth.user);
+    if (pUsuario) { // si hay un prop se trata de uin renderizado en tabla de edicion de usuario
+        user = pUsuario!;
+    }
     const paisInfo = useSelector((state: RootState) => state.paisInfo.datosPais);
-
     // Clonar el objeto user para evitar mutar el estado original -> recomendable cuando se edita
-    const initialState: FormData = {
+    const initialState: UserData = {
         nombre: user!.nombre! as string,
         correo: user?.correo! as string,
         cedula: user?.cedula! as string,
@@ -56,10 +50,11 @@ const MiPerfil: React.FC = () => {
         direccion: user?.direccion! as string,
         fechaNacimiento: user?.fechaNacimiento! as string | null,
         genero: user?.genero! as string,
+        user_type: tiposUsuario[user!.user_type as number] as string,
     };
-    
+
     const [editMode, setEditMode] = useState(false);
-    const [formData, setFormData] = useState<FormData>(initialState);
+    const [formData, setFormData] = useState<UserData>(initialState);
     const [mostrarModal, setMostrarModal] = useState(false);
     const [mostrarFaltanDatosModal, setFaltanDatosModal] = useState(false);
 
@@ -70,6 +65,7 @@ const MiPerfil: React.FC = () => {
     const [provincia, setSelectedProvincia] = useState('')
     const [canton, setSelectedCanton] = useState('')
     const [distrito, setSelectedDistrito] = useState('');
+    const [tipo, setSelectedTipo] = useState('');
     // React-router-dom
     const navigate = useNavigate();
 
@@ -86,15 +82,15 @@ const MiPerfil: React.FC = () => {
             const provincias = obtenerNombresProvincias(paisInfo);
             setProvincias(provincias);
 
-            if (paisInfo[user.provincia] && paisInfo[user.provincia].cantones && paisInfo[user.provincia].cantones[user.canton].distritos) {
-                const cantonesProvincia = obtenerNombresCantonesDeProvincia(user.provincia, paisInfo!);
+            if (paisInfo[user.provincia!] && paisInfo[user.provincia!].cantones && paisInfo[user.provincia!].cantones[user.canton!].distritos) {
+                const cantonesProvincia = obtenerNombresCantonesDeProvincia(user.provincia!, paisInfo!);
                 setCantones(cantonesProvincia);
-                const distritosCanton = obtenerNombresDistritosDeCanton(paisInfo[user.provincia].cantones[user.canton].distritos);
+                const distritosCanton = obtenerNombresDistritosDeCanton(paisInfo[user.provincia!].cantones[user.canton!].distritos);
                 //console.log(distritosCanton)
                 setDistritos(distritosCanton);
             }
         }
-    }, [user, paisInfo, navigate, setProvincias, obtenerNombresProvincias, obtenerNombresCantonesDeProvincia, obtenerNombresDistritosDeCanton]);
+    }, [user, paisInfo, navigate, obtenerNombresProvincias, obtenerNombresCantonesDeProvincia, obtenerNombresDistritosDeCanton]);
 
     const cargarCantones = (value: string, name: string) => {
         setSelectedProvincia(value);
@@ -109,9 +105,9 @@ const MiPerfil: React.FC = () => {
 
     const cargarDistritos = (value: string, name: string) => {
         setSelectedCanton(value);
-        console.log(paisInfo![provincia].cantones[value].distritos)
+        //console.log(paisInfo![provincia].cantones[value].distritos)
         const distritosCanton = obtenerNombresDistritosDeCanton(paisInfo![provincia].cantones[value].distritos);
-        console.log(distritosCanton)
+        //console.log(distritosCanton)
         setDistritos(distritosCanton);
         setFormData({
             ...formData!,
@@ -124,6 +120,10 @@ const MiPerfil: React.FC = () => {
         const { name, value } = e.target;
         try {
             // Si el campo cambiado es un dropdown (select), actualiza el estado correspondiente y también el estado formData
+            if(name === 'user_type') {
+                //console.log(tiposUsuario[parseInt(value)]);
+                setSelectedTipo(tiposUsuario[parseInt(value)]);
+            }
             if (name === 'provincia') {
                 cargarCantones(value, name);
             } else if (name === 'canton') {
@@ -143,12 +143,12 @@ const MiPerfil: React.FC = () => {
             cargarCantones(user?.provincia!, name);
             cargarDistritos(value, name);
         }
-
-        console.log(canton)
+        //console.log(canton)
     };
 
     const handleEditClick = () => {
         setEditMode(true);
+        setFormData(initialState);
     };
 
     const handleCancelClick = () => {
@@ -160,9 +160,10 @@ const MiPerfil: React.FC = () => {
     };
     // Función para abrir el modal de confirmación antes de guardar los cambios
     const handleSaveClick = () => {
-        console.log(canton)
-        console.log(distrito)
-        if (!formData?.cedula || !formData?.nombre || !formData?.canton || distrito === '') {
+        //console.log(canton)
+        //console.log(distrito)
+        console.log(tipo)
+        if (!formData?.cedula || !formData?.nombre || !formData?.canton || distrito === '' || tipo === '') {
             setFaltanDatosModal(true);
             //alert('Por favor, complete todos los campos obligatorios.');
             return;
@@ -174,7 +175,6 @@ const MiPerfil: React.FC = () => {
             setFaltanDatosModal(true);
             return;
         }
-
         // Abre el modal de confirmación
         setMostrarModal(true);
     };
@@ -194,23 +194,35 @@ const MiPerfil: React.FC = () => {
         setMostrarModal(false); // Cierra el modal sin guardar los cambios
     };
 
-
     return (
         <div className="container shadow-lg">
             <br />
-            <h2>Mis Datos Personales</h2>
+            {!pUsuario && (
+                <>
+                    <h2>Mis Datos Personales</h2>
+                </>
+            )}
+            {pUsuario && (
+                <>
+                    <h2>Datos de la Cuenta</h2>
+                </>
+            )}
             <br />
             <div className="row">
                 {formData && Object.entries(formData).map(([key, value]) => {
-                    if (key === 'correo' || key === 'user_type' || key === 'estado') {
+                    if ((key === 'correo') || (key === 'estado')) {
                         return null; // Salta email, user_type y estado
+                    } else if((key === 'user_type') && !pUsuario){
+                        return null; // si no hay pUsuario se salta el renderizado del dropdown
                     }
                     // Renderizar el label con el texto personalizado
                     const label = labels[key] || key; // Usar el texto personalizado o el nombre del campo si no se encuentra en el objeto labels
                     if (key === 'fechaNacimiento') {
+                        // Convertir fechaNacimiento a objeto Date si es un Timestamp
+                        const fechaNacimiento: string = value instanceof Timestamp ? value.toDate().toDateString() : value.toString();
                         //console.log(value);
                         // Divide la fecha en partes (año, mes, día)
-                        const parts = value!.split('-');
+                        const parts = fechaNacimiento!.split('-');
                         // Reformatea la fecha en el formato deseado (día/mes/año)
                         const formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
                         // Renderizar el selector de fecha para fecha de nacimiento
@@ -233,37 +245,74 @@ const MiPerfil: React.FC = () => {
                         );
                     }
 
-                    if (key === 'provincia' || key === 'canton' || key === 'distrito' || key === 'genero') {
+                    if (key === 'provincia' || key === 'canton' || key === 'distrito' || key === 'genero' || key === 'user_type') {
                         // Renderizar dropdowns para cantón, provincia, distrito y género
                         return (
-                            <div key={key} className="col-md-3 mb-3">
-                                <label className="form-label">{label}</label>
-                                {!editMode ? (
-                                    <div className="form-control">{value}</div>
-                                ) : (
-                                    <select
-                                        title='form-select'
-                                        name={key}
-                                        value={formData[key]!}
-                                        onChange={handleChange}
-                                        className="form-select"
-                                    >
-                                        <option value="">Seleccionar {label}</option>
-                                        {key === 'provincia' && provincias.map((prov, index) => (
-                                            <option key={index} value={prov}>{prov}</option>
-                                        ))}
-                                        {key === 'canton' && cantones.map((canton, index) => (
-                                            <option key={index} value={canton}>{canton}</option>
-                                        ))}
-                                        {key === 'distrito' && distritos.map((distrito, index) => (
-                                            <option key={index} value={distrito}>{distrito}</option>
-                                        ))}
-                                        {key === 'genero' && generos.map((genero, index) => (
-                                            <option key={index} value={genero}>{genero}</option>
-                                        ))}
-                                    </select>
+                            <>
+                                {pUsuario && ( // Verifica si pUsuario existe
+                                    <div key={key} className="col-md-3 mb-3">
+                                        <label className="form-label">{label}</label>
+                                        {!editMode ? (
+                                            <div className="form-control">{value}</div>
+                                        ) : (
+                                            <select
+                                                title='form-select'
+                                                name={key}
+                                                value={formData[key]!}
+                                                onChange={handleChange}
+                                                className="form-select"
+                                            >
+                                                <option value="">Seleccionar {label}</option>
+                                                {key === 'provincia' && provincias.map((prov, index) => (
+                                                    <option key={index} value={prov}>{prov}</option>
+                                                ))}
+                                                {key === 'canton' && cantones.map((canton, index) => (
+                                                    <option key={index} value={canton}>{canton}</option>
+                                                ))}
+                                                {key === 'distrito' && distritos.map((distrito, index) => (
+                                                    <option key={index} value={distrito}>{distrito}</option>
+                                                ))}
+                                                {key === 'genero' && generos.map((genero, index) => (
+                                                    <option key={index} value={genero}>{genero}</option>
+                                                ))}
+                                                {key === 'user_type' && tiposUsuario.map((tipo, index) => (
+                                                    <option key={index} value={index}>{tipo}</option>
+                                                ))}
+                                            </select>
+                                        )}
+                                    </div>
                                 )}
-                            </div>
+                                {!pUsuario && ( // Verifica si pUsuario existe
+                                    <div key={key} className="col-md-3 mb-3">
+                                        <label className="form-label">{label}</label>
+                                        {!editMode ? (
+                                            <div className="form-control">{value}</div>
+                                        ) : (
+                                            <select
+                                                title='form-select'
+                                                name={key}
+                                                value={formData[key]!}
+                                                onChange={handleChange}
+                                                className="form-select"
+                                            >
+                                                <option value="">Seleccionar {label}</option>
+                                                {key === 'provincia' && provincias.map((prov, index) => (
+                                                    <option key={index} value={prov}>{prov}</option>
+                                                ))}
+                                                {key === 'canton' && cantones.map((canton, index) => (
+                                                    <option key={index} value={canton}>{canton}</option>
+                                                ))}
+                                                {key === 'distrito' && distritos.map((distrito, index) => (
+                                                    <option key={index} value={distrito}>{distrito}</option>
+                                                ))}
+                                                {key === 'genero' && generos.map((genero, index) => (
+                                                    <option key={index} value={genero}>{genero}</option>
+                                                ))}
+                                            </select>
+                                        )}
+                                    </div>
+                                )}
+                            </>
                         );
                     }
 

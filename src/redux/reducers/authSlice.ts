@@ -1,22 +1,23 @@
 // authSlice.ts
-import {  createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice, PayloadAction } from '@reduxjs/toolkit';
 import { AppThunk } from '../store';
 import { auth_fire, data_base } from '../../firebase';
 import { Timestamp, collection, addDoc, query, where, getDocs, doc, setDoc } from "firebase/firestore";
-import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword} from 'firebase/auth';
+import { createUserWithEmailAndPassword, sendEmailVerification, sendPasswordResetEmail, signInWithEmailAndPassword } from 'firebase/auth';
 
-export type UserData = {
+export interface UserData {
+  [key: string]: string | number | null | undefined| Timestamp | any;
   nombre: string;
   correo: string;
   cedula: string;
   telefono: string;
-  provincia: string;
-  canton: string;
-  distrito: string;
+  provincia: string | null;
+  canton: string | null;
+  distrito: string | null;
   direccion: string;
-  fechaNacimiento: Timestamp | string;
+  fechaNacimiento: string | Timestamp | null;
   genero: string;
-  user_type?: number;
+  user_type?: number | string;
   estado?: number;
 }
 
@@ -64,14 +65,14 @@ const authSlice = createSlice({
       state.loggedIn = false;
       state.user = null;
     },
-    editInfo: (state, action: PayloadAction<UserData>) =>{
+    editInfo: (state, action: PayloadAction<UserData>) => {
       state.user = action.payload;
     }
   }
 });
 
 
-export const { loginSuccess, loginFailure, signupSuccess, signupFailure, logOut, editInfo} = authSlice.actions;
+export const { loginSuccess, loginFailure, signupSuccess, signupFailure, logOut, editInfo } = authSlice.actions;
 export default authSlice.reducer;
 
 export const login = (email: string, password: string): AppThunk => async dispatch => {
@@ -120,7 +121,7 @@ const obtenerUsuario = async (userEmail: string): Promise<UserData | null> => {
       const userData = primerDocumento.data() as UserData;
 
       // Convertir fechaNacimiento a objeto Date si es un Timestamp
-      const fechaNacimiento: string = userData.fechaNacimiento instanceof Timestamp? userData.fechaNacimiento.toDate().toDateString(): userData.fechaNacimiento.toString();
+      const fechaNacimiento: string = userData.fechaNacimiento instanceof Timestamp ? userData.fechaNacimiento.toDate().toDateString() : userData.fechaNacimiento!.toString();
       //console.log(fechaNacimiento)
 
       // Construir un objeto UserData a partir de los datos obtenidos de DB FIREBASE
@@ -155,7 +156,7 @@ export const signup = (formData: any): AppThunk => async dispatch => {
     console.log(formData.correo)
     console.log(formData.password)
     const userCredential = await createUserWithEmailAndPassword(auth_fire, formData.correo, formData.password);
-    
+
     // Agrega el documento a fibrease(Usuarios) collection
     await agregarDoc(formData);
 
@@ -167,10 +168,10 @@ export const signup = (formData: any): AppThunk => async dispatch => {
 
   } catch (error: any) {
     //console.log(error.message)
-    if(error.message === 'Firebase: Error (auth/email-already-in-use).'){
+    if (error.message === 'Firebase: Error (auth/email-already-in-use).') {
       dispatch(signupFailure('El correo electrónico ya se encuentra en uso, inténte con otro porfavor.'));
     }
-    
+
   }
 };
 
@@ -204,7 +205,7 @@ const agregarDoc = async (formData: any) => {
   }
 }
 
-export const editarDoc = (formData: any, userEmail: string): AppThunk => async dispatch  => {
+export const editarDoc = (formData: any, userEmail: string): AppThunk => async dispatch => {
   // Referencia a la colección de 'Usuarios'
   const usuariosCollectionRef = collection(data_base, "Usuarios");
 
@@ -214,7 +215,7 @@ export const editarDoc = (formData: any, userEmail: string): AppThunk => async d
 
     // Obtener el documento del usuario
     const usuarioDocSnap = await getDocs(db_query);
-    
+
     // Verificar si se encontró el documento
     if (!usuarioDocSnap.empty) {
       // Obtener la referencia al documento del usuario
@@ -224,7 +225,7 @@ export const editarDoc = (formData: any, userEmail: string): AppThunk => async d
       // Actualizar los datos del documento con los datos proporcionados en formData
       await setDoc(userDocRef, formData);
 
-      const user_data_updated= await obtenerUsuario(userEmail);
+      const user_data_updated = await obtenerUsuario(userEmail);
 
       dispatch(editInfo(user_data_updated!));
 
@@ -237,7 +238,7 @@ export const editarDoc = (formData: any, userEmail: string): AppThunk => async d
   }
 };
 
-export const enviarResetPassword = async (email:string) => {
+export const enviarResetPassword = async (email: string) => {
   try {
     await sendPasswordResetEmail(auth_fire, email);
     alert('Se ha enviado un correo electrónico para restablecer tu contraseña.');

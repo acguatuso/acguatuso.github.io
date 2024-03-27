@@ -8,92 +8,96 @@ import { useSelector } from "react-redux";
 import { getFirebaseDocs } from "../../api/getFirebaseDocs/getFirebaseDocs";
 import { Student } from "./Student.interface";
 import CreateAccountModal from "../../components/Modal/CreateAccountModa";
-
-const columns = [
-  // {
-  //   name: "Número",
-  //   selector: (row: any) => row.id,
-  //   sortable: true,
-  // },
-  {
-    name: "Nombre",
-    selector: (row: any) => row.nombre,
-    sortable: true,
-  },
-
-  {
-    name: "Cédula",
-    selector: (row: any) => row.cedula,
-    sortable: true,
-  },
-  {
-    name: "Télefono",
-    selector: (row: any) => row.telefono,
-    sortable: true,
-  },
-  {
-    name: "Correo",
-    selector: (row: any) => row.correo,
-    sortable: true,
-    width: "250px",
-  },
-  {
-    name: "Estado",
-    cell: (row: any) => (
-      <div className="form-check form-switch">
-        <input
-          className="form-check-input"
-          type="checkbox"
-          role="switch"
-        ></input>
-      </div>
-    ),
-    width: "5vw",
-  },
-  {
-    name: "Ver",
-    cell: (row: any) => (
-      <button
-        className="btn btn-primary"
-        onClick={() => handleButtonClick(row.name)}
-      >
-        <FaAddressCard />
-      </button>
-    ),
-    width: "5vw",
-  },
-  {
-    name: "Editar",
-    cell: (row: any) => (
-      <button
-        className="btn btn-warning"
-        onClick={() => handleButtonClick(row.name)}
-      >
-        <FaEdit />
-      </button>
-    ),
-    width: "5vw",
-  },
-  {
-    name: "Eliminar",
-    cell: (row: any) => (
-      <button
-        className="btn btn-danger"
-        onClick={() => handleButtonClick(row.name)}
-      >
-        <MdDelete />
-      </button>
-    ),
-    width: "6vw",
-  },
-];
+import MiPerfilModal from "../../components/Modal/EditUserModal";
 
 const Students = () => {
   // const [jsonData, setJsonData] = useState([]);
   const [filteredData, setFilteredData] = useState<Student[]>([]);
   const [filterText, setFilterText] = useState("");
   const [showCreateAccountModal, setShowCreateAccountModal] = useState(false); // Estado para controlar la visibilidad del modal
+  const [showEditAccountModal, setShowEditAccountModal] = useState(false); // Estado para controlar la visibilidad del modal
+  const [selectedUser, setSelectedUser] = useState<Student | null>(null);
+  // React-router-dom
+  const navigate = useNavigate();
+  // Redux Hooks & Access
+  const user = useSelector((state: RootState) => state.auth.user);
+  const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
 
+  const columns = [
+    {
+      name: "Nombre",
+      selector: (row: any) => row.nombre,
+      sortable: true,
+    },
+
+    {
+      name: "Cédula",
+      selector: (row: any) => row.cedula,
+      sortable: true,
+    },
+    {
+      name: "Télefono",
+      selector: (row: any) => row.telefono,
+      sortable: true,
+    },
+    {
+      name: "Correo",
+      selector: (row: any) => row.correo,
+      sortable: true,
+      width: "250px",
+    },
+    {
+      name: "Estado",
+      cell: (row: any) => (
+        <div className="form-check form-switch">
+          <input
+            className="form-check-input"
+            type="checkbox"
+            role="switch"
+          ></input>
+        </div>
+      ),
+      width: "5vw",
+    },
+    {
+      name: "Ver",
+      cell: (row: any) => (
+        <button
+          className="btn btn-primary"
+          onClick={() => handleButtonClick(row.name)}
+        >
+          <FaAddressCard />
+        </button>
+      ),
+      width: "5vw",
+    },
+    {
+      name: "Editar",
+      cell: (row: any) => (
+        <button
+          className="btn btn-warning"
+          onClick={() =>handleButtonClick(row)}
+        >
+          <FaEdit />
+        </button>
+      ),
+      width: "5vw",
+    },
+    {
+      name: "Eliminar",
+      cell: (row: any) => (
+        <button
+          className="btn btn-danger"
+          onClick={() => handleButtonClick(row.name)}
+        >
+          <MdDelete />
+        </button>
+      ),
+      width: "6vw",
+    },
+  ];
+
+  // Redireccionar si está no logueado, y no hay usuario
   useEffect(() => {
     // fetch("/src/pages/Students/data.json")
     //   .then((response) => response.json())
@@ -103,7 +107,10 @@ const Students = () => {
     //   })
     //   .catch((error) => console.error("Error fetching JSON:", error));
     getStudents();
-  }, []);
+    if (!loggedIn && !user) {
+      navigate("/");
+    }
+  }, [loggedIn, user, navigate]);
 
   // useEffect(() => {
   //   const filtered = filteredData.filter((item) =>
@@ -143,20 +150,6 @@ const Students = () => {
     setFilteredData(formatedData);
   };
 
-  // LOGICA PARA REDIRECCIONAR SI NO SE ESTA LOGUEADO, PARA QUE NO SE PUEDA ACCEDER MENDIATE URL DIRECTA
-  // React-router-dom
-  const navigate = useNavigate();
-  // Redux Hooks & Access
-  const user = useSelector((state: RootState) => state.auth.user);
-  const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
-
-  // Redireccionar si está no logueado, y no hay usuario
-  useEffect(() => {
-    if (!loggedIn && !user) {
-      navigate("/");
-    }
-  }, [loggedIn, user, navigate]);
-
   const openCreateAccountModal = () => {
     setShowCreateAccountModal(true); // Función para abrir el modal
   };
@@ -164,6 +157,21 @@ const Students = () => {
   const closeCreateAccountModal = () => {
     setShowCreateAccountModal(false); // Función para cerrar el modal
   };
+
+  const openEditAccountModal = () => {
+    setShowEditAccountModal(true); // Función para abrir el modal
+  };
+
+  const closeEditAccountModal = () => {
+    setShowEditAccountModal(false); // Función para cerrar el modal
+  };
+
+  const handleButtonClick = (usuario: Student): void => {
+    console.log("Button clicked for:", usuario);
+    openEditAccountModal()
+    setSelectedUser(usuario);
+  };
+  
 
   return (
     <div style={{ top: "18%", left: "10%", right: "10%", bottom: "10%" }}>
@@ -195,15 +203,17 @@ const Students = () => {
         <DataTableBase columns={columns} data={filteredData} />
       </div>
       {/* Modal para el formulario de creación de cuenta */}
-      <CreateAccountModal 
-        mostrar={showCreateAccountModal} 
-        onClose={closeCreateAccountModal} />
+      <CreateAccountModal
+        mostrar={showCreateAccountModal}
+        onClose={closeCreateAccountModal}
+      />
+      <MiPerfilModal
+        mostrar={showEditAccountModal}
+        onClose={closeEditAccountModal}
+        usuario={selectedUser}
+      />
     </div>
   );
 };
-
-function handleButtonClick(id: any): void {
-  console.log("Button clicked for:", id);
-}
 
 export default Students;
