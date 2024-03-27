@@ -9,14 +9,15 @@ import { getFirebaseDocs } from "../../api/getFirebaseDocs/getFirebaseDocs";
 import { Student } from "./Student.interface";
 import CreateAccountModal from "../../components/Modal/CreateAccountModa";
 import MiPerfilModal from "../../components/Modal/EditUserModal";
+import { updateFirebaseDoc } from "../../api/updateFirebaseDoc/updateFirebaseDoc";
 
 const Students = () => {
-  // const [jsonData, setJsonData] = useState([]);
   const [filteredData, setFilteredData] = useState<Student[]>([]);
   const [filterText, setFilterText] = useState("");
   const [showCreateAccountModal, setShowCreateAccountModal] = useState(false); // Estado para controlar la visibilidad del modal
   const [showEditAccountModal, setShowEditAccountModal] = useState(false); // Estado para controlar la visibilidad del modal
   const [selectedUser, setSelectedUser] = useState<Student | null>(null);
+
   // React-router-dom
   const navigate = useNavigate();
   // Redux Hooks & Access
@@ -54,6 +55,8 @@ const Students = () => {
             className="form-check-input"
             type="checkbox"
             role="switch"
+            checked={row.estado}
+            onChange={() => handleSwitchToggle(row)}
           ></input>
         </div>
       ),
@@ -64,7 +67,7 @@ const Students = () => {
       cell: (row: any) => (
         <button
           className="btn btn-primary"
-          onClick={() => handleButtonClick(row.name)}
+          onClick={() => handleButtonClick(row)}
         >
           <FaAddressCard />
         </button>
@@ -76,7 +79,7 @@ const Students = () => {
       cell: (row: any) => (
         <button
           className="btn btn-warning"
-          onClick={() =>handleButtonClick(row)}
+          onClick={() => handleButtonClick(row)}
         >
           <FaEdit />
         </button>
@@ -88,7 +91,7 @@ const Students = () => {
       cell: (row: any) => (
         <button
           className="btn btn-danger"
-          onClick={() => handleButtonClick(row.name)}
+          onClick={() => console.log("eliminando...")}
         >
           <MdDelete />
         </button>
@@ -99,42 +102,29 @@ const Students = () => {
 
   // Redireccionar si está no logueado, y no hay usuario
   useEffect(() => {
-    // fetch("/src/pages/Students/data.json")
-    //   .then((response) => response.json())
-    //   .then((data) => {
-    //     setJsonData(data);
-    //     setFilteredData(data);
-    //   })
-    //   .catch((error) => console.error("Error fetching JSON:", error));
-    getStudents();
+    getUsers();
     if (!loggedIn && !user) {
       navigate("/");
     }
   }, [loggedIn, user, navigate]);
 
-  // useEffect(() => {
-  //   const filtered = filteredData.filter((item) =>
-  //     item.nombre.toLowerCase().includes(filterText.toLowerCase())
-  //   );
-  //   setFilteredData(filtered);
-  // }, [filterText, []]);
+  useEffect(() => {
+    if (filterText !== "") {
+      const filtered = filteredData.filter((item) =>
+        item.nombre.toLowerCase().includes(filterText.toLowerCase())
+      );
+      setFilteredData(filtered);
+    } else {
+      getUsers();
+    }
+  }, [filterText]);
 
-  // const addStudent = () => {
-  //   const newEntry = {
-  //     id: jsonData.length + 1,
-  //     name: "New Student",
-  //     idCR: "1234567",
-  //     phone: "12345678",
-  //     email: "new.student@example.com",
-  //   };
-  //   setJsonData([newEntry, ...jsonData]);
-  // };
-
-  const getStudents = async () => {
+  const getUsers = async () => {
     const data = await getFirebaseDocs("Usuarios");
     var formatedData: Student[] = [];
     formatedData = data.map((student: any) => ({
       nombre: student.nombre,
+      id: student.id,
       canton: student.canton,
       cedula: student.cedula,
       correo: student.correo,
@@ -147,6 +137,9 @@ const Students = () => {
       telefono: student.telefono,
       user_type: student.user_type,
     }));
+    formatedData.sort((a, b) =>
+      a.nombre.localeCompare(b.nombre, "en", { sensitivity: "base" })
+    );
     setFilteredData(formatedData);
   };
 
@@ -168,11 +161,17 @@ const Students = () => {
 
   const handleButtonClick = (usuario: Student): void => {
     console.log("Button clicked for:", usuario);
-    openEditAccountModal()
+    openEditAccountModal();
     setSelectedUser(usuario);
   };
-  
 
+  function handleSwitchToggle(row: any): void {
+    updateFirebaseDoc(`/Usuarios/${row.id}`, {
+      estado: row.estado === 0 ? 1 : 0,
+    });
+    getUsers();
+  }
+  
   return (
     <div style={{ top: "18%", left: "10%", right: "10%", bottom: "10%" }}>
       <div className="shadow-lg p-3">
@@ -198,7 +197,6 @@ const Students = () => {
               onChange={(e) => setFilterText(e.target.value)}
             />
           </div>
-
         </div>
         <DataTableBase columns={columns} data={filteredData} />
       </div>
