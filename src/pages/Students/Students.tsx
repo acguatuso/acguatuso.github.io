@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import DataTableBase from "../../components/dataTable/DataTableBase";
 import { FaAddressCard, FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
@@ -17,6 +17,8 @@ const Students = () => {
   const [showCreateAccountModal, setShowCreateAccountModal] = useState(false); // Estado para controlar la visibilidad del modal
   const [showEditAccountModal, setShowEditAccountModal] = useState(false); // Estado para controlar la visibilidad del modal
   const [selectedUser, setSelectedUser] = useState<Student | null>(null);
+  const [selectedSearch, setSelectedSearch] = useState("");
+  const [inputState, setInputState] = useState(true)
 
   // React-router-dom
   const navigate = useNavigate();
@@ -110,14 +112,17 @@ const Students = () => {
 
   useEffect(() => {
     if (filterText !== "") {
-      const filtered = filteredData.filter((item) =>
-        item.nombre.toLowerCase().includes(filterText.toLowerCase())
-      );
+      const filtered = filteredData.filter((item) => {
+        const selectedValue = item[selectedSearch];
+        if (typeof selectedValue === "string") {
+          return selectedValue.toLowerCase().includes(filterText.toLowerCase());
+        }
+      });
       setFilteredData(filtered);
     } else {
       getUsers();
     }
-  }, [filterText]);
+  }, [filterText, selectedSearch]);
 
   const getUsers = async () => {
     const data = await getFirebaseDocs("Usuarios");
@@ -171,7 +176,14 @@ const Students = () => {
     });
     getUsers();
   }
-  
+
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedSearch(event.target.value);
+    if(inputState){
+      setInputState(!inputState);
+    }
+  };
+
   return (
     <div style={{ top: "18%", left: "10%", right: "10%", bottom: "10%" }}>
       <div className="shadow-lg p-3">
@@ -181,21 +193,37 @@ const Students = () => {
         <div className="d-flex justify-content-between mb-2">
           <div className="d-flex">
             <button
-              className="btn btn-success py-0 ms-2 mt-3 shadow-lg"
+              className="btn btn-success py-0 ms-2 mt-3 shadow"
               style={{ height: "35px" }}
               onClick={openCreateAccountModal} // Asocia la función de apertura del modal al evento onClick del botón
             >
               Crear Usuario
             </button>
           </div>
-          <div className="col-3">
-            <input
-              type="text"
-              className="form-control bg-light text-dark mt-3 me-2 border border-primary shadow-lg"
-              placeholder="Filtrar por Nombre"
-              value={filterText}
-              onChange={(e) => setFilterText(e.target.value)}
-            />
+          <div className="d-flex">
+            <div className="mt-3 mx-2">
+              <select
+                className="form-select border border-secondary shadow"
+                aria-label="Default select example"
+                onChange={handleSelectChange}
+              >
+                <option hidden>Seleccione un filtro</option>
+                <option value="nombre">Nombre</option>
+                <option value="cedula">Cédula</option>
+                <option value="telefono">Teléfono</option>
+                <option value="correo">Correo</option>
+              </select>
+            </div>
+            <div className="">
+              <input
+                type="text"
+                className="form-control bg-light text-dark mt-3 me-2 border border-secondary shadow"
+                placeholder="Buscar"
+                value={filterText}
+                disabled = {inputState}
+                onChange={(e) => setFilterText(e.target.value)}
+              />
+            </div>
           </div>
         </div>
         <DataTableBase columns={columns} data={filteredData} />

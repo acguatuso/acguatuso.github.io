@@ -1,12 +1,5 @@
 import './styles.css';
-import DataTable, { TableProps, createTheme } from "react-data-table-component";
-
-createTheme("dark", {
-  striped: {
-    default: "#393939",
-  },
-});
-
+import DataTable, { TableProps } from "react-data-table-component";
 
 function DataTableBase<T>(props: TableProps<T>): JSX.Element {
   return (
