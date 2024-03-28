@@ -125,7 +125,7 @@ export const FormularioCursos = (props: formProps) => {
           matriculados: [],
           postulados: [],
           estado: 0,
-  
+          usuarios_interesados: [], //necesario para poder almacenar la lista de estudiantes interesados en este curso en específico.
       };
       console.log(cursoData)
       const res = await addFirebaseDoc('Cursos', cursoData);
