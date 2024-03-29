@@ -16,7 +16,10 @@ export const ListaCursosMatriculaPage = () => {
     const [courses, setCourses] = useState<Course[]>([]);
     const [showUsuariosMatricula, setShowUsuariosMatricula] = useState(false);
     const [idCursoConsular, setIdCursoConsultar] = useState('');
+    const [nombreCurso, setNombreCurso] = useState('');
     const [usuariosInteresadosCurso, setUsuariosInteresadosCurso] = useState<string[]>([]);
+    const [filteredCourses, setFilteredCourses] = useState<Course[]> ([]);
+    const [filterText, setFilterText] = useState('');
 
     
     //Columnas de la tabla
@@ -41,7 +44,7 @@ export const ListaCursosMatriculaPage = () => {
             cell: (row: any) => (
                 <button
                     className="btn btn-primary"
-                    onClick={() => handleClickListaUsuarios(row.id, row.usuariosInteresados)}
+                    onClick={() => handleClickListaUsuarios(row.id, row.nombre, row.usuariosInteresados)}
                     >
                     <i className='fa-solid fa-users'></i>
                 </button>
@@ -50,11 +53,12 @@ export const ListaCursosMatriculaPage = () => {
         }
     ];
 
-    const handleClickListaUsuarios = (idCurso: string, usuariosInte: string[]) => {
+    const handleClickListaUsuarios = (idCurso: string, nombreCurso: string, usuariosInte: string[]) => {
         //console.log('ID del Curso: ', idCurso);
         //console.log('Estos son los usuarios interesados: ', usuariosInte);
         setUsuariosInteresadosCurso(usuariosInte);
         setIdCursoConsultar(idCurso);
+        setNombreCurso(nombreCurso);
         setShowUsuariosMatricula(true);
     }
 
@@ -73,7 +77,7 @@ export const ListaCursosMatriculaPage = () => {
                     descripcion: doc.descripcion,
                     usuariosInteresados: doc.usuarios_interesados,
                 }));
-                console.log(coursesData);
+                //console.log(coursesData);
                 setCourses(coursesData);
             }catch(error){
                 console.error('Error Al traer los cursos:', error);
@@ -84,13 +88,44 @@ export const ListaCursosMatriculaPage = () => {
         
     }, [])
 
+    useEffect(() => {
+        if (filterText.trim() === ''){
+            setFilteredCourses(courses);
+        } else {
+            const filtered = courses.filter(course => 
+                course.nombre.toLocaleLowerCase().includes(filterText.toLocaleLowerCase())
+            );
+            //console.log('Estos son los cursos filtrados por nombre: ', filtered);
+            setFilteredCourses(filtered);
+        }
+    }, [filterText, courses]);
+
+
+
   return (
     <div>
+
         {showUsuariosMatricula ? (
                 <ListaUsuariosMatriculaPage onRegresarClick={handleRegresarClick} idCurso={idCursoConsular} 
-                    usuariosInteresados={usuariosInteresadosCurso}/>
+                    nombreCurso = {nombreCurso} usuariosInteresados={usuariosInteresadosCurso}/>
             ) : (
-                <DataTableBase columns={columns} data={courses} />
+                <>
+                    <h5 className="text-muted pt-4" >
+                        Lista de Cursos
+                    </h5>
+                    <div className="d-flex justify-content-end mb-2">
+                        <div className="col-md-2">
+
+                            <input 
+                                type="text"
+                                className='form-control bg-light text-dark mt-3 me-2 border border-primary shadow-lg' 
+                                placeholder='Filtrar por nombre'
+                                value = {filterText}
+                                onChange={e => setFilterText(e.target.value)}/>
+                        </div>
+                    </div>
+                        <DataTableBase columns={columns} data={filteredCourses} />
+                </>
             )}
          
     </div>
