@@ -26,7 +26,9 @@ function CursosMain() {
                 <div className="row">
                     <div className="col-6">
                         <h3>Matrícula</h3>
-                        <button className="btn btn-primary">Aceptar/Rechazar</button>
+                        <Link to = '/matriculaAdmin'>
+                            <button className="btn btn-primary">Aceptar/Rechazar</button>
+                        </Link>
                         <h3>Registro</h3>
                         <button className="btn btn-primary">Aprobar/Reprobar</button>
                     </div>
