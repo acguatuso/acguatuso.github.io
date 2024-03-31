@@ -12,11 +12,14 @@ interface Users {
     correo: string;
 }
 
-export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCurso, usuariosInteresados}: { onRegresarClick: () => void; idCurso: string; nombreCurso:string; usuariosInteresados: string[] }) => {
+export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCurso, usuariosInteresados, matriculados}: 
+    { onRegresarClick: () => void; idCurso: string; nombreCurso:string; usuariosInteresados: string[]; matriculados: string[] }) => {
 
     const [users, setUsers] = useState<Users[]>([]);
     const [showDetailsUserModal, setShowDetailsUserModal] = useState(false); // estado para controlar la visibilidad del modal
     const [selectedUser, setSelectedUser] = useState<Users | null>(null);
+    const [filteredUsers, setFilteredUsers] = useState<Users[]> ([]);
+    const [filterText, setFilterText] = useState('');
     
 
     //Columnas a usar dentro de la tabla
@@ -81,6 +84,7 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
                 }));
                 //console.log('DATOS DE LOS USUARIOS: ', userData);
                 setUsers(userData);
+                console.log('Lista de aceptados en curso> ', matriculados);
                 
             }catch(error){
                 console.error('Error Al traer los usuarios:', error);
@@ -90,6 +94,17 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
         fetchData();
         
     }, [])
+
+    useEffect(() => {
+        if(filterText.trim() === ''){
+            setFilteredUsers(users);
+        } else {
+            const filtered = users.filter(user => 
+                user.nombre.toLowerCase().includes(filterText.toLowerCase())    
+            );
+            setFilteredUsers(filtered);
+        }
+    }, [filterText, users]);
 
     const closeSeeUserModal = () => {
         setShowDetailsUserModal(false);
@@ -120,7 +135,18 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
                 <h5 className="text-muted pt-4" >
                             Interesados en el curso: {nombreCurso} 
                 </h5>
-                <DataTableBase columns={columns} data={users} />
+                <div className="d-flex justify-content-end mb-2">
+                        <div className="col-md-2">
+
+                            <input 
+                                type="text"
+                                className='form-control bg-light text-dark mt-3 me-2 border border-primary shadow-lg' 
+                                placeholder='Filtrar por nombre'
+                                value = {filterText}
+                                onChange={e => setFilterText(e.target.value)}/>
+                        </div>
+                    </div>
+                <DataTableBase columns={columns} data={filteredUsers} />
                 <button
                     className="btn btn-primary" 
                     onClick={handleClickRegresar}>
@@ -130,8 +156,11 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
             <AceptarRechazarUsuario 
                 mostrar={showDetailsUserModal}
                 onClose={closeSeeUserModal}
-                usuario = {selectedUser} />
-        </>
+                usuario = {selectedUser} 
+                usuariosMatriculados = {matriculados}
+                idCurso = {idCurso}/>
+                </>
+                /* idCurso = {idCurso} */
 
   )
 }

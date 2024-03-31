@@ -9,6 +9,7 @@ interface Course {
     nombre: string;
     descripcion: string;
     usuariosInteresados: string[];
+    matriculados: string[];
 }
 
 export const ListaCursosMatriculaPage = () => {
@@ -18,6 +19,7 @@ export const ListaCursosMatriculaPage = () => {
     const [idCursoConsular, setIdCursoConsultar] = useState('');
     const [nombreCurso, setNombreCurso] = useState('');
     const [usuariosInteresadosCurso, setUsuariosInteresadosCurso] = useState<string[]>([]);
+    const [usuariosMatriculados, setUsuariosMatriculados] = useState<string[]>([]);
     const [filteredCourses, setFilteredCourses] = useState<Course[]> ([]);
     const [filterText, setFilterText] = useState('');
 
@@ -42,9 +44,10 @@ export const ListaCursosMatriculaPage = () => {
         {
             name: "Gestionar",
             cell: (row: any) => (
+                
                 <button
                     className="btn btn-primary"
-                    onClick={() => handleClickListaUsuarios(row.id, row.nombre, row.usuariosInteresados)}
+                    onClick={() => handleClickListaUsuarios(row.id, row.nombre, row.usuariosInteresados, row.matriculados)}
                     >
                     <i className='fa-solid fa-users'></i>
                 </button>
@@ -53,12 +56,14 @@ export const ListaCursosMatriculaPage = () => {
         }
     ];
 
-    const handleClickListaUsuarios = (idCurso: string, nombreCurso: string, usuariosInte: string[]) => {
+    const handleClickListaUsuarios = (idCurso: string, nombreCurso: string, usuariosInte: string[], matriculadosCurso: string[]) => {
         //console.log('ID del Curso: ', idCurso);
         //console.log('Estos son los usuarios interesados: ', usuariosInte);
         setUsuariosInteresadosCurso(usuariosInte);
         setIdCursoConsultar(idCurso);
         setNombreCurso(nombreCurso);
+        setUsuariosMatriculados(matriculadosCurso);
+        
         setShowUsuariosMatricula(true);
     }
 
@@ -76,6 +81,7 @@ export const ListaCursosMatriculaPage = () => {
                     nombre: doc.nombre,
                     descripcion: doc.descripcion,
                     usuariosInteresados: doc.usuarios_interesados,
+                    matriculados: doc.matriculados,
                 }));
                 //console.log(coursesData);
                 setCourses(coursesData);
@@ -107,7 +113,8 @@ export const ListaCursosMatriculaPage = () => {
 
         {showUsuariosMatricula ? (
                 <ListaUsuariosMatriculaPage onRegresarClick={handleRegresarClick} idCurso={idCursoConsular} 
-                    nombreCurso = {nombreCurso} usuariosInteresados={usuariosInteresadosCurso}/>
+                    nombreCurso = {nombreCurso} usuariosInteresados={usuariosInteresadosCurso}
+                    matriculados = {usuariosMatriculados}/>
             ) : (
                 <>
                     <h5 className="text-muted pt-4" >
