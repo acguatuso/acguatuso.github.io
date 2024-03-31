@@ -1,4 +1,4 @@
-import {useEffect, useState} from 'react';
+import { useEffect, useState } from 'react';
 import { getFirebaseDocs } from '../../../api/getFirebaseDocs/getFirebaseDocs';
 import DataTableBase from '../../dataTable/DataTableBase';
 import { AceptarRechazarUsuario } from './AceptarRechazarUsuario';
@@ -12,15 +12,15 @@ interface Users {
     correo: string;
 }
 
-export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCurso, usuariosInteresados, matriculados}: 
-    { onRegresarClick: () => void; idCurso: string; nombreCurso:string; usuariosInteresados: string[]; matriculados: string[] }) => {
+export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCurso, usuariosInteresados, matriculados }:
+    { onRegresarClick: () => void; idCurso: string; nombreCurso: string; usuariosInteresados: string[]; matriculados: string[] }) => {
 
     const [users, setUsers] = useState<Users[]>([]);
     const [showDetailsUserModal, setShowDetailsUserModal] = useState(false); // estado para controlar la visibilidad del modal
     const [selectedUser, setSelectedUser] = useState<Users | null>(null);
-    const [filteredUsers, setFilteredUsers] = useState<Users[]> ([]);
+    const [filteredUsers, setFilteredUsers] = useState<Users[]>([]);
     const [filterText, setFilterText] = useState('');
-    
+
 
     //Columnas a usar dentro de la tabla
     //Columnas de la tabla
@@ -66,10 +66,10 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
     ];
 
     useEffect(() => {
-    
-        const fetchData = async() => {
-            try{
-                const docSnap =  await getFirebaseDocs('Usuarios');
+
+        const fetchData = async () => {
+            try {
+                const docSnap = await getFirebaseDocs('Usuarios');
                 const usuariosFiltrados = docSnap.filter((doc: any) =>
                     usuariosInteresados.includes(doc.id)
                 );
@@ -85,22 +85,22 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
                 //console.log('DATOS DE LOS USUARIOS: ', userData);
                 setUsers(userData);
                 console.log('Lista de aceptados en curso> ', matriculados);
-                
-            }catch(error){
+
+            } catch (error) {
                 console.error('Error Al traer los usuarios:', error);
             }
         }
-        
+
         fetchData();
-        
+
     }, [])
 
     useEffect(() => {
-        if(filterText.trim() === ''){
+        if (filterText.trim() === '') {
             setFilteredUsers(users);
         } else {
-            const filtered = users.filter(user => 
-                user.nombre.toLowerCase().includes(filterText.toLowerCase())    
+            const filtered = users.filter(user =>
+                user.nombre.toLowerCase().includes(filterText.toLowerCase())
             );
             setFilteredUsers(filtered);
         }
@@ -124,43 +124,43 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
     const handleClickRegresar = () => {
         onRegresarClick(); // aqui estoy llamando a la funcion del componente ListaCursosMAtriculaPage para que cambie el estado de showListaUsuarios a false. Y asi se vuelva a mostrar la lista de los cursos matriculados
     }
-  
-  //console.log(`ESTE ES EL NOMBRE DEL CURSO ${nombreCurso}`, 'Y este el id de sus usuarios interesados: ', usuariosInteresados);
-  
+
+    //console.log(`ESTE ES EL NOMBRE DEL CURSO ${nombreCurso}`, 'Y este el id de sus usuarios interesados: ', usuariosInteresados);
+
     return (
         <>
-        
+
             <div>
-                <h1>ListaUsuariosMatriculaPage</h1>
+
                 <h5 className="text-muted pt-4" >
-                            Interesados en el curso: {nombreCurso} 
+                    Interesados en el curso: {nombreCurso}
                 </h5>
                 <div className="d-flex justify-content-end mb-2">
-                        <div className="col-md-2">
+                    <div className="col-md-2">
 
-                            <input 
-                                type="text"
-                                className='form-control bg-light text-dark mt-3 me-2 border border-primary shadow-lg' 
-                                placeholder='Filtrar por nombre'
-                                value = {filterText}
-                                onChange={e => setFilterText(e.target.value)}/>
-                        </div>
+                        <input
+                            type="text"
+                            className='form-control bg-light text-dark mt-3 me-2 border border-primary shadow-lg'
+                            placeholder='Filtrar por nombre'
+                            value={filterText}
+                            onChange={e => setFilterText(e.target.value)} />
                     </div>
+                </div>
                 <DataTableBase columns={columns} data={filteredUsers} />
                 <button
-                    className="btn btn-primary" 
+                    className="btn btn-primary"
                     onClick={handleClickRegresar}>
                     regresar
                 </button>
             </div>
-            <AceptarRechazarUsuario 
+            <AceptarRechazarUsuario
                 mostrar={showDetailsUserModal}
                 onClose={closeSeeUserModal}
-                usuario = {selectedUser} 
-                usuariosMatriculados = {matriculados}
-                idCurso = {idCurso}/>
-                </>
-                /* idCurso = {idCurso} */
+                usuario={selectedUser}
+                usuariosMatriculados={matriculados}
+                idCurso={idCurso} />
+        </>
+        /* idCurso = {idCurso} */
 
-  )
+    )
 }
