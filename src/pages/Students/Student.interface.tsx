@@ -11,4 +11,5 @@ export interface Student{
     provincia:       string;
     telefono:        string;
     user_type:       number;
+    [key: string]: string | number | Date;
 }
