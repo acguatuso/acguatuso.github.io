@@ -60,39 +60,46 @@ export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
 
   const handleClickRechazar = async () => {
     //TODO
-    setLoading(true);
+    const seleccion = confirm('¿Está seguro de desmatricular al usuario?');
+    
+    if (seleccion){
 
-    // Verificar si el usuario está matriculado antes de intentar eliminarlo
-    if (!matriculadosLocal.includes(usuario.id)) {
-      console.warn('El usuario no está matriculado, no es necesario rechazarlo.');
-      setLoading(false);
-      onClose();
-      return;
+      setLoading(true);
+  
+      // Verificar si el usuario está matriculado antes de intentar eliminarlo
+      if (!matriculadosLocal.includes(usuario.id)) {
+        console.warn('El usuario no está matriculado, no es necesario rechazarlo.');
+        setLoading(false);
+        onClose();
+        return;
+      }
+  
+      try {
+        const newMatriculados = matriculadosLocal.filter(id => id !== usuario.id);
+        //console.log('ESTAMOS EN RECHAZAR: ', newMatriculados)
+        await updateFirebaseDoc(rutaDocumentoFirebase, { matriculados: newMatriculados });
+        setMatriculadosLocal(newMatriculados); // Actualiza el estado global de matriculados
+        setMensajeExito('Se ha desmatriculado el usuario.');
+  
+        // onClose();
+      } catch (error) {
+        console.error('Error al actualizar matriculados en Firebase:', error);
+      }
+  
+      setTimeout(() => {
+        // const enviadoExitoso = await SentEmailCoursesRejected();
+        // console.log(enviadoExitoso);
+        setMensajeExito('');
+  
+        setLoading(false);
+        onClose();
+      }, 2000);
     }
-
-    try {
-      const newMatriculados = matriculadosLocal.filter(id => id !== usuario.id);
-      //console.log('ESTAMOS EN RECHAZAR: ', newMatriculados)
-      await updateFirebaseDoc(rutaDocumentoFirebase, { matriculados: newMatriculados });
-      setMatriculadosLocal(newMatriculados); // Actualiza el estado global de matriculados
-      setMensajeExito('Se ha desmatriculado el usuario.');
-
-      // onClose();
-    } catch (error) {
-      console.error('Error al actualizar matriculados en Firebase:', error);
-    }
-
-    setTimeout(() => {
-      // const enviadoExitoso = await SentEmailCoursesRejected();
-      // console.log(enviadoExitoso);
-      setMensajeExito('');
-
-      setLoading(false);
-      onClose();
-    }, 2000);
+    
   }
 
   const handleClickCerrar = async () => {
+    //alert('No se hicieron cambios');
     onClose();
   }
 
