@@ -80,7 +80,7 @@ export const ListaCursosMatriculaPage = () => {
                     id: doc.id,
                     nombre: doc.nombre,
                     descripcion: doc.descripcion,
-                    usuariosInteresados: doc.usuarios_interesados,
+                    usuariosInteresados: doc.postulados,//doc.usuarios_interesados,
                     matriculados: doc.matriculados,
                 }));
                 //console.log(coursesData);

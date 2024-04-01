@@ -60,7 +60,7 @@ export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
 
   const handleClickRechazar = async () => {
     //TODO
-    const seleccion = confirm('¿Está seguro de desmatricular al usuario?');
+    const seleccion = confirm('¿Está seguro de desmatricular/rechazar al usuario?');
     
     if (seleccion){
 
