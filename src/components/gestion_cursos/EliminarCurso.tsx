@@ -1,17 +1,21 @@
 import { MdDelete } from "react-icons/md"
 import { deleteFirebaseDoc } from "../../api/deleteFirebaseDoc/deleteFirebaseDoc"
 import { Modal } from "../../components/Modal/Modal"
+import { idDelete } from "../../pages/About/components/about.interface"
+import { useAppDispatch } from "../../hooks/hooks"
+import { deleteFirebaseImages } from "../../api/deleteFirebaseImage/deleteFirebaseImage"
+import { deleteCurso } from "../../redux/reducers/cursosSlice"
+import { Toast } from "../Toast/Toast"
+import { showToast } from "../Toast/toastMethods"
 
-
-interface idBorrar {
-    id: string
-}
-  
-
-function EliminarCurso(prop: idBorrar) {
+function EliminarCurso(prop: idDelete) {
+    const dispatch = useAppDispatch()
     const handleDelete = async() =>{
         await deleteFirebaseDoc(`/Cursos/${prop.id}`)
 
+        await deleteFirebaseImages(prop.image_url)
+        dispatch(deleteCurso(prop))
+        showToast('delete-modal-curso')
     }
 
     return (
@@ -25,9 +29,15 @@ function EliminarCurso(prop: idBorrar) {
         body={'¿Estás seguro que desea eliminar este curso?'}
         secondaryButtonText={'Cancelar'}
         primaryButtonText={'Aceptar'}
-        classSecondaryButton="btn btn-sencodary"
-        classPrimaryButton="btn btn-primary"
+        classSecondaryButton="btn btn-secondary"
+        classPrimaryButton="btn btn-danger"
         functionButtonOption={() => {handleDelete()}} 
+        />
+
+        <Toast
+            id='delete-modal-curso' 
+            message='¡Se ha eliminado con éxito el curso!' 
+            title='Seccion de avisos'
         />
     </>
     )

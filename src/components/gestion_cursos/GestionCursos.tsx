@@ -1,5 +1,4 @@
 import { useState, useEffect} from 'react';
-import { getFirebaseDocs } from "../../api/getFirebaseDocs/getFirebaseDocs";
 import { FormularioCursos } from "./FormularioCursos";
 import { Curso } from './curso.interface';
 import EliminarCurso from './EliminarCurso';
@@ -8,73 +7,115 @@ import { FaAddressCard, FaEdit } from 'react-icons/fa';
 import { RootState } from '../../redux/store';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-
-const columns = [
-  {
-    name: "Nombre",
-    selector: (row: any) => row.nombre,
-    sortable: true,
-  },
-  {
-    name: "Horario",
-    cell: (row: any) => (
-      <div className='text-start'>
-        {row.horario.map((h: any, index: number) => (
-        <div key={index}>
-            {h.dia}: {h.hora}
-        </div>
-        ))}
-      </div>
-    ),
-    sortable: true,
-  },
-  {
-    name: "Modalidad",
-    selector: (row: any) => row.modalidad,
-    sortable: true,
-  },
-  {
-    name: "Ver",
-    cell: (row: any) => (
-      <button
-        className="btn btn-primary"
-        onClick={() => handleButtonClick(row.nombre)}
-      >
-        <FaAddressCard />
-      </button>
-    ),
-    width: "5vw",
-  },
-  {
-    name: "Editar",
-    cell: (row: any) => (
-      <FormularioCursos 
-      id={`course-section-modal-edit-${row.id}`}
-      titulo={`Editar Curso: ${row.nombre}`}
-      nombreButton={<FaEdit />}
-      styleButton={"btn btn-warning"}
-      submitButton={"Guardar Cambios"}
-      curso={row}
-      />
-    ),
-    width: "5vw",
-  },
-  {
-    name: "Eliminar",
-    cell: (row: any) => (
-      <EliminarCurso id={row.id}/>
-    ),
-    width: "6vw",
-  },
-];
-
+import { changeCursoEstado, cursosSelector, fetchCursos } from '../../redux/reducers/cursosSlice';
+import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
+import { updateFirebaseDoc } from '../../api/updateFirebaseDoc/updateFirebaseDoc';
 
 function GestionCursos() {
-  const [cursos, setCursos] = useState<Curso[]>([]);
+  const [cursos, setCursos] = useState<Array<Curso>>([]);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [error, setError] = useState<string | undefined>(undefined);
   const [filterText, setFilterText] = useState("");
+  const selectedCursos = useAppSelector(cursosSelector);
+  const dispatch = useAppDispatch();
+
   useEffect(() => {
-    obtenerCursos();
-  }, []);
+    (async () => {
+      await dispatch(fetchCursos())
+    })()
+  }, [dispatch])
+
+  useEffect(() => { 
+    setLoading(selectedCursos.loading);
+    setError(selectedCursos.error);
+    if (!selectedCursos.loading && !selectedCursos.error) {
+      setCursos(selectedCursos.cursos);
+    }
+  }, [selectedCursos]) 
+
+  function handleSwitchToggle(row: any): void {
+    updateFirebaseDoc(`/Cursos/${row.id}`, {
+      estado: row.estado === 0 ? 1 : 0,
+    });
+    dispatch(changeCursoEstado(row.id));
+  }
+
+  const columns = [
+    {
+      name: "Nombre",
+      selector: (row: any) => row.nombre,
+      sortable: true,
+    },
+    {
+      name: "Horario",
+      cell: (row: any) => (
+        <div className='text-start'>
+          {row.horario.map((h: any, index: number) => (
+          <div key={index}>
+              {h.dia}: {h.hora}
+          </div>
+          ))}
+        </div>
+      ),
+      sortable: true,
+    },
+    {
+      name: "Modalidad",
+      selector: (row: any) => row.modalidad,
+      sortable: true,
+    },
+    {
+      name: "Estado",
+      cell: (row: any) => (
+        <div className="form-check form-switch">
+          <input
+            className="form-check-input"
+            type="checkbox"
+            role="switch"
+            checked={row.estado}
+            onChange={() => handleSwitchToggle(row)}
+          ></input>
+        </div>
+      ),
+      width: "5vw",
+    },
+    {
+      name: "Ver",
+      cell: (row: any) => (
+        <button
+          className="btn btn-primary"
+          onClick={() => handleButtonClick(row.nombre)}
+        >
+          <FaAddressCard />
+        </button>
+      ),
+      width: "5vw",
+    },
+    {
+      name: "Editar",
+      cell: (row: any) => (
+        <FormularioCursos 
+        id={`course-section-modal-edit-${row.id}`}
+        titulo={`Editar Curso: ${row.nombre}`}
+        nombreButton={<FaEdit />}
+        styleButton={"btn btn-warning"}
+        submitButton={"Guardar Cambios"}
+        curso={row}
+        />
+      ),
+      width: "5vw",
+    },
+    {
+      name: "Eliminar",
+      cell: (row: any) => (
+        <EliminarCurso 
+          id={row.id}
+          image_url={row.image_url}
+        />
+      ),
+      width: "6vw",
+    },
+  ];
 
   // LOGICA PARA REDIRECCIONAR SI NO SE ESTA LOGUEADO, PARA QUE NO SE PUEDA ACCEDER MENDIATE URL DIRECTA
   // React-router-dom
@@ -90,27 +131,6 @@ function GestionCursos() {
     }
   }, [loggedIn, user, navigate]);
 
-  // Obtiene los cursos de Firebase
-    const obtenerCursos = async () => {
-      const cursosData = await getFirebaseDocs("Cursos");
-      var cursosFormateados: Curso[] = [];
-      cursosFormateados = cursosData.map((curso: any) => ({
-        id: curso.id,
-        nombre: curso.nombre,
-        descripcion: curso.descripcion,
-        modalidad: curso.modalidad,
-        fechaCreacion: curso.fechaCreacion,
-        fecha_inicio: curso.fecha_inicio, 
-        fecha_finalizacion: curso.fecha_finalizacion, 
-        horario: curso.horario,
-        link_plataforma: curso.link_plataforma
-      }));
-      cursosFormateados.sort((a, b) => b.fechaCreacion.toMillis() - a.fechaCreacion.toMillis());
-      setCursos(cursosFormateados);
-      console.log(cursosFormateados)
-      
-    };
-  
   return (
     <>
       <div style={{ top: "18%", left: "10%", right: "10%", bottom: "10%" }}>
@@ -152,4 +172,3 @@ export default GestionCursos;
 function handleButtonClick(name: any): void {
   console.log(name)
 }
-

@@ -1,14 +1,20 @@
 import { Timestamp } from "firebase/firestore";
 export interface Curso {
-    id: string;
+    id?: string;
     nombre: string;
     descripcion: string;
     modalidad: string;
-    fechaCreacion: Timestamp;
+    fechaCreacion?: Timestamp;
     fecha_inicio: Timestamp;
     fecha_finalizacion: Timestamp;
     horario: Horario[];
     link_plataforma: string;
+    image_url: string;
+    aprobados: [];
+    reprobados: [];
+    matriculados: [];
+    postulados: [];
+    estado: number;
 }
 
 export interface Horario { 
