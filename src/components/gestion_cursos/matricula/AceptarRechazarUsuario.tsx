@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { updateFirebaseDoc } from '../../../api/updateFirebaseDoc/updateFirebaseDoc';
 import NotificationModal from '../../Modal/NotificationModal';
+import { SentEmailCoursesRejected } from './SentEmailCoursesRejected';
 
 interface ModalProps {
   mostrar: boolean;
@@ -82,6 +83,8 @@ export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
     }
 
     setTimeout(() => {
+      // const enviadoExitoso = await SentEmailCoursesRejected();
+      // console.log(enviadoExitoso);
       setMensajeExito('');
 
       setLoading(false);
@@ -89,7 +92,7 @@ export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
     }, 2000);
   }
 
-  const handleClickCerrar = () => {
+  const handleClickCerrar = async () => {
     onClose();
   }
 
