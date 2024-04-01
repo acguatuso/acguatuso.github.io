@@ -6,6 +6,9 @@ import './CursosMain.css'
 import { uploadFirebaseImage } from '../../api/uploadFirebaseImage/uploadFirebaseImage';
 import { Toast } from '../Toast/Toast';
 import { MdDelete } from 'react-icons/md';
+import { useAppDispatch } from '../../hooks/hooks';
+import { addCurso, editCurso } from '../../redux/reducers/cursosSlice';
+import { Timestamp } from 'firebase/firestore';
 
 interface formProps{
     id: string
@@ -20,7 +23,7 @@ export const FormularioCursos = (props: formProps) => {
     const [nombreCurso, setNombreCurso] = useState('');
     const [descripcionCurso, setDescripcionCurso] = useState('');
     const [modalidad, setModalidad] = useState('');
-    const [fechaInicio, setFechaInicio] = useState<Date | null>(null);
+    const [fechaInicio, setFechaInicio] = useState<Date | null >(null);
     const [fechaFin, setFechaFin] = useState<Date | null>(null);
     const [linkCurso, setLinkCurso] = useState('');
     const [horarios, setHorarios] = useState<Horario[]>([{ dia: '', hora: '' }]); // Lista de Horarios
@@ -28,14 +31,15 @@ export const FormularioCursos = (props: formProps) => {
     const [newHorario, setNewHorario] = useState('');
     const [fileImage, setFileImage] = useState<File>()
     const [mensajeExito, setMensajeExito] = useState('');
-
+    const dispatch = useAppDispatch();
+    
     useEffect(() => {
         if (props.curso !== null) {
             setNombreCurso(props.curso.nombre);
             setDescripcionCurso(props.curso.descripcion);
             setModalidad(props.curso.modalidad);
-            setFechaInicio(props.curso.fecha_inicio.toDate());
-            setFechaFin(props.curso.fecha_finalizacion.toDate());
+            setFechaInicio(new Date(props.curso.fecha_inicio.seconds * 1000));
+            setFechaFin(new Date(props.curso.fecha_finalizacion.seconds * 1000)); 
             setLinkCurso(props.curso.link_plataforma);
             setHorarios(props.curso.horario || [{ dia: '', hora: '' }]);
         }
@@ -59,12 +63,18 @@ export const FormularioCursos = (props: formProps) => {
   
     const handleFechaInicioChange = (e: ChangeEvent<HTMLInputElement>) => {
       const fechaSeleccionada = e.target.value;
-      setFechaInicio(new Date(fechaSeleccionada));
+      const fecha = new Date(fechaSeleccionada);
+      // Ajustar la fecha para tener en cuenta la zona horaria
+      fecha.setHours(12); // Establecer la hora a mediodía para evitar cambios de día
+      setFechaInicio(fecha);
     };
     
     const handleFechaFinChange = (e: ChangeEvent<HTMLInputElement>) => {
       const fechaSeleccionada = e.target.value;
-      setFechaFin(new Date(fechaSeleccionada));
+      const fecha = new Date(fechaSeleccionada);
+      // Ajustar la fecha para tener en cuenta la zona horaria
+      fecha.setHours(12); // Establecer la hora a mediodía para evitar cambios de día
+      setFechaFin(fecha);
     };
   
     const handleHorariosChange = (index: number, key: keyof Horario, value: string) => {
@@ -76,7 +86,7 @@ export const FormularioCursos = (props: formProps) => {
             setNewHorario(value);
         }
         setHorarios(newHorarios);
-        console.log(horarios)
+        console.log(horarios);
     };
 
     const handleAddHorario = (): void => {
@@ -101,25 +111,25 @@ export const FormularioCursos = (props: formProps) => {
         setFechaInicio(null);
         setFechaFin(null);
         setLinkCurso('');
+        setFileImage(undefined)
         setHorarios([{ dia: '', hora: '' }]);
     };
 
     const handleCrearCurso = async() => {
-      const fechaCreacion = new Date();
-      if(fileImage != null){
-        uploadFirebaseImage(fileImage, `/Cursos/${nombreCurso}/image1`)
+      if(fileImage != undefined){
+        await uploadFirebaseImage(fileImage, `/Cursos/${nombreCurso}/image1`)
         setFileImage(undefined);
       }
-      const cursoData = {
+      let cursoData : Curso = {
           nombre: nombreCurso,
           descripcion: descripcionCurso,
           modalidad: modalidad,
-          fecha_inicio: fechaInicio,
-          fecha_finalizacion: fechaFin,
+          fecha_inicio: Timestamp.fromDate(fechaInicio as Date),
+          fecha_finalizacion: Timestamp.fromDate(fechaFin as Date),
           link_plataforma: linkCurso,
           horario: horarios,
-          fechaCreacion: fechaCreacion,
-          image_url: `/Cursos/${nombreCurso}/`,
+          fechaCreacion: Timestamp.now(),
+          image_url: `/Cursos/${nombreCurso}/image1`,
           aprobados: [],
           reprobados: [],
           matriculados: [],
@@ -129,39 +139,52 @@ export const FormularioCursos = (props: formProps) => {
       console.log(cursoData)
       const res = await addFirebaseDoc('Cursos', cursoData);
       console.log(res)
+      cursoData = {
+        ...cursoData,
+        id: res!.id
+      }
+      dispatch(addCurso(cursoData))
+
   
       // Después de enviar los datos, mostrar el mensaje de éxito
       setMensajeExito("Curso agregado con éxito!");
   
       // Limpiar el formulario y cerrar el modal después de unos segundos
       setTimeout(() => {
+        handleReset();
         setMensajeExito('');
       }, 5000); // El mensaje de éxito se mostrará durante 5 segundos (5000 milisegundos)
     };
  
 
-    const handleEditarCurso = () => {
-        if(fileImage != null){
-            uploadFirebaseImage(fileImage, `/Cursos/${nombreCurso}/image1`)
-            setFileImage(undefined);
+    const handleEditarCurso = async () => {
+        if(fileImage != undefined){
+          await uploadFirebaseImage(fileImage, `/Cursos/${nombreCurso}/image1`)
+          setFileImage(undefined);
         }
         if (props.curso !== null) {
             // Llamar a la función para actualizar el curso en Firebase
-            updateFirebaseDoc(`/Cursos/${props.curso.id}`, {
-                nombre: nombreCurso,
-                descripcion: descripcionCurso,
-                modalidad: modalidad,
-                fecha_inicio: fechaInicio,
-                fecha_finalizacion: fechaFin,
-                link_plataforma: linkCurso,
-                horario: horarios,
-                image_url: `/Cursos/${nombreCurso}/`,
-                aprobados: [],
-                reprobados: [],
-                matriculados: [],
-                postulados: [],
-                estado: 0,
-            });
+            let data: Curso = {
+              nombre: nombreCurso,
+              descripcion: descripcionCurso,
+              modalidad: modalidad,
+              fecha_inicio: Timestamp.fromDate(fechaInicio as Date),
+              fecha_finalizacion: Timestamp.fromDate(fechaFin as Date),
+              link_plataforma: linkCurso,
+              horario: horarios,
+              image_url: `/Cursos/${nombreCurso}/image1`,
+              aprobados: [],
+              reprobados: [],
+              matriculados: [],
+              postulados: [],
+              estado: 0,
+            }
+            await updateFirebaseDoc(`/Cursos/${props.curso.id}`, data);
+            data = {
+              ...data,
+              id: props.id
+            }
+            dispatch(editCurso(data))
             // Después de enviar los datos, mostrar el mensaje de éxito
             setMensajeExito("Curso editado con éxito!");
 
@@ -222,6 +245,7 @@ export const FormularioCursos = (props: formProps) => {
                                                     <option disabled value="">Selecciona una modalidad</option>
                                                     <option value="Presencial">Presencial</option>
                                                     <option value="Virtual">Virtual</option>
+                                                    <option value="Mixta">Mixta</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -237,8 +261,9 @@ export const FormularioCursos = (props: formProps) => {
                                             </div>
                                             <div className="row">
                                                 <div className="col">
-                                                    <label className="form-label text-dark" htmlFor="linkClase">Link de Clase</label>
-                                                    <input type="url" className="form-control" id="linkClase" name="linkClase" value={linkCurso} onChange={handleLinkCursoChange}/>
+                                                    <label className="form-label text-dark" htmlFor="linkClase" >Link de Clase </label>
+                                                    <input type="url" className="form-control" id="linkClase" name="linkClase" value={linkCurso} onChange={handleLinkCursoChange} required={modalidad === 'Virtual' || modalidad === 'Mixta'}/>
+                                                    {modalidad === 'Virtual' || modalidad === 'Mixta' ? (<span className="text-danger">* Requerido</span>) : null}
                                                 </div>
                                                 <div className="col">
                                                     <label className="form-label text-dark" htmlFor="imagen">Imagen Ilustrativa</label>
@@ -274,11 +299,9 @@ export const FormularioCursos = (props: formProps) => {
                                         ))}  
                                         <div className='text-end'>
                                           <button type="button" className="btn btn-primary" onClick={handleAddHorario}>
-                                             Agregar Horario
+                                             Agregar Día
                                           </button>
                                         </div>
-                                    
-                                        
                                         </div>
                                     </div>
                                 </div>

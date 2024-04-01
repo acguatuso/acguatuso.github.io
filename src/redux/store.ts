@@ -5,6 +5,7 @@ import authReducer from './reducers/authSlice';
 import empresaReducer from './reducers/empresaSlice';
 import aboutReducer from './reducers/aboutSlice';
 import paisInfoReducer from './reducers/paisInfoSlice';
+import cursosReducer from './reducers/cursosSlice';
 
 export type AppDispatch = typeof store.dispatch;
 export type RootState = ReturnType<typeof store.getState>;
@@ -21,6 +22,8 @@ const persistedAuthReducer = persistReducer(persistConfig, authReducer);
 const persistedEmpresaReducer = persistReducer(persistConfig, empresaReducer);
 const persistedAboutReducer = persistReducer(persistConfig, aboutReducer);
 const persistedPaisInfoReducer = persistReducer(persistConfig, paisInfoReducer);
+const persistedCursosReducer = persistReducer(persistConfig, cursosReducer);
+
 
 const store = configureStore({
   reducer: {
@@ -28,6 +31,7 @@ const store = configureStore({
     empresa: persistedEmpresaReducer,
     about: persistedAboutReducer,
     paisInfo: persistedPaisInfoReducer,
+    cursos: persistedCursosReducer,
     // aca van más reducers una vez persistidos
   }, middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
