@@ -67,14 +67,14 @@ export const EditInformationSection = () => {
   return (
     <>
     <button type="button" className="btn btn-dark m-5" data-bs-toggle="modal" data-bs-target="#information-section-edit">
-    Editar Información
+    Editar Información del Footer
     </button>
 
     <div className="modal fade" id="information-section-edit" data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div className="modal-dialog modal-lg">
         <div className="modal-content">
         <div className="modal-header">
-            <h1 className="modal-title fs-5" id="staticBackdropLabel">Editar Información</h1>
+            <h1 className="modal-title fs-5" id="staticBackdropLabel">Editando Información Footer</h1>
             <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={handleReset}></button>
         </div>
         <div className="modal-body">

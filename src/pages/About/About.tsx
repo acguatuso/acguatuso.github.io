@@ -32,7 +32,7 @@ export const About = () => {
   // Redux Hooks & Access
   const user = useSelector((state: RootState) => state.auth.user);
   const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
-  console.log('Conectado: ', loggedIn);
+  //console.log('Conectado: ', loggedIn);
   // Redireccionar si está no logueado, y no hay usuario
   useEffect(() => {
     if (!loggedIn && !user) {
