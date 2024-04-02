@@ -162,7 +162,7 @@ export const signup = (formData: any): AppThunk => async dispatch => {
     // Envía el correo de verificación
     await sendEmailVerification(userCredential.user);
 
-    const texto = 'Cuenta creada con éxtio!'
+    const texto = 'Cuenta creada con éxito!'
     dispatch(signupSuccess({ msg: texto!, emailVerified: userCredential.user.emailVerified }));
 
   } catch (error: any) {
