@@ -269,7 +269,7 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
                                     <div key={key} className="col-md-3 mb-3">
                                         <label className="form-label">{label}</label>
                                         {!editMode ? (
-                                            <div className="form-control">{key === 'user_type' ? mapUserTypeToText(formData.user_type) : value}</div>
+                                            <div className="form-control">{key === 'user_type' ? mapUserTypeToText(formData.user_type!) : value}</div>
                                         ) : (
                                             <select
                                                 title='form-select'

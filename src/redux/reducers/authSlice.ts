@@ -17,7 +17,7 @@ export interface UserData {
   direccion: string;
   fechaNacimiento: string | Timestamp | null;
   genero: string;
-  user_type?: number | undefined;
+  user_type?: number;
   estado?: number;
 }
 
@@ -53,7 +53,6 @@ const authSlice = createSlice({
       state.error = action.payload;
     },
     signupSuccess: (state, action: PayloadAction<{ msg: string, emailVerified: boolean }>) => {
-      state.loggedIn = false;
       state.notification = action.payload.msg;
       state.emailVerified = action.payload.emailVerified;
       state.error = null;
@@ -153,8 +152,8 @@ const obtenerUsuario = async (userEmail: string): Promise<UserData | null> => {
 
 export const signup = (formData: any): AppThunk => async dispatch => {
   try {
-    console.log(formData.correo)
-    console.log(formData.password)
+    //console.log(formData.correo)
+    //console.log(formData.password)
     const userCredential = await createUserWithEmailAndPassword(auth_fire, formData.correo, formData.password);
 
     // Agrega el documento a fibrease(Usuarios) collection
@@ -188,7 +187,7 @@ const agregarDoc = async (formData: any) => {
     direccion: formData.direccion,
     fechaNacimiento: Timestamp.fromDate(new Date(formData.fechaNacimiento)),
     genero: formData.genero,
-    user_type: parseInt(formData.user_type, 10),
+    user_type: 0, // toda cuenta se crea con tipo ->   (0 : Comuún),
     estado: 0  // toda cuenta se crea con estado ->   (0 : Inactivo)
   };
 
@@ -201,7 +200,7 @@ const agregarDoc = async (formData: any) => {
     await addDoc(users_collection_ref, nuevoDocumento);
     //console.log("Documento agregado con ID: ", documentoRef.id);
   } catch (error) {
-    console.error("Error al agregar documento: ", error);
+    //console.error("Error al agregar documento: ", error);
   }
 }
 
@@ -229,12 +228,12 @@ export const editarDoc = (formData: any, userEmail: string): AppThunk => async d
 
       dispatch(editInfo(user_data_updated!));
 
-      console.log("Documento del usuario actualizado exitosamente");
+      //console.log("Documento del usuario actualizado exitosamente");
     } else {
-      console.log("No se encontró el documento del usuario");
+      //console.log("No se encontró el documento del usuario");
     }
   } catch (error) {
-    console.error("Error al actualizar el documento del usuario: ", error);
+    //console.error("Error al actualizar el documento del usuario: ", error);
   }
 };
 
@@ -243,6 +242,6 @@ export const enviarResetPassword = async (email: string) => {
     await sendPasswordResetEmail(auth_fire, email);
     alert('Se ha enviado un correo electrónico para restablecer tu contraseña.');
   } catch (error) {
-    console.log(error);
+    //console.log(error);
   }
 };
