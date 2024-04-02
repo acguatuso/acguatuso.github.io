@@ -206,6 +206,10 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
         setMostrarModal(false); // Cierra el modal sin guardar los cambios
     };
 
+    const mapUserTypeToText = (userType: number) => {
+        return tiposUsuario[userType]; // tiposUsuario es el arreglo que contiene los valores de texto
+    };
+
     return (
         <div className="container shadow-lg">
             <br />
@@ -265,7 +269,7 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
                                     <div key={key} className="col-md-3 mb-3">
                                         <label className="form-label">{label}</label>
                                         {!editMode ? (
-                                            <div className="form-control">{value}</div>
+                                            <div className="form-control">{key === 'user_type' ? mapUserTypeToText(formData.user_type) : value}</div>
                                         ) : (
                                             <select
                                                 title='form-select'
