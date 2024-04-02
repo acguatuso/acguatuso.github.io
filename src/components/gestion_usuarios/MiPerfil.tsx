@@ -50,7 +50,7 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
         direccion: user?.direccion! as string,
         fechaNacimiento: user?.fechaNacimiento! as string | null,
         genero: user?.genero! as string,
-        user_type: tiposUsuario[user!.user_type as number] as string,
+        user_type: user!.user_type as number,
     };
 
     const [editMode, setEditMode] = useState(false);
@@ -120,7 +120,7 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
         const { name, value } = e.target;
         try {
             // Si el campo cambiado es un dropdown (select), actualiza el estado correspondiente y también el estado formData
-            if(name === 'user_type') {
+            if (name === 'user_type') {
                 //console.log(tiposUsuario[parseInt(value)]);
                 setSelectedTipo(tiposUsuario[parseInt(value)]);
             }
@@ -160,24 +160,36 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
     };
     // Función para abrir el modal de confirmación antes de guardar los cambios
     const handleSaveClick = () => {
-        //console.log(canton)
-        //console.log(distrito)
-        console.log(tipo)
-        if (!formData?.cedula || !formData?.nombre || !formData?.canton || distrito === '' || tipo === '') {
-            setFaltanDatosModal(true);
-            //alert('Por favor, complete todos los campos obligatorios.');
+        // Verificar si hay cambios en al menos un campo obligatorio
+        const changesDetected = Object.keys(initialState).some(key => {
+            // Excluir correo, estado y user_type de la comparación
+            if (key === 'correo' || key === 'estado' || key === 'user_type') return false;
+            return initialState[key as keyof UserData] !== formData[key as keyof UserData];
+        });
+    
+        if (!changesDetected) {
+            // No hay cambios, no se necesita mostrar el modal de que faltan datos
+            setMostrarModal(true); // Mostrar el modal de confirmación directamente
             return;
         }
-
+    
+        // Verificar si algún campo obligatorio está vacío
+        if (!formData?.cedula || !formData?.nombre || !formData?.canton || distrito === '') {
+            setFaltanDatosModal(true);
+            return;
+        }
+    
         // Validar formato de número de teléfono
         const numberPattern = /^[0-9]+$/;
         if ((formData.telefono && !numberPattern.test(formData.telefono)) || (formData.cedula && !numberPattern.test(formData.cedula))) {
             setFaltanDatosModal(true);
             return;
         }
+    
         // Abre el modal de confirmación
         setMostrarModal(true);
     };
+    
     const handleAceptar = () => {
         setFaltanDatosModal(false);
     }
@@ -212,7 +224,7 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
                 {formData && Object.entries(formData).map(([key, value]) => {
                     if ((key === 'correo') || (key === 'estado')) {
                         return null; // Salta email, user_type y estado
-                    } else if((key === 'user_type') && !pUsuario){
+                    } else if ((key === 'user_type') && !pUsuario) {
                         return null; // si no hay pUsuario se salta el renderizado del dropdown
                     }
                     // Renderizar el label con el texto personalizado
@@ -276,7 +288,7 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
                                                     <option key={index} value={genero}>{genero}</option>
                                                 ))}
                                                 {key === 'user_type' && tiposUsuario.map((tipo, index) => (
-                                                    <option key={index} value={index}>{tipo}</option>
+                                                    <option key={index} value={index} selected={formData.user_type === index}>{tipo}</option>
                                                 ))}
                                             </select>
                                         )}

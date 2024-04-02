@@ -17,7 +17,7 @@ export interface UserData {
   direccion: string;
   fechaNacimiento: string | Timestamp | null;
   genero: string;
-  user_type?: number | string;
+  user_type?: number | string | null;
   estado?: number;
 }
 
