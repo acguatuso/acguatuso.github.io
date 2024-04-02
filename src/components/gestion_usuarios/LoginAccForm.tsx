@@ -57,7 +57,7 @@ const LoginAccountForm: React.FC = () => {
         setShowLoginSuccessModal(false); // Ocultar el modal después del tiempo especificado
         navigate("/home"); // Redirige al usuario a la página de inicio
       }, 3 * 1000); // Convierte los segundos a milisegundos
-  
+
       // Limpia el temporizador si el componente se desmonta antes de que se complete
       return () => clearTimeout(timeoutId);
     }
@@ -66,11 +66,7 @@ const LoginAccountForm: React.FC = () => {
   return (
     <>
       <div className="container">
-        <div>
-          <img src="/src/assets/LogoUCAG.png" alt="Bootstrap" width="200" height="150" />
-          <h2>Bienvenido!</h2>
-          <h2>Inicio de Sesión</h2>
-        </div>
+
         <div className="row justify-content-center">
           <div className="col-md-6">
             <div className='card shadow-lg'>
@@ -83,6 +79,11 @@ const LoginAccountForm: React.FC = () => {
               )}
               {!user && (
                 <form onSubmit={handleLogin}>
+                  <div>
+                    <img src="/src/assets/LogoUCAG.png" alt="Bootstrap" width="200" height="150" />
+                    <h3>Bienvenido!</h3>
+                    <h3>Inicio de Sesión</h3>
+                  </div>
                   <div className="mb-3">
                     <label htmlFor="email" className="form-label text-start text-muted" >Correo:</label>
                     <input type="email" id="email" value={email} onChange={handleEmailChange} className="form-control" placeholder="Ej: correo@example.com" />
@@ -97,24 +98,28 @@ const LoginAccountForm: React.FC = () => {
                     </div>
                   </div>
                   <button type="submit" className="btn btn-primary">Iniciar Sesión</button>
+                  <div>
+                    <br />
+                    <label>¿No tiene cuenta?</label>
+                    <Link to="/crear-cuenta">Crear Cuenta</Link>
+                  </div>
+                  <div>
+                    <span>¿Olvidaste tu contraseña? </span>
+                    <span className="link-style" onClick={() => setIsForgotPasswordModalOpen(true)} >Haz clic aquí</span>
+                    <ForgotPassword isOpen={isForgotPasswordModalOpen} onClose={() => setIsForgotPasswordModalOpen(false)} />
+                  </div>
                 </form>
               )}
               {user && (
                 <div>
+                  <div>
+                    <img src="/src/assets/LogoUCAG.png" alt="Bootstrap" width="200" height="150" />
+                    <h3>Bienvenido!</h3>
+                  </div>
                   <label>Credenciales Correctas!</label>
                   <label>Hola {user.nombre}!</label>
                 </div>
               )}
-            </div>
-            <br />
-            <div>
-              <label>¿No tiene cuenta?</label>
-              <Link to="/crear-cuenta">Crear Cuenta</Link>
-            </div>
-            <div>
-              <span>¿Olvidaste tu contraseña? </span>
-              <span className="link-style" onClick={() => setIsForgotPasswordModalOpen(true)} >Haz clic aquí</span>
-              <ForgotPassword isOpen={isForgotPasswordModalOpen} onClose={() => setIsForgotPasswordModalOpen(false)} />
             </div>
           </div>
         </div>

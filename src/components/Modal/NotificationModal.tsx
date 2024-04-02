@@ -24,7 +24,7 @@ const NotificationModal: React.FC<ModalProps> = ({ texto, mostrar, onClose, onCo
         <div className="modal-content">
           <div className="modal-header">
             <h5 className="modal-title">Notificación</h5>
-            {onClose && <button type="button" className="btn-close" onClick={onClose}></button>} {/* Renderiza el botón de cierre solo si la función onClose está definida */}
+            {onClose && <button title="btn-close" type="button" className="btn-close" onClick={onClose}></button>} {/* Renderiza el botón de cierre solo si la función onClose está definida */}
           </div>
           <div className="modal-body">
             <p>{texto}</p>

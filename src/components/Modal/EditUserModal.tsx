@@ -20,7 +20,7 @@ const MiPerfilModal: React.FC<ModalProps> = ({ mostrar, onClose, usuario }) => {
               <div className="modal-content">
                 <div className="modal-header">
                   <h5 className="modal-title">Perfil de Usuario a Editar:</h5>
-                  {onClose && <button type="button" className="btn-close" onClick={onClose}></button>}
+                  {onClose && <button title="btn-close" type="button" className="btn-close" onClick={onClose}></button>}
                 </div>
                 <div className="modal-body">
                   {/* Pasar las props del usuario al componente MiPerfil */}

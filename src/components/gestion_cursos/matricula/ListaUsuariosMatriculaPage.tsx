@@ -150,7 +150,7 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
                 <button
                     className="btn btn-primary"
                     onClick={handleClickRegresar}>
-                    regresar
+                    Regresar
                 </button>
             </div>
             <AceptarRechazarUsuario
