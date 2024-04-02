@@ -1,14 +1,14 @@
 import emailjs from '@emailjs/browser';
 
 
-export const SentEmailCoursesRejected = (nombrePersona: string, correoPersona: string, nombreCurso: string) : Promise<boolean> => {
+export const SentEmailCoursesAcepted = (nombrePersona: string, correoPersona: string, nombreCurso: string) : Promise<boolean> => {
 
     // const serviceId: string  = 'service_ad6dvf4';
     // const templateId: string = 'contact_form';
     // const publicKey: string  = 'ON-22qKjZUDzY0s6N';
          /*Email de Cantonal Matriculas*/
   const serviceId: string = 'service_dkr0wxb';
-  const templateId: string = 'template_matricula_r'; // Rechazadas
+  const templateId: string = '';//'template_matricula_a'; // Aceptadas
   const publicKey: string = 'd2Zek1yZFLVAozcHY'; 
       /*Email de Cantonal MAtriculas*/  
     const information = {

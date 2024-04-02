@@ -158,7 +158,8 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
                 onClose={closeSeeUserModal}
                 usuario={selectedUser}
                 usuariosMatriculados={matriculados}
-                idCurso={idCurso} />
+                idCurso={idCurso} 
+                nombreCurso={nombreCurso}/>
         </>
         /* idCurso = {idCurso} */
 

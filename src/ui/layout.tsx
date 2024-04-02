@@ -36,7 +36,7 @@ const Layout: React.FC<LayoutProps> = ({ children }) => {
     <>
       <Navbar />
       {children}
-      {isLoaded && <Footer />}
+      {/* {isLoaded && <Footer />} */}
     </>
   );
 };

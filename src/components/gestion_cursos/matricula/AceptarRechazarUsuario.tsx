@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { updateFirebaseDoc } from '../../../api/updateFirebaseDoc/updateFirebaseDoc';
 import NotificationModal from '../../Modal/NotificationModal';
 import { SentEmailCoursesRejected } from './SentEmailCoursesRejected';
+import { SentEmailCoursesAcepted } from './SentEmailCoursesAcepted';
 
 interface ModalProps {
   mostrar: boolean;
@@ -9,9 +10,10 @@ interface ModalProps {
   usuario: any;
   usuariosMatriculados: string[];
   idCurso: string;
+  nombreCurso: string;
 }
 
-export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose, usuario, usuariosMatriculados, idCurso }) => {
+export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose, usuario, usuariosMatriculados, idCurso, nombreCurso }) => {
 
   //console.log("DPG", idCurso);
   const rutaDocumentoFirebase = `Cursos/${idCurso}`;
@@ -39,7 +41,8 @@ export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
       await updateFirebaseDoc(rutaDocumentoFirebase, { matriculados: newMatriculados });
       //console.log('NEW MATRICULADOS: ',newMatriculados)
       setMostrarNotificacion(true);
-
+      const enviadoExitoso = await SentEmailCoursesAcepted(usuario.nombre, usuario.correo, nombreCurso);
+      console.log(enviadoExitoso);
 
       setTimeout(() => {
         setMatriculadosLocal(newMatriculados);
@@ -65,6 +68,7 @@ export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
     if (seleccion){
 
       setLoading(true);
+      console.log('Nombre del usuario: ', usuario.nombre, 'correo: ', usuario.correo)
   
       // Verificar si el usuario está matriculado antes de intentar eliminarlo
       if (!matriculadosLocal.includes(usuario.id)) {
@@ -85,10 +89,13 @@ export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
       } catch (error) {
         console.error('Error al actualizar matriculados en Firebase:', error);
       }
+      
+      
+      
   
-      setTimeout(() => {
-        // const enviadoExitoso = await SentEmailCoursesRejected();
-        // console.log(enviadoExitoso);
+      setTimeout(async () => {
+        const enviadoExitoso = await SentEmailCoursesRejected(usuario.nombre, usuario.correo, nombreCurso);
+        console.log(enviadoExitoso);
         setMensajeExito('');
   
         setLoading(false);
