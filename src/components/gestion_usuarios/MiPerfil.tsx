@@ -33,10 +33,15 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
     // Redux Hooks & Access
     const dispatch = useAppDispatch()
     const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
-    let user = useSelector((state: RootState) => state.auth.user);
-    if (pUsuario) { // si hay un prop se trata de uin renderizado en tabla de edicion de usuario
-        user = pUsuario!;
+    let user: any = null
+    if (!pUsuario) { // si hay un prop se trata de un usuario de la tabla y no mi perfil personal
+        user = useSelector((state: RootState) => state.auth.user);
+        //console.log(user);
+    } else {
+        user = pUsuario;
+        //console.log(user);
     }
+    //console.log(user);
     const paisInfo = useSelector((state: RootState) => state.paisInfo.datosPais);
     // Clonar el objeto user para evitar mutar el estado original -> recomendable cuando se edita
     const initialState: UserData = {
@@ -197,7 +202,7 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
     // Función para guardar los cambios después de confirmar en el modal
     const handleConfirmSave = () => {
         // Dispatch de la acción para actualizar los datos del usuario en Firebase Firestore
-        dispatch(editarDoc(formData, user!.correo!));
+        dispatch(editarDoc(formData, formData.correo, pUsuario!));
         setEditMode(false);
         setMostrarModal(false); // Cierra el modal después de guardar
     };

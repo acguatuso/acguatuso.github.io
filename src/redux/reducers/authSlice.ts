@@ -204,7 +204,7 @@ const agregarDoc = async (formData: any) => {
   }
 }
 
-export const editarDoc = (formData: any, userEmail: string): AppThunk => async dispatch => {
+export const editarDoc = (formData: any, userEmail: string, user: UserData): AppThunk => async dispatch => {
   // Referencia a la colección de 'Usuarios'
   const usuariosCollectionRef = collection(data_base, "Usuarios");
 
@@ -226,7 +226,11 @@ export const editarDoc = (formData: any, userEmail: string): AppThunk => async d
 
       const user_data_updated = await obtenerUsuario(userEmail);
 
-      dispatch(editInfo(user_data_updated!));
+      if (!user){
+        dispatch(editInfo(user_data_updated!));
+      } else {
+        // no hace nada si es un pUsuario para no alterar el persistant user redux
+      }
 
       //console.log("Documento del usuario actualizado exitosamente");
     } else {
