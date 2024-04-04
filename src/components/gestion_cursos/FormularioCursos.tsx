@@ -63,18 +63,12 @@ export const FormularioCursos = (props: formProps) => {
   
     const handleFechaInicioChange = (e: ChangeEvent<HTMLInputElement>) => {
       const fechaSeleccionada = e.target.value;
-      const fecha = new Date(fechaSeleccionada);
-      // Ajustar la fecha para tener en cuenta la zona horaria
-      fecha.setHours(12); // Establecer la hora a mediodía para evitar cambios de día
-      setFechaInicio(fecha);
+      setFechaInicio(new Date(fechaSeleccionada));
     };
     
     const handleFechaFinChange = (e: ChangeEvent<HTMLInputElement>) => {
       const fechaSeleccionada = e.target.value;
-      const fecha = new Date(fechaSeleccionada);
-      // Ajustar la fecha para tener en cuenta la zona horaria
-      fecha.setHours(12); // Establecer la hora a mediodía para evitar cambios de día
-      setFechaFin(fecha);
+      setFechaFin(new Date(fechaSeleccionada));
     };
   
     const handleHorariosChange = (index: number, key: keyof Horario, value: string) => {
@@ -90,7 +84,7 @@ export const FormularioCursos = (props: formProps) => {
     };
 
     const handleAddHorario = (): void => {
-        if (selectedDia && newHorario) {
+        if (selectedDia && newHorario || horarios[horarios.length - 1].dia !== "" && horarios[horarios.length - 1].hora !== "" ) {
             setNewHorario(''); 
             setSelectedDia(''); 
             setHorarios([...horarios, { dia: '', hora: '' }]);
@@ -99,9 +93,11 @@ export const FormularioCursos = (props: formProps) => {
     };
 
     const handleRemoveHorario = (index: number) => {
-        const newHorarios = [...horarios];
-        newHorarios.splice(index, 1);
-        setHorarios(newHorarios);
+        if (horarios.length !== 1){
+            const newHorarios = [...horarios];
+            newHorarios.splice(index, 1);
+            setHorarios(newHorarios);
+        }
     };
 
     const handleReset = () => {
@@ -182,7 +178,7 @@ export const FormularioCursos = (props: formProps) => {
             await updateFirebaseDoc(`/Cursos/${props.curso.id}`, data);
             data = {
               ...data,
-              id: props.id
+              id: props.curso.id
             }
             dispatch(editCurso(data))
             // Después de enviar los datos, mostrar el mensaje de éxito
