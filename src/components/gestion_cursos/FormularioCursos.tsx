@@ -182,7 +182,7 @@ export const FormularioCursos = (props: formProps) => {
             await updateFirebaseDoc(`/Cursos/${props.curso.id}`, data);
             data = {
               ...data,
-              id: props.id
+              id: props.curso.id
             }
             dispatch(editCurso(data))
             // Después de enviar los datos, mostrar el mensaje de éxito
