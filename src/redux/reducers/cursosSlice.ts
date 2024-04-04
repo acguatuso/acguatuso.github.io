@@ -80,11 +80,18 @@ const cursosSlice = createSlice({
         if (curso) {
           curso.estado = curso.estado === 0 ? 1 : 0;
         }
-      }
+      },
+      changeCursoDisponibilidad: (state, action: PayloadAction<string>) => {
+        const cursoId = action.payload;
+        const curso = state.cursos.find(curso => curso.id === cursoId);
+        if (curso) {
+          curso.disponibilidad = curso.disponibilidad === 0 ? 1 : 0;
+        }
+      },
     }
   })
 
-  export const { addCurso, deleteCurso, editCurso, changeCursoEstado } = cursosSlice.actions;
+  export const { addCurso, deleteCurso, editCurso, changeCursoEstado, changeCursoDisponibilidad } = cursosSlice.actions;
   export const cursosSelector = (state: RootState) => state.cursos;
   export default cursosSlice.reducer;
   

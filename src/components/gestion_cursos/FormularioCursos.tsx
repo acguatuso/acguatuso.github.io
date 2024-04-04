@@ -19,6 +19,12 @@ interface formProps{
     curso: Curso | null
 }
 
+declare global {
+    interface JQuery {
+        modal(action: 'show' | 'hide' | 'toggle'): void;
+    }
+}
+
 export const FormularioCursos = (props: formProps) => {
     const [nombreCurso, setNombreCurso] = useState('');
     const [descripcionCurso, setDescripcionCurso] = useState('');
@@ -29,7 +35,7 @@ export const FormularioCursos = (props: formProps) => {
     const [horarios, setHorarios] = useState<Horario[]>([{ dia: '', hora: '' }]); // Lista de Horarios
     const [selectedDia, setSelectedDia] = useState('');
     const [newHorario, setNewHorario] = useState('');
-    const [fileImage, setFileImage] = useState<File>()
+    const [fileImage, setFileImage] = useState<File | null>(null); 
     const [mensajeExito, setMensajeExito] = useState('');
     const dispatch = useAppDispatch();
     
@@ -107,14 +113,14 @@ export const FormularioCursos = (props: formProps) => {
         setFechaInicio(null);
         setFechaFin(null);
         setLinkCurso('');
-        setFileImage(undefined)
+        setFileImage(null);
         setHorarios([{ dia: '', hora: '' }]);
     };
 
     const handleCrearCurso = async() => {
-      if(fileImage != undefined){
+      if(fileImage != null){
         await uploadFirebaseImage(fileImage, `/Cursos/${nombreCurso}/image1`)
-        setFileImage(undefined);
+        setFileImage(null);
       }
       let cursoData : Curso = {
           nombre: nombreCurso,
@@ -131,6 +137,7 @@ export const FormularioCursos = (props: formProps) => {
           matriculados: [],
           postulados: [],
           estado: 0,
+          disponibilidad: 0,
       };
       console.log(cursoData)
       const res = await addFirebaseDoc('Cursos', cursoData);
@@ -149,14 +156,14 @@ export const FormularioCursos = (props: formProps) => {
       setTimeout(() => {
         handleReset();
         setMensajeExito('');
-      }, 5000); // El mensaje de éxito se mostrará durante 5 segundos (5000 milisegundos)
+      }, 3000); // El mensaje de éxito se mostrará durante 5 segundos (5000 milisegundos)
     };
  
 
     const handleEditarCurso = async () => {
-        if(fileImage != undefined){
+        if(fileImage != null){
           await uploadFirebaseImage(fileImage, `/Cursos/${nombreCurso}/image1`)
-          setFileImage(undefined);
+          setFileImage(null);
         }
         if (props.curso !== null) {
             // Llamar a la función para actualizar el curso en Firebase
@@ -186,11 +193,26 @@ export const FormularioCursos = (props: formProps) => {
 
             setTimeout(() => {
               setMensajeExito('');
-            }, 5000); // El mensaje de éxito se mostrará durante 5 segundos (5000 milisegundos)
+            }, 3000); // El mensaje de éxito se mostrará durante 5 segundos (5000 milisegundos)
         } 
     }
 
     const handleSubmit = () => {
+        if (
+            nombreCurso === '' ||
+            descripcionCurso === '' ||
+            modalidad === '' ||
+            fechaInicio === null ||
+            fechaFin === null ||
+            (props.id.startsWith('course-section-modal-add') && fileImage === undefined) || // La imagen es requerida solo al crear un curso
+            (modalidad === 'Virtual' || modalidad === 'Mixta') && linkCurso === '' ||
+            (horarios.length > 0 && (horarios[horarios.length - 1].dia === "" || horarios[horarios.length - 1].hora === ""))
+        ) {
+            alert("Faltan campos requeridos");
+            return; // Detener el envío del formulario si algún campo requerido está vacío
+        }
+        
+        
         switch (true) {
             case props.id.startsWith('course-section-modal-add'):
                 handleCrearCurso();
@@ -201,6 +223,7 @@ export const FormularioCursos = (props: formProps) => {
             default:
                 console.error('ID de modal no reconocido:', props.id);
         }
+        $(`#${props.id}`).modal('hide');
     };
     
     return (
@@ -306,7 +329,7 @@ export const FormularioCursos = (props: formProps) => {
                     </div>
                     <div className="modal-footer border-0">
                         <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleReset}>Cancelar</button>
-                        <button type="button" className="btn btn-primary" data-bs-dismiss="modal" onClick={handleSubmit}>{props.submitButton}</button>
+                        <button type="button" className="btn btn-primary" /* data-bs-dismiss="modal" */ onClick={handleSubmit}>{props.submitButton}</button>
                     </div>
                 </div>
             </div>

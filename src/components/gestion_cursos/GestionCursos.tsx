@@ -3,11 +3,11 @@ import { FormularioCursos } from "./FormularioCursos";
 import { Curso } from './curso.interface';
 import EliminarCurso from './EliminarCurso';
 import DataTableBase from '../dataTable/DataTableBase';
-import { FaAddressCard, FaEdit } from 'react-icons/fa';
+import { FaAddressCard, FaArrowLeft, FaEdit } from 'react-icons/fa';
 import { RootState } from '../../redux/store';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { changeCursoEstado, cursosSelector, fetchCursos } from '../../redux/reducers/cursosSlice';
+import { changeCursoDisponibilidad, changeCursoEstado, cursosSelector, fetchCursos } from '../../redux/reducers/cursosSlice';
 import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
 import { updateFirebaseDoc } from '../../api/updateFirebaseDoc/updateFirebaseDoc';
 
@@ -33,12 +33,38 @@ function GestionCursos() {
     }
   }, [selectedCursos]) 
 
-  function handleSwitchToggle(row: any): void {
+  function handleSwitchToggleEstado(row: any): void {
+    // Desactivar la disponibilidad cuando se activa el estado
+    if (row.disponibilidad === 1) {
+      updateFirebaseDoc(`/Cursos/${row.id}`, {
+        disponibilidad: 0,
+      });
+      dispatch(changeCursoDisponibilidad(row.id));
+    }
+    
+    // Activar o desactivar el estado
     updateFirebaseDoc(`/Cursos/${row.id}`, {
       estado: row.estado === 0 ? 1 : 0,
     });
     dispatch(changeCursoEstado(row.id));
   }
+  
+  function handleSwitchToggleDisponibilidad(row: any): void {
+    // Desactivar el estado cuando se activa la disponibilidad
+    if (row.estado === 1) {
+      updateFirebaseDoc(`/Cursos/${row.id}`, {
+        estado: 0,
+      });
+      dispatch(changeCursoEstado(row.id));
+    }
+    
+    // Activar o desactivar la disponibilidad
+    updateFirebaseDoc(`/Cursos/${row.id}`, {
+      disponibilidad: row.disponibilidad === 0 ? 1 : 0,
+    });
+    dispatch(changeCursoDisponibilidad(row.id));
+  }
+  
 
   const columns = [
     {
@@ -73,7 +99,22 @@ function GestionCursos() {
             type="checkbox"
             role="switch"
             checked={row.estado}
-            onChange={() => handleSwitchToggle(row)}
+            onChange={() => handleSwitchToggleEstado(row)}
+          ></input>
+        </div>
+      ),
+      width: "5vw",
+    },
+    {
+      name: "Disponibilidad",
+      cell: (row: any) => (
+        <div className="form-check form-switch">
+          <input
+            className="form-check-input"
+            type="checkbox"
+            role="switch"
+            checked={row.disponibilidad}
+            onChange={() => handleSwitchToggleDisponibilidad(row)}
           ></input>
         </div>
       ),
@@ -131,12 +172,25 @@ function GestionCursos() {
     }
   }, [loggedIn, user, navigate]);
 
+  const goBack = () => {
+    navigate("/Cursos")
+  };
+
+
   return (
     <>
+      <div className="d-flex align-items-center">
+        <button className="btn btn-outline-primary me-2" onClick={goBack}>
+          <FaArrowLeft /> Volver
+        </button>
+      </div>
       <div style={{ top: "18%", left: "10%", right: "10%", bottom: "10%" }}>
-      <h2 className="text-secondary mb-0 pt-3 ps-2">
-        Gestión de Cursos
-      </h2>
+        <h2 className="text-secondary mb-0 pt-3 ps-2">
+          Gestión de Cursos
+        </h2>
+      </div>
+      <div className="alert alert-info mt-3" role="alert">
+        <strong>Nota:</strong> La <strong><em>disponibilidad</em></strong> indica si el curso está disponible o no para la visualización y matrícula por parte del usuario. Los  <strong>cursos disponibles</strong> aparecerán en la sección de matrícula. Por otro lado, el <strong><em>estado</em></strong> indica si el curso está disponible de forma inmediata o si estará disponible próximamente. Marcar un curso como  <strong>activo</strong>  lo mostrará en la sección de cursos disponibles próximante.
       </div>
       <div className="d-flex justify-content-between mb-2">
         <div className="d-flex">

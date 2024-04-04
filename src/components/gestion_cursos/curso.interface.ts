@@ -14,7 +14,8 @@ export interface Curso {
     reprobados: [];
     matriculados: [];
     postulados: [];
-    estado: number;
+    estado?: number;
+    disponibilidad?: number;
 }
 
 export interface Horario { 
