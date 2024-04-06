@@ -9,6 +9,7 @@ import { MdDelete } from 'react-icons/md';
 import { useAppDispatch } from '../../hooks/hooks';
 import { addCurso, editCurso } from '../../redux/reducers/cursosSlice';
 import { Timestamp } from 'firebase/firestore';
+import NotificationModal from '../Modal/NotificationModal';
 
 interface formProps{
     id: string
@@ -38,6 +39,7 @@ export const FormularioCursos = (props: formProps) => {
     const [fileImage, setFileImage] = useState<File | null>(null); 
     const [mensajeExito, setMensajeExito] = useState('');
     const [intentadoEnviar, setIntentadoEnviar] = useState(false);
+    const [mostrarModal, setMostrarModal] = useState(false);
     const dispatch = useAppDispatch();
     
     useEffect(() => {
@@ -120,8 +122,9 @@ export const FormularioCursos = (props: formProps) => {
     };
 
     const handleCrearCurso = async() => {
+      let res2: string | undefined;
       if(fileImage != null){
-        await uploadFirebaseImage(fileImage, `/Cursos/${nombreCurso}/image1`)
+        res2 = await uploadFirebaseImage(fileImage, `/Cursos/${nombreCurso}/image1`)
         setFileImage(null);
       }
       let cursoData : Curso = {
@@ -140,6 +143,7 @@ export const FormularioCursos = (props: formProps) => {
           postulados: [],
           estado: 0,
           disponibilidad: 0,
+          download_url: res2!,
       };
       console.log(cursoData)
       const res = await addFirebaseDoc('Cursos', cursoData);
@@ -163,9 +167,12 @@ export const FormularioCursos = (props: formProps) => {
  
 
     const handleEditarCurso = async () => {
+        let res2: string | undefined;
         if(fileImage != null){
-          await uploadFirebaseImage(fileImage, `/Cursos/${nombreCurso}/image1`)
+          res2 = await uploadFirebaseImage(fileImage, `/Cursos/${nombreCurso}/image1`)
           setFileImage(null);
+        } else {
+            res2 = props.curso?.download_url;
         }
         if (props.curso !== null) {
             // Llamar a la función para actualizar el curso en Firebase
@@ -183,6 +190,7 @@ export const FormularioCursos = (props: formProps) => {
               matriculados: [],
               postulados: [],
               estado: 0,
+              download_url: res2!,
             }
             await updateFirebaseDoc(`/Cursos/${props.curso.id}`, data);
             data = {
@@ -192,12 +200,17 @@ export const FormularioCursos = (props: formProps) => {
             dispatch(editCurso(data))
             // Después de enviar los datos, mostrar el mensaje de éxito
             setMensajeExito("Curso editado con éxito!");
-
+            $(`#${props.id}`).modal('hide');
+            setMostrarModal(false);
             setTimeout(() => {
               setMensajeExito('');
             }, 3000); // El mensaje de éxito se mostrará durante 5 segundos (5000 milisegundos)
         } 
     }
+
+    const handleCancelSave = () => {
+        setMostrarModal(false); // Cierra el modal sin guardar los cambios
+    };
 
     const handleSubmit = () => {
         setIntentadoEnviar(true);
@@ -216,14 +229,14 @@ export const FormularioCursos = (props: formProps) => {
         switch (true) {
             case props.id.startsWith('course-section-modal-add'):
                 handleCrearCurso();
+                $(`#${props.id}`).modal('hide');
                 break;
             case props.id.startsWith('course-section-modal-edit'):
-                handleEditarCurso();
+                setMostrarModal(true);
                 break;
             default:
                 console.error('ID de modal no reconocido:', props.id);
         }
-        $(`#${props.id}`).modal('hide');
     };
     
     return (
@@ -337,6 +350,13 @@ export const FormularioCursos = (props: formProps) => {
                 </div>
             </div>
         </div>
+        {/* Modal de confirmación para guardar */}
+        <NotificationModal
+                texto="¿Está seguro que desea guardar los cambios?"
+                mostrar={mostrarModal}
+                onClose={handleCancelSave}
+                onConfirm={handleEditarCurso}
+            />
         {/* <Toast 
         id='toast-form-cursos' 
         message={mensajeExito} 
