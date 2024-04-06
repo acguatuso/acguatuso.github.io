@@ -1,25 +1,16 @@
-import { AdsSectionEditModal } from './AdsSectionEditModal';
-import { AdsSectionDelete } from './AdsSectionDelete';
-import { adsSection } from '../about.interface';
-import { useAppSelector } from '../../../hooks/hooks';
-import { aboutSelector } from '../../../redux/reducers/aboutSlice';
-import { useEffect, useState } from 'react';
+import { ads, adsSelector } from '../../../redux/reducers/adsSlice'
+import { useAppSelector } from '../../../hooks/hooks'
+import { AdsEditModal } from './AdsEditModal'
+import { AdsDelete } from './AdsDelete';
 
-export const AdsSection = () => {    
-    const about = useAppSelector(aboutSelector)    
-    const [sections, setSections] = useState<adsSection[]>([])
-
-    useEffect(() => { 
-        setSections(about.sections)
-    }, [about])
-
-    
+export const AdsList = () => {
+    const ads = useAppSelector(adsSelector)        
     return (
         
     <>   
-    {about.loading &&  <div>Cargando...</div>}
+    {ads.loading &&  <div>Cargando...</div>}
     {        
-        sections.map((element: adsSection)=>{        
+        ads.adsList.map((element: ads)=>{        
             
             return ( 
                                  
@@ -33,7 +24,7 @@ export const AdsSection = () => {
                             <h5>{element.subtitulo}</h5>
                             <p className='lead'>{element.descripcion}</p>
                         </div>         
-                        <AdsSectionEditModal
+                        <AdsEditModal
                             key={`${element.id}-adssection1`} 
                             id = {element.id}
                             posicion_id={element.posicion_id}           
@@ -44,7 +35,7 @@ export const AdsSection = () => {
                             titulo= {element.titulo}
                             download_url={element!.download_url}                    
                         />     
-                        <AdsSectionDelete
+                        <AdsDelete
                             key={`${element.id}-delete1`}
                             id={element.id}
                             image_url={element.image_url}
@@ -64,7 +55,7 @@ export const AdsSection = () => {
                         <div className="col">        
                             <img  className='img-thumbnail' src={element.download_url}/>
                         </div>
-                        <AdsSectionEditModal                
+                        <AdsEditModal                
                             key={`${element.id}-adssection2`} 
                             id = {element.id}
                             posicion_id={element.posicion_id}           
@@ -75,7 +66,7 @@ export const AdsSection = () => {
                             titulo= {element.titulo}
                             download_url={element.download_url}
                         />
-                        <AdsSectionDelete 
+                        <AdsDelete
                             key={`${element.id}-delete2`}
                             id={element.id}
                             image_url={element.image_url}

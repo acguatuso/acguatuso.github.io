@@ -1,5 +1,5 @@
-import { useEffect, useState } from 'react'
-import { adsSection } from './about.interface';
+import { useState } from 'react'
+import { adsSection } from '../about.interface';
 import { updateFirebaseDoc } from '../../../api/updateFirebaseDoc/updateFirebaseDoc';
 import { uploadFirebaseImage } from '../../../api/uploadFirebaseImage/uploadFirebaseImage';
 import { useAppDispatch } from '../../../hooks/hooks';
@@ -42,7 +42,6 @@ export const AdsSectionEditModal = (props: adsSection) => {
     const handleUpdate = async()=> {
         console.log('cuando entraa al handleupdate',forms.download_url)
         let res: string | undefined;
-        //console.log('handleupdate')
         if(fileImage != undefined){
             console.log(fileImage, 'handleupdateeeee???')
             res = await uploadFirebaseImage(fileImage!,forms.image_url)

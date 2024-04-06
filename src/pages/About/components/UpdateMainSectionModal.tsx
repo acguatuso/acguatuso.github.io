@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import {  updateMainSection } from './about.interface';
+import {  updateMainSection } from '../about.interface';
 import { updateFirebaseDoc } from '../../../api/updateFirebaseDoc/updateFirebaseDoc';
 import { uploadFirebaseImage } from '../../../api/uploadFirebaseImage/uploadFirebaseImage';
 import { useAppDispatch, useAppSelector } from '../../../hooks/hooks';
@@ -35,12 +35,6 @@ export const UpdateMainSectionModal = () => {
     handleChange(evt)
   }
   
-// const showToast = () => {
-//     //aparece el toast
-//     const element = document.getElementById('toast-update')
-//     const element2 = new bootstrap.Toast(element)
-//     element2.show()
-// }
   
 const handleUpdate = async () => {
     let res: string | undefined = about.head.download_url_principal

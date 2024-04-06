@@ -4,7 +4,7 @@ import { Toast } from "../../../components/Toast/Toast";
 import { showToast } from "../../../components/Toast/toastMethods";
 import { useAppDispatch } from "../../../hooks/hooks";
 import { deleteSection } from "../../../redux/reducers/aboutSlice";
-import { idDelete } from './about.interface';
+import { idDelete } from '../about.interface';
 
 export const AdsSectionDelete = (prop: idDelete ) => {
     const dispatch = useAppDispatch()

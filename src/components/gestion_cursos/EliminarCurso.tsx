@@ -1,7 +1,7 @@
 import { MdDelete } from "react-icons/md"
 import { deleteFirebaseDoc } from "../../api/deleteFirebaseDoc/deleteFirebaseDoc"
 import { Modal } from "../../components/Modal/Modal"
-import { idDelete } from "../../pages/About/components/about.interface"
+import { idDelete } from "../../pages/About/about.interface"
 import { useAppDispatch } from "../../hooks/hooks"
 import { deleteFirebaseImages } from "../../api/deleteFirebaseImage/deleteFirebaseImage"
 import { deleteCurso } from "../../redux/reducers/cursosSlice"

@@ -1,11 +1,10 @@
 import { UpdateMainSectionModal } from "./components/UpdateMainSectionModal";
 import { AdsSection } from './components/AdsSection';
 import { AddSection } from './components/AddSection';
-import { aboutSelector, fetchMainSection, fetchSections } from '../../redux/reducers/aboutSlice';
-import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
+import { fetchMainSection, fetchSections } from '../../redux/reducers/aboutSlice';
+import { useAppDispatch } from "../../hooks/hooks";
 import { EditInformationSection } from "./components/EditInformationSection";
-import { useEffect, useState } from "react";
-import { adsSection } from "./components/about.interface";
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
 import { useNavigate } from "react-router-dom";
@@ -13,11 +12,6 @@ import { useNavigate } from "react-router-dom";
 export const About = () => {
   //IMPLEMENTACION DE REDUX
   const dispatch = useAppDispatch()
-
-  //se realiza el fetch del mainSection y se utiliza el useSelector para extraer sus datos
-  // const fetch = async()=> {
-
-  // }
 
   useEffect(() => {
     (async () => {
@@ -32,7 +26,7 @@ export const About = () => {
   // Redux Hooks & Access
   const user = useSelector((state: RootState) => state.auth.user);
   const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
-  //console.log('Conectado: ', loggedIn);
+
   // Redireccionar si está no logueado, y no hay usuario
   useEffect(() => {
     if (!loggedIn && !user) {
@@ -56,8 +50,3 @@ export const About = () => {
   )
 }
 export default About;
-
-// todo
-// agregar toast listo en updatemain, addsection
-// cuando se edita en la seccion la imagen vacia, hace que si hay imagen la quite
-// el borrar no esta eliminando las imagenes
