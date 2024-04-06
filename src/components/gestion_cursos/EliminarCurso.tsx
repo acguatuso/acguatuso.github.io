@@ -23,10 +23,10 @@ function EliminarCurso(prop: idDelete) {
         <Modal
         id={`course-section-modal-delete-${prop.id}`}
         buttonStyle={"btn btn-danger"}
-        modalTitle="Eliminar"
+        modalTitle="Notificación"
         buttonName={<MdDelete />}
         modalName={'Eliminar'}
-        body={'¿Estás seguro que desea eliminar este curso?'}
+        body={'¿Está seguro que desea eliminar este curso?'}
         secondaryButtonText={'Cancelar'}
         primaryButtonText={'Aceptar'}
         classSecondaryButton="btn btn-secondary"
