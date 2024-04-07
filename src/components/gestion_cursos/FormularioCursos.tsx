@@ -9,6 +9,7 @@ import { MdDelete } from 'react-icons/md';
 import { useAppDispatch } from '../../hooks/hooks';
 import { addCurso, editCurso } from '../../redux/reducers/cursosSlice';
 import { Timestamp } from 'firebase/firestore';
+import NotificationModal from '../Modal/NotificationModal';
 
 interface formProps{
     id: string
@@ -37,6 +38,8 @@ export const FormularioCursos = (props: formProps) => {
     const [newHorario, setNewHorario] = useState('');
     const [fileImage, setFileImage] = useState<File | null>(null); 
     const [mensajeExito, setMensajeExito] = useState('');
+    const [intentadoEnviar, setIntentadoEnviar] = useState(false);
+    const [mostrarModal, setMostrarModal] = useState(false);
     const dispatch = useAppDispatch();
     
     useEffect(() => {
@@ -114,12 +117,14 @@ export const FormularioCursos = (props: formProps) => {
         setFechaFin(null);
         setLinkCurso('');
         setFileImage(null);
+        setIntentadoEnviar(false);
         setHorarios([{ dia: '', hora: '' }]);
     };
 
     const handleCrearCurso = async() => {
+      let res2: string | undefined;
       if(fileImage != null){
-        await uploadFirebaseImage(fileImage, `/Cursos/${nombreCurso}/image1`)
+        res2 = await uploadFirebaseImage(fileImage, `/Cursos/${nombreCurso}/image1`)
         setFileImage(null);
       }
       let cursoData : Curso = {
@@ -138,6 +143,7 @@ export const FormularioCursos = (props: formProps) => {
           postulados: [],
           estado: 0,
           disponibilidad: 0,
+          download_url: res2!,
       };
       console.log(cursoData)
       const res = await addFirebaseDoc('Cursos', cursoData);
@@ -161,9 +167,12 @@ export const FormularioCursos = (props: formProps) => {
  
 
     const handleEditarCurso = async () => {
+        let res2: string | undefined;
         if(fileImage != null){
-          await uploadFirebaseImage(fileImage, `/Cursos/${nombreCurso}/image1`)
+          res2 = await uploadFirebaseImage(fileImage, `/Cursos/${nombreCurso}/image1`)
           setFileImage(null);
+        } else {
+            res2 = props.curso?.download_url;
         }
         if (props.curso !== null) {
             // Llamar a la función para actualizar el curso en Firebase
@@ -181,6 +190,7 @@ export const FormularioCursos = (props: formProps) => {
               matriculados: [],
               postulados: [],
               estado: 0,
+              download_url: res2!,
             }
             await updateFirebaseDoc(`/Cursos/${props.curso.id}`, data);
             data = {
@@ -190,14 +200,20 @@ export const FormularioCursos = (props: formProps) => {
             dispatch(editCurso(data))
             // Después de enviar los datos, mostrar el mensaje de éxito
             setMensajeExito("Curso editado con éxito!");
-
+            $(`#${props.id}`).modal('hide');
+            setMostrarModal(false);
             setTimeout(() => {
               setMensajeExito('');
             }, 3000); // El mensaje de éxito se mostrará durante 5 segundos (5000 milisegundos)
         } 
     }
 
+    const handleCancelSave = () => {
+        setMostrarModal(false); // Cierra el modal sin guardar los cambios
+    };
+
     const handleSubmit = () => {
+        setIntentadoEnviar(true);
         if (
             nombreCurso === '' ||
             descripcionCurso === '' ||
@@ -208,22 +224,19 @@ export const FormularioCursos = (props: formProps) => {
             (modalidad === 'Virtual' || modalidad === 'Mixta') && linkCurso === '' ||
             (horarios.length > 0 && (horarios[horarios.length - 1].dia === "" || horarios[horarios.length - 1].hora === ""))
         ) {
-            alert("Faltan campos requeridos");
             return; // Detener el envío del formulario si algún campo requerido está vacío
         }
-        
-        
         switch (true) {
             case props.id.startsWith('course-section-modal-add'):
                 handleCrearCurso();
+                $(`#${props.id}`).modal('hide');
                 break;
             case props.id.startsWith('course-section-modal-edit'):
-                handleEditarCurso();
+                setMostrarModal(true);
                 break;
             default:
                 console.error('ID de modal no reconocido:', props.id);
         }
-        $(`#${props.id}`).modal('hide');
     };
     
     return (
@@ -236,7 +249,7 @@ export const FormularioCursos = (props: formProps) => {
                 <div className="modal-content">
                     <div className="modal-header border-0">
                         <h1 className="modal-title fs-5" id="staticBackdropLabel">{props.titulo}</h1>
-                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={handleReset}></button>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={props.id.startsWith('course-section-modal-add') ? handleReset : undefined}></button>
                     </div>
                     <div className="modal-body text-start">
                         <form id='form-modal-cursos'>
@@ -251,16 +264,20 @@ export const FormularioCursos = (props: formProps) => {
                                         <div className="accordion-body">
                                             <div className="row">
                                                 <div className="col">
-                                                    <label className="form-label text-dark" htmlFor="nombre">Nombre</label>
-                                                    <input type="text" className="form-control" id="nombre" name="nombre" value={nombreCurso} onChange={handleNombreCursoChange}  placeholder="Nombre del curso" required/>
+                                                <label className="form-label" htmlFor="nombre">
+                                                    Nombre <span className="required-indicator text-danger">*</span>
+                                                </label>
+                                                <input type="text" className={`form-control ${intentadoEnviar && nombreCurso === '' ? 'is-invalid' : ''}`} id="nombre" name="nombre" value={nombreCurso} onChange={handleNombreCursoChange} placeholder="Nombre del curso" required />
                                                 </div>
                                                 <div className="col">
-                                                    <label className="form-label text-dark" htmlFor="descripcion">Descripción</label>
-                                                    <input type="text" className="form-control" id="descripcion" name="descripcion" value={descripcionCurso} onChange={handleDescripcionCursoChange} placeholder="Descripción del curso" required/>
+                                                    <label className="form-label" htmlFor="descripcion">
+                                                        Descripción <span className="required-indicator text-danger">*</span>
+                                                    </label>
+                                                    <input type="text" className={`form-control ${intentadoEnviar && descripcionCurso === '' ? 'is-invalid' : ''}`} id="descripcion" name="descripcion" value={descripcionCurso} onChange={handleDescripcionCursoChange} placeholder="Descripción del curso" required/>
                                                 </div>
                                                 <div className="col">
-                                                    <label className="form-label text-dark" htmlFor="modalidad">Modalidad</label>
-                                                    <select id="modalidad" className="form-select" name="modalidad" value={modalidad} onChange={handleModalidadChange} required>
+                                                    <label className="form-label" htmlFor="modalidad">Modalidad <span className="required-indicator text-danger">*</span></label>
+                                                    <select id="modalidad" className={`form-select ${intentadoEnviar && modalidad === '' ? 'is-invalid' : ''}`} name="modalidad" value={modalidad} onChange={handleModalidadChange} required>
                                                     <option disabled value="">Selecciona una modalidad</option>
                                                     <option value="Presencial">Presencial</option>
                                                     <option value="Virtual">Virtual</option>
@@ -270,23 +287,22 @@ export const FormularioCursos = (props: formProps) => {
                                             </div>
                                             <div className="row">
                                                 <div className="col">
-                                                    <label className="form-label text-dark" htmlFor="fechaInicio">Fecha de Inicio</label>
-                                                    <input type="date" className="form-control" id="fechaInicio" name="fechaInicio" value={fechaInicio ? fechaInicio.toISOString().substring(0, 10) : ''} onChange={handleFechaInicioChange} required/>
+                                                    <label className="form-label"  htmlFor="fechaInicio">Fecha de Inicio <span className="required-indicator text-danger">*</span></label>
+                                                    <input type="date" className={`form-control ${intentadoEnviar && fechaInicio === null ? 'is-invalid' : ''}`} id="fechaInicio" name="fechaInicio" value={fechaInicio ? fechaInicio.toISOString().substring(0, 10) : ''} onChange={handleFechaInicioChange} required/>
                                                 </div>
                                                 <div className="col">
-                                                    <label className="form-label text-dark" htmlFor="fechaFin">Fecha de Fin</label>
-                                                    <input type="date" className="form-control" id="fechaFin" name="fechaFin" value={fechaFin ? fechaFin.toISOString().substring(0, 10) : ''} onChange={handleFechaFinChange} required/>
+                                                    <label className="form-label" htmlFor="fechaFin">Fecha de Fin <span className="required-indicator text-danger">*</span></label>
+                                                    <input type="date" className={`form-control ${intentadoEnviar && fechaFin === null ? 'is-invalid' : ''}`} id="fechaFin" name="fechaFin" value={fechaFin ? fechaFin.toISOString().substring(0, 10) : ''} onChange={handleFechaFinChange} required/>
                                                 </div>
                                             </div>
                                             <div className="row">
                                                 <div className="col">
-                                                    <label className="form-label text-dark" htmlFor="linkClase" >Link de Clase </label>
-                                                    <input type="url" className="form-control" id="linkClase" name="linkClase" value={linkCurso} onChange={handleLinkCursoChange} required={modalidad === 'Virtual' || modalidad === 'Mixta'}/>
-                                                    {modalidad === 'Virtual' || modalidad === 'Mixta' ? (<span className="text-danger">* Requerido</span>) : null}
+                                                    <label className="form-label" htmlFor="linkClase" >Link de Clase {modalidad === 'Virtual' || modalidad === 'Mixta' ? (<span className=" required-indicator text-danger">*</span>) : null}</label>
+                                                    <input type="url" className={`form-control ${intentadoEnviar && (modalidad === 'Virtual' || modalidad === 'Mixta') && linkCurso === '' ? 'is-invalid' : ''}`} id="linkClase" name="linkClase" value={linkCurso} onChange={handleLinkCursoChange} required={modalidad === 'Virtual' || modalidad === 'Mixta'}/>
                                                 </div>
                                                 <div className="col">
-                                                    <label className="form-label text-dark" htmlFor="imagen">Imagen Ilustrativa</label>
-                                                    <input type="file" className="form-control" id="imagen" name="imagen" onChange={ (event) => setFileImage(event.target.files![0])}/>
+                                                    <label className="form-label" htmlFor="imagen">Imagen Ilustrativa  {props.id.startsWith('course-section-modal-add') ? (<span className="required-indicator text-danger">*</span>) : null} </label>
+                                                    <input type="file" className={`form-control ${intentadoEnviar && props.id.startsWith('course-section-modal-add') && fileImage === null ? 'is-invalid' : ''}`} id="imagen" name="imagen" onChange={ (event) => setFileImage(event.target.files![0])}/>
                                                 </div>
                                             </div>
                                         </div>
@@ -295,14 +311,14 @@ export const FormularioCursos = (props: formProps) => {
                                 <div className="accordion-item">
                                     <h2 className="accordion-header" id="horariosHeading">
                                         <button className="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#horariosCollapse" aria-expanded="false" aria-controls="horariosCollapse">
-                                        Horarios
+                                        Horarios <span className="required-indicator text-danger"> *</span>
                                         </button>
                                     </h2>
                                     <div id="horariosCollapse" className="accordion-collapse collapse" aria-labelledby="horariosHeading">
                                         <div className="accordion-body">
                                         {horarios.map((horario, index) => (
-                                            <div key={index} className="input-group mb-3">
-                                                <select className="form-select input-group-text text-start" value={horario.dia} onChange={(e) => handleHorariosChange(index, 'dia', e.target.value)} required>
+                                            <div key={index} className="input-group mb-3 has-validation">
+                                                <select className={`form-select input-group-text text-start ${intentadoEnviar && selectedDia === '' ? 'is-invalid' : ''}`} value={horario.dia} onChange={(e) => handleHorariosChange(index, 'dia', e.target.value)} required>
                                                     <option disabled value="">Selecciona un día</option>
                                                     <option value="Lunes">Lunes</option>
                                                     <option value="Martes">Martes</option>
@@ -312,7 +328,7 @@ export const FormularioCursos = (props: formProps) => {
                                                     <option value="Sábado">Sábado</option>
                                                     <option value="Domingo">Domingo</option>
                                                 </select>
-                                                <input type="text" className="form-control" value={horario.hora} onChange={(e) => handleHorariosChange(index, 'hora', e.target.value)} aria-label="horario" aria-describedby="inputGroup-sizing-default8" required/>
+                                                <input type="text" className={`form-control ${intentadoEnviar && newHorario === '' ? 'is-invalid' : ''}`} value={horario.hora} onChange={(e) => handleHorariosChange(index, 'hora', e.target.value)} aria-label="horario" aria-describedby="inputGroup-sizing-default8" required/>
                                                 <button type="button" className="btn btn-danger" onClick={() => handleRemoveHorario(index)}> <MdDelete/> </button>
                                             </div>
                                         ))}  
@@ -328,12 +344,19 @@ export const FormularioCursos = (props: formProps) => {
                         </form>
                     </div>
                     <div className="modal-footer border-0">
-                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={handleReset}>Cancelar</button>
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={props.id.startsWith('course-section-modal-add') ? handleReset : undefined}>Cancelar</button>
                         <button type="button" className="btn btn-primary" /* data-bs-dismiss="modal" */ onClick={handleSubmit}>{props.submitButton}</button>
                     </div>
                 </div>
             </div>
         </div>
+        {/* Modal de confirmación para guardar */}
+        <NotificationModal
+                texto="¿Está seguro que desea guardar los cambios?"
+                mostrar={mostrarModal}
+                onClose={handleCancelSave}
+                onConfirm={handleEditarCurso}
+            />
         {/* <Toast 
         id='toast-form-cursos' 
         message={mensajeExito} 

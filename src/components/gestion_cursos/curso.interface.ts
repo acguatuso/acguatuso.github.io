@@ -16,6 +16,7 @@ export interface Curso {
     postulados: [];
     estado?: number;
     disponibilidad?: number;
+    download_url: string;
 }
 
 export interface Horario { 

@@ -3,13 +3,14 @@ import { FormularioCursos } from "./FormularioCursos";
 import { Curso } from './curso.interface';
 import EliminarCurso from './EliminarCurso';
 import DataTableBase from '../dataTable/DataTableBase';
-import { FaAddressCard, FaArrowLeft, FaEdit } from 'react-icons/fa';
+import { FaAddressCard, FaArrowLeft, FaEdit, FaEye } from 'react-icons/fa';
 import { RootState } from '../../redux/store';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
 import { changeCursoDisponibilidad, changeCursoEstado, cursosSelector, fetchCursos } from '../../redux/reducers/cursosSlice';
 import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
 import { updateFirebaseDoc } from '../../api/updateFirebaseDoc/updateFirebaseDoc';
+import DetallesCurso from './DetallesCurso';
 
 function GestionCursos() {
   const [cursos, setCursos] = useState<Array<Curso>>([]);
@@ -123,12 +124,7 @@ function GestionCursos() {
     {
       name: "Ver",
       cell: (row: any) => (
-        <button
-          className="btn btn-primary"
-          onClick={() => handleButtonClick(row.nombre)}
-        >
-          <FaAddressCard />
-        </button>
+        <DetallesCurso curso={row}/>
       ),
       width: "5vw",
     },
