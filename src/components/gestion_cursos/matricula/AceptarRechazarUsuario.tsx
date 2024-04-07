@@ -68,14 +68,15 @@ export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
     if (seleccion){
 
       setLoading(true);
-      console.log('Nombre del usuario: ', usuario.nombre, 'correo: ', usuario.correo)
+      //console.log('Nombre del usuario: ', usuario.nombre, 'correo: ', usuario.correo)
   
       // Verificar si el usuario está matriculado antes de intentar eliminarlo
       if (!matriculadosLocal.includes(usuario.id)) {
         console.warn('El usuario no está matriculado, no es necesario rechazarlo.');
         setLoading(false);
         onClose();
-        return;
+        await SentEmailCoursesRejected(usuario.nombre, usuario.correo, nombreCurso); 
+        return; 
       }
   
       try {

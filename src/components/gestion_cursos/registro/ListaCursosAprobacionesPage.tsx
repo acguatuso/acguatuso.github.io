@@ -3,6 +3,7 @@ import { getFirebaseDocs } from "../../../api/getFirebaseDocs/getFirebaseDocs";
 import DataTableBase from "../../dataTable/DataTableBase";
 import { useNavigate } from 'react-router-dom';
 import { UsuariosMatriculadosPage } from '.';
+import { FaArrowLeft } from 'react-icons/fa6';
 
 
 //interfaz de un curso con datos reducido. 
@@ -124,8 +125,8 @@ export const ListaCursosAprobacionesPage = () => {
                     </div>
 
                     <div className='d-flex justify-content-between'>
-                        <button className="btn btn-primary mt-3 "
-                                onClick={regresarCursosPage}>Regresar</button>
+                        <button className="btn btn-outline-primary mt-3 "
+                                onClick={regresarCursosPage}><FaArrowLeft /> Volver</button>
                         <div className="col-md-2">
                             <input
                                 type="text"
