@@ -122,7 +122,7 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
 
 
     const handleClickRegresar = () => {
-        onRegresarClick(); // aqui estoy llamando a la funcion del componente ListaCursosMAtriculaPage para que cambie el estado de showListaUsuarios a false. Y asi se vuelva a mostrar la lista de los cursos matriculados
+        onRegresarClick(); // aqui estoy llamando a la funcion del componente ListaCursosMAtriculaPage para que cambie el estado de showUsuariosMatriculados a false. Y asi se vuelva a mostrar la lista de los cursos matriculados
     }
 
     //console.log(`ESTE ES EL NOMBRE DEL CURSO ${nombreCurso}`, 'Y este el id de sus usuarios interesados: ', usuariosInteresados);
