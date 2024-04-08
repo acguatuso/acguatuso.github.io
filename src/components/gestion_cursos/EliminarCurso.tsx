@@ -15,7 +15,10 @@ function EliminarCurso(prop: idDelete) {
 
         await deleteFirebaseImages(prop.image_url)
         dispatch(deleteCurso(prop))
-        showToast('delete-modal-curso')
+        setTimeout(() => {
+            showToast('delete-modal-curso')
+        }, 1000); 
+        
     }
 
     return (
@@ -36,7 +39,7 @@ function EliminarCurso(prop: idDelete) {
 
         <Toast
             id='delete-modal-curso' 
-            message='¡Se ha eliminado con éxito el curso!' 
+            message='¡Curso eliminado con éxito!' 
             title='Seccion de avisos'
         />
     </>
