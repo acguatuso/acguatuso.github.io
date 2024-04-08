@@ -1,33 +1,42 @@
 import { useState, useEffect } from 'react';
-import { getFirebaseDocs } from "../../../api/getFirebaseDocs/getFirebaseDocs";
 import DataTableBase from "../../dataTable/DataTableBase";
 import { useNavigate } from 'react-router-dom';
 import { UsuariosMatriculadosPage } from '.';
 import { FaArrowLeft } from 'react-icons/fa6';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import { fetchCursos } from '../../../redux/reducers/cursosSlice';
+import { useAppDispatch } from '../../../hooks/hooks';
+import { Curso } from '../curso.interface';
 
-
-//interfaz de un curso con datos reducido. 
-interface Course {
-    id: string;
-    nombre: string;
-    descripcion: string;
-    usuariosInteresados: string[];
-    matriculados: string[];
-    aprobados: string[];
-}
 export const ListaCursosAprobacionesPage = () => {
-    const [courses, setCourses] = useState<Course[]>([]);
+    //REDUX/////////////////////////////////////////////////////
+    // El dispatch lo necesito para lo de Redux con los cursos
+    const dispatch = useAppDispatch();
+    const coursesRedux = useSelector((state: RootState) => state.cursos.cursos);
+
+    useEffect(() => {
+        (async () => {
+            await dispatch(fetchCursos())
+        })()
+    }, [dispatch])
+
+    //console.log({coursesRedux});
+    //REDUX///////////////////////////////////////////////////////
+
+    //const [courses, setCourses] = useState<Course[]>([]);
     const [showUsuariosMatriculados, setShowUsuariosMatriculados] = useState(false); // Esto me servira, para cuando le doy clic al boton de gestionar me muestre el otro componente 
     const [idCursoConsular, setIdCursoConsultar] = useState('');
     const [nombreCurso, setNombreCurso] = useState('');
     // const [usuariosInteresadosCurso, setUsuariosInteresadosCurso] = useState<string[]>([]);
     const [usuariosMatriculados, setUsuariosMatriculados] = useState<string[]>([]);
-    const [usuariosAprobados, setUsuariosAprobados] = useState<string []>([]);
-    const [usuariosReprobados, setUsuariosReprobados] = useState<string []>([]);
-    const [filteredCourses, setFilteredCourses] = useState<Course[]> ([]);
+    const [usuariosAprobados, setUsuariosAprobados] = useState<string[]>([]);
+    const [usuariosReprobados, setUsuariosReprobados] = useState<string[]>([]);
+    //const [filteredCourses, setFilteredCourses] = useState<Course[]> ([]);
+    const [filteredCourses, setFilteredCourses] = useState<Curso[]>([]);
     const [filterText, setFilterText] = useState('');
     const navigate = useNavigate();
-  
+
     //Columnas de la tabla
     const columns = [
         {
@@ -36,80 +45,57 @@ export const ListaCursosAprobacionesPage = () => {
             sortable: true,
             width: "30vw",
         },
-    
+
         {
             name: "Descripción",
             selector: (row: any) => row.descripcion,
             sortable: true,
             width: "50vw",
         },
-    
-    
+
+
         {
             name: "Gestionar",
             cell: (row: any) => (
-                
+
                 <button
                     className="btn btn-primary"
-                    onClick={() => handleClickListaUsuarios(row.id, row.nombre, row.usuariosInteresados, row.matriculados, row.aprobados, row.reprobados)}
-                    >
+                    onClick={() => handleClickListaUsuarios(row.id, row.nombre, row.matriculados, row.aprobados, row.reprobados)}
+                >
                     <i className='fa-solid fa-users'></i>
                 </button>
             ),
             width: "8vw",
         }
     ];
-  
-    const handleClickListaUsuarios = (idCurso: string, nombreCurso: string, usuariosInte: string[], matriculadosCurso: string[], aprobadosCurso: string[], reprobadosCurso: string[]) => {
-    
-        // setUsuariosInteresadosCurso(usuariosInte);
+
+    const handleClickListaUsuarios = (idCurso: string, nombreCurso: string, matriculadosCurso: string[], aprobadosCurso: string[], reprobadosCurso: string[]) => {
+
         setIdCursoConsultar(idCurso);
         setNombreCurso(nombreCurso);
         setUsuariosMatriculados(matriculadosCurso);
         setUsuariosAprobados(aprobadosCurso);
         setUsuariosReprobados(reprobadosCurso);
         //console.log({usuariosReprobados})
-        
+
         setShowUsuariosMatriculados(true);
     }
 
     const handleRegresarClick = () => {
-         setShowUsuariosMatriculados(false); // Cambia el estado a true cuando se hace clic en Regresar
+        setShowUsuariosMatriculados(false); // Cambia el estado a true cuando se hace clic en Regresar
     }
+
     useEffect(() => {
-    
-        const fetchData = async() => {
-            try{
-                const docSnap =  await getFirebaseDocs('Cursos');
-                const coursesData = docSnap.map((doc: any) => ({
-                    id: doc.id,
-                    nombre: doc.nombre,
-                    descripcion: doc.descripcion,
-                    usuariosInteresados: doc.postulados,//doc.usuarios_interesados,
-                    matriculados: doc.matriculados,
-                    aprobados: doc.aprobados,
-                    reprobados: doc.reprobados,
-                }));
-                setCourses(coursesData);
-            }catch(error){
-                console.error('Error Al traer los cursos:', error);
-            }
-        }
-        
-        fetchData();
-        
-    }, [])
-    useEffect(() => {
-        if (filterText.trim() === ''){
-            setFilteredCourses(courses);
+        if (filterText.trim() === '') {
+            setFilteredCourses(coursesRedux);
         } else {
-            const filtered = courses.filter(course => 
+            const filtered = coursesRedux.filter(course =>
                 course.nombre.toLocaleLowerCase().includes(filterText.toLocaleLowerCase())
             );
             //console.log('Estos son los cursos filtrados por nombre: ', filtered);
             setFilteredCourses(filtered);
         }
-    }, [filterText, courses]);
+    }, [filterText, coursesRedux]);
 
     const regresarCursosPage = () => {
         navigate('/Cursos');
@@ -120,11 +106,11 @@ export const ListaCursosAprobacionesPage = () => {
 
             {showUsuariosMatriculados ? (
                 <UsuariosMatriculadosPage onRegresarClick={handleRegresarClick}
-                                          nombreCurso = {nombreCurso} //usuariosInteresados={usuariosInteresadosCurso}
-                                          matriculados = {usuariosMatriculados}
-                                          aprobados = {usuariosAprobados}
-                                          reprobados = {usuariosReprobados}
-                                          idCurso={idCursoConsular}/>
+                    nombreCurso={nombreCurso} //usuariosInteresados={usuariosInteresadosCurso}
+                    matriculados={usuariosMatriculados}
+                    aprobados={usuariosAprobados}
+                    reprobados={usuariosReprobados}
+                    idCurso={idCursoConsular} />
             ) : (
                 <>
                     <div>
@@ -136,7 +122,7 @@ export const ListaCursosAprobacionesPage = () => {
 
                     <div className='d-flex justify-content-between'>
                         <button className="btn btn-outline-primary mt-3 "
-                                onClick={regresarCursosPage}><FaArrowLeft /> Volver</button>
+                            onClick={regresarCursosPage}><FaArrowLeft /> Volver</button>
                         <div className="col-md-2">
                             <input
                                 type="text"
