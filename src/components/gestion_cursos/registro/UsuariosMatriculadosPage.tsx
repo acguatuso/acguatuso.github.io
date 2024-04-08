@@ -78,8 +78,7 @@ export const UsuariosMatriculadosPage = ({ onRegresarClick, nombreCurso, matricu
                     cedula: doc.cedula,
                     telefono: doc.telefono,
                     correo: doc.correo,
-                    //descripcion: doc.descripcion,
-                    //usuariosInteresados: doc.usuarios_interesados,
+
                 }));
                 //console.log('DATOS DE LOS USUARIOS: ', userData);
                 setUsers(userData);
@@ -114,9 +113,7 @@ export const UsuariosMatriculadosPage = ({ onRegresarClick, nombreCurso, matricu
     }
 
     const handleClickVer = (usuario: Users): void => {
-    //     console.log("Boton click:", usuario);
-    // console.log({aprobados})
-    // console.log({reprobados})
+
         openSeeUserModal();
         setSelectedUser(usuario);
     }
@@ -151,7 +148,6 @@ export const UsuariosMatriculadosPage = ({ onRegresarClick, nombreCurso, matricu
                 mostrar = {showDetailsUserModal}
                 onClose={closeSeeUserModal}
                 usuario={selectedUser}
-                // usuariosMatriculados={matriculados}
                 idCurso={idCurso}
                 nombreCurso={nombreCurso}
                 usuariosAprobados={aprobados}
