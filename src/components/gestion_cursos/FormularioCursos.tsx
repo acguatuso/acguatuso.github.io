@@ -340,7 +340,7 @@ export const FormularioCursos = (props: formProps) => {
                                                 </div>
                                                 <div className="col">
                                                     <label className="form-label" htmlFor="imagen">Imagen Ilustrativa  {props.id.startsWith('course-section-modal-add') ? (<span className="required-indicator text-danger">*</span>) : null} </label>
-                                                    <input type="file" accept="image/png, image/jpeg, image/jpg" className={`form-control ${intentadoEnviar && props.id.startsWith('course-section-modal-add') && fileImage === null ? 'is-invalid' : ''}`} id="imagen" name="imagen" onChange={ (event) => setFileImage(event.target.files![0])}/>
+                                                    <input type="file" accept="image/png, image/jpeg, image/jpg" className={`form-control ${intentadoEnviar && props.id.startsWith('course-section-modal-add') && fileImage === null ? 'is-invalid' : ''}`} id="imagen" name="imagen" value={!fileImage ? "" : undefined}   onChange={ (event) => setFileImage(event.target.files![0])}/>
                                                 </div>
                                             </div>
                                         </div>
