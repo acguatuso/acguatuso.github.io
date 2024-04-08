@@ -38,7 +38,8 @@ export const FormularioCursos = (props: formProps) => {
     const [fileImage, setFileImage] = useState<File | null>(null); 
     const [intentadoEnviar, setIntentadoEnviar] = useState(false);
     const [mostrarModal, setMostrarModal] = useState(false);
-    const [mostrarFecha, setMostrarFecha] = useState(false);
+    const [mostrarFechaInicio, setMostrarFechaInicio] = useState(false); 
+    const [mostrarFechaFin, setMostrarFechaFin] = useState(false); 
     const dispatch = useAppDispatch();
     
     useEffect(() => {
@@ -50,7 +51,8 @@ export const FormularioCursos = (props: formProps) => {
             setFechaFin(props.curso.fecha_finalizacion instanceof Timestamp ? props.curso.fecha_finalizacion.toDate() : null); 
             setLinkCurso(props.curso.link_plataforma);
             setHorarios(props.curso.horario);
-            setMostrarFecha(true);
+            setMostrarFechaInicio(true);
+            setMostrarFechaFin(true);
         }
     }, [props.curso]);
 
@@ -63,7 +65,8 @@ export const FormularioCursos = (props: formProps) => {
             setFechaFin(props.curso.fecha_finalizacion instanceof Timestamp ? props.curso.fecha_finalizacion.toDate() : null); 
             setLinkCurso(props.curso.link_plataforma);
             setHorarios(props.curso.horario);
-            setMostrarFecha(true);
+            setMostrarFechaInicio(true);
+            setMostrarFechaFin(true);
             setFileImage(null);
         }
     };
@@ -85,13 +88,13 @@ export const FormularioCursos = (props: formProps) => {
     };
   
     const handleFechaInicioChange = (e: ChangeEvent<HTMLInputElement>) => {
-      setMostrarFecha(false);
+      setMostrarFechaInicio(false);
       const fechaSeleccionada = e.target.value;
       setFechaInicio(new Date(fechaSeleccionada));
     };
     
     const handleFechaFinChange = (e: ChangeEvent<HTMLInputElement>) => {
-      setMostrarFecha(false);
+      setMostrarFechaFin(false);
       const fechaSeleccionada = e.target.value;
       setFechaFin(new Date(fechaSeleccionada));
     };
@@ -255,8 +258,8 @@ export const FormularioCursos = (props: formProps) => {
         setFileImage(null);
     };
 
-    function formatearFecha(fecha: Date | undefined): string | undefined {
-        if (!mostrarFecha && fecha){
+    function formatearFecha(fecha: Date | undefined, mostrar: boolean): string | undefined {
+        if (!mostrar && fecha){
             return fecha ? fecha.toISOString().substring(0, 10) : undefined;
         }
         else {
@@ -323,11 +326,11 @@ export const FormularioCursos = (props: formProps) => {
                                             <div className="row">
                                                 <div className="col">
                                                     <label className="form-label"  htmlFor="fechaInicio">Fecha de Inicio <span className="required-indicator text-danger">*</span></label>
-                                                    <input type="date" className={`form-control ${intentadoEnviar && fechaInicio === null ? 'is-invalid' : ''}`} id="fechaInicio" name="fechaInicio" value={fechaInicio ? formatearFecha(fechaInicio) : ''} onChange={handleFechaInicioChange} required/>
+                                                    <input type="date" className={`form-control ${intentadoEnviar && fechaInicio === null ? 'is-invalid' : ''}`} id="fechaInicio" name="fechaInicio" value={fechaInicio ? formatearFecha(fechaInicio, mostrarFechaInicio) : ''} onChange={handleFechaInicioChange} required/>
                                                 </div>
                                                 <div className="col">
                                                     <label className="form-label" htmlFor="fechaFin">Fecha de Fin <span className="required-indicator text-danger">*</span></label>
-                                                    <input type="date" className={`form-control ${intentadoEnviar && fechaFin === null ? 'is-invalid' : ''}`} id="fechaFin" name="fechaFin" value={fechaFin? formatearFecha(fechaFin) : ''} onChange={handleFechaFinChange} required/>
+                                                    <input type="date" className={`form-control ${intentadoEnviar && fechaFin === null ? 'is-invalid' : ''}`} id="fechaFin" name="fechaFin" value={fechaFin? formatearFecha(fechaFin, mostrarFechaFin) : ''} onChange={handleFechaFinChange} required/>
                                                 </div>
                                             </div>
                                             <div className="row">
