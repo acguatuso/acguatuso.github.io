@@ -23,6 +23,7 @@ export const ListaCursosAprobacionesPage = () => {
     // const [usuariosInteresadosCurso, setUsuariosInteresadosCurso] = useState<string[]>([]);
     const [usuariosMatriculados, setUsuariosMatriculados] = useState<string[]>([]);
     const [usuariosAprobados, setUsuariosAprobados] = useState<string []>([]);
+    const [usuariosReprobados, setUsuariosReprobados] = useState<string []>([]);
     const [filteredCourses, setFilteredCourses] = useState<Course[]> ([]);
     const [filterText, setFilterText] = useState('');
     const navigate = useNavigate();
@@ -50,7 +51,7 @@ export const ListaCursosAprobacionesPage = () => {
                 
                 <button
                     className="btn btn-primary"
-                    onClick={() => handleClickListaUsuarios(row.id, row.nombre, row.usuariosInteresados, row.matriculados, row.aprobados)}
+                    onClick={() => handleClickListaUsuarios(row.id, row.nombre, row.usuariosInteresados, row.matriculados, row.aprobados, row.reprobados)}
                     >
                     <i className='fa-solid fa-users'></i>
                 </button>
@@ -59,14 +60,15 @@ export const ListaCursosAprobacionesPage = () => {
         }
     ];
   
-    const handleClickListaUsuarios = (idCurso: string, nombreCurso: string, usuariosInte: string[], matriculadosCurso: string[], aprobadosCurso: string[]) => {
+    const handleClickListaUsuarios = (idCurso: string, nombreCurso: string, usuariosInte: string[], matriculadosCurso: string[], aprobadosCurso: string[], reprobadosCurso: string[]) => {
     
         // setUsuariosInteresadosCurso(usuariosInte);
         setIdCursoConsultar(idCurso);
         setNombreCurso(nombreCurso);
         setUsuariosMatriculados(matriculadosCurso);
         setUsuariosAprobados(aprobadosCurso);
-        //  console.log({usuariosAprobados})
+        setUsuariosReprobados(reprobadosCurso);
+        //console.log({usuariosReprobados})
         
         setShowUsuariosMatriculados(true);
     }
@@ -86,8 +88,8 @@ export const ListaCursosAprobacionesPage = () => {
                     usuariosInteresados: doc.postulados,//doc.usuarios_interesados,
                     matriculados: doc.matriculados,
                     aprobados: doc.aprobados,
+                    reprobados: doc.reprobados,
                 }));
-                //console.log(coursesData);
                 setCourses(coursesData);
             }catch(error){
                 console.error('Error Al traer los cursos:', error);
@@ -121,6 +123,7 @@ export const ListaCursosAprobacionesPage = () => {
                                           nombreCurso = {nombreCurso} //usuariosInteresados={usuariosInteresadosCurso}
                                           matriculados = {usuariosMatriculados}
                                           aprobados = {usuariosAprobados}
+                                          reprobados = {usuariosReprobados}
                                           idCurso={idCursoConsular}/>
             ) : (
                 <>

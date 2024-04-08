@@ -13,8 +13,8 @@ interface Users {
     correo: string;
 }
 
-export const UsuariosMatriculadosPage = ({ onRegresarClick, nombreCurso, matriculados, idCurso, aprobados }:
-    {onRegresarClick: () => void; nombreCurso: string; matriculados: string[]; idCurso: string;  aprobados: string[]; }) => {
+export const UsuariosMatriculadosPage = ({ onRegresarClick, nombreCurso, matriculados, idCurso, aprobados, reprobados }:
+    {onRegresarClick: () => void; nombreCurso: string; matriculados: string[]; idCurso: string;  aprobados: string[]; reprobados: string[]; }) => {
   
     const [users, setUsers] = useState<Users[]>([]);
     const [showDetailsUserModal, setShowDetailsUserModal] = useState(false); // estado para controlar la visibilidad del modal
@@ -116,6 +116,7 @@ export const UsuariosMatriculadosPage = ({ onRegresarClick, nombreCurso, matricu
     const handleClickVer = (usuario: Users): void => {
     //     console.log("Boton click:", usuario);
     // console.log({aprobados})
+    // console.log({reprobados})
         openSeeUserModal();
         setSelectedUser(usuario);
     }
@@ -154,6 +155,7 @@ export const UsuariosMatriculadosPage = ({ onRegresarClick, nombreCurso, matricu
                 idCurso={idCurso}
                 nombreCurso={nombreCurso}
                 usuariosAprobados={aprobados}
+                usuariosReprobados={reprobados}
             />
         </>
     )

@@ -9,11 +9,12 @@ interface ModalProps {
     usuario: any;
     //usuariosMatriculados: string[];
     usuariosAprobados: string[];
+    usuariosReprobados: string[];
     idCurso: string;
     nombreCurso: string;
 }
 
-export const AprobarReprobarUsuario: React.FC<ModalProps>  = ({ mostrar, onClose, usuario, usuariosAprobados, /* usuariosMatriculados ,*/ idCurso, nombreCurso }) => {
+export const AprobarReprobarUsuario: React.FC<ModalProps>  = ({ mostrar, onClose, usuario, usuariosAprobados, usuariosReprobados, /* usuariosMatriculados ,*/ idCurso, nombreCurso }) => {
 //   //console.log("DPG", idCurso);
   const rutaDocumentoFirebase = `Cursos/${idCurso}`;
 //   //console.log('RUTA DEL CURSO: ', rutaDocumentoFirebase);
@@ -23,16 +24,16 @@ export const AprobarReprobarUsuario: React.FC<ModalProps>  = ({ mostrar, onClose
    const [loading, setLoading] = useState(false);
 //   const [matriculadosLocal, setMatriculadosLocal] = useState<string[]>([]);
 const [aprobadosLocal, setAprobadosLocal] = useState<string []>([]);
+const [reprobadosLocal, setReprobadosLocal] = useState<string []>([]);
 
   useEffect(() => {
-    // Actualizar aprobados locales al recibir nuevos datos
-//     setMatriculadosLocal(usuariosMatriculados);
+    // Actualizar aprobados y reprobados locales al recibir nuevos datos
     setAprobadosLocal(usuariosAprobados);
-  }, [usuariosAprobados]);
+    setReprobadosLocal(usuariosReprobados);
+  }, [usuariosAprobados, usuariosReprobados]);
 
-//   const isMatriculado = usuario?.id && matriculadosLocal.includes(usuario.id)//usuariosMatriculados.includes(usuario.id);
     const isAprobado = usuario?.id && aprobadosLocal.includes(usuario.id);
-    const isReprobado = false;
+    const isReprobado = usuario?.id && reprobadosLocal.includes(usuario.id);
     // console.log({isAprobado})
 
    const handleClickAprobar = async () => {
@@ -40,10 +41,26 @@ const [aprobadosLocal, setAprobadosLocal] = useState<string []>([]);
     // console.log({aprobadosLocal})
     setLoading(true);
 
+    // En caso de que el alumno se encuentre en Reprobado y lo quieran aprobar. Quita al alumno de Reprobados en la BD
+    if (isReprobado){
+        const seleccion = confirm('¿Está seguro de Aprobar al usuario?');
+        if (seleccion){
+            try {
+                const newReprobados = reprobadosLocal.filter(id => id !== usuario.id);
+                await updateFirebaseDoc(rutaDocumentoFirebase, { reprobados: newReprobados });
+                setReprobadosLocal(newReprobados); // Actualiza el estado global de reprobados
+   
+            } catch (error) {
+                console.error('(Caso: Alumno anteriormente Reprobado): Error al Aprobar alumno en Firebase:', error);
+            }
+        }
+    }
+
+    // agrega al alumno a Aprobados en la BD
     try {
       const newAprobados = [...aprobadosLocal, usuario.id];
       await updateFirebaseDoc(rutaDocumentoFirebase, { aprobados: newAprobados });
-      console.log({newAprobados})
+      //console.log({newAprobados})
       setMostrarNotificacion(true);
       setTimeout(() => {
         setAprobadosLocal(newAprobados);
@@ -60,47 +77,78 @@ const [aprobadosLocal, setAprobadosLocal] = useState<string []>([]);
     }, 2500);
    }
 
-   const handleClickRechazar = async () => {
-//     //TODO
-//     const seleccion = confirm('¿Está seguro de desmatricular/rechazar al usuario?');
-    
-//     if (seleccion){
-
-//       setLoading(true);
-//       //console.log('Nombre del usuario: ', usuario.nombre, 'correo: ', usuario.correo)
-  
-//       // Verificar si el usuario está matriculado antes de intentar eliminarlo
-//       if (!matriculadosLocal.includes(usuario.id)) {
-//         console.warn('El usuario no está matriculado, no es necesario rechazarlo.');
-//         setLoading(false);
+    const handleClickRechazar = async () => {
+        
+        //     if (seleccion){
+            
+            setLoading(true);
+            //       //console.log('Nombre del usuario: ', usuario.nombre, 'correo: ', usuario.correo)
+            
+            //       // Verificar si el usuario está matriculado antes de intentar eliminarlo
+            //       if (!matriculadosLocal.includes(usuario.id)) {
+                //         console.warn('El usuario no está matriculado, no es necesario rechazarlo.');
+                //         setLoading(false);
 //         onClose();
 //         await SentEmailCoursesRejected(usuario.nombre, usuario.correo, nombreCurso); 
 //         return; 
 //       }
+
+// en caso de que el alumno estaba aprobado y quieren reprobarlo.
+// console.log({isAprobado})
+        if (isAprobado){
+            const seleccion = confirm('¿Está seguro de Reprobar al usuario?');
+            if (seleccion){
+                try {
+                    const newAprobados = aprobadosLocal.filter(id => id !== usuario.id);
+                    await updateFirebaseDoc(rutaDocumentoFirebase, { aprobados: newAprobados });
+                    setAprobadosLocal(newAprobados); // Actualiza el estado global de aprobados
+                    //setMensajeExito('El estudiante ha sido Reprobado.');    
+                } catch (error) {
+                    console.error('(Caso: Alumno anteriormente Aprobado): Error al reprobar alumno en Firebase:', error);
+                }
+            }
+        }
+
+
+        // agrega al alumno a Reprobados en la BD
+    try {
+        const newReprobados = [...reprobadosLocal, usuario.id];
+        await updateFirebaseDoc(rutaDocumentoFirebase, { reprobados: newReprobados });
+        //console.log({newReprobados})
+        //setMostrarNotificacion(true);
+        setMensajeExito('El estudiante ha sido Reprobado.');
+        setTimeout(() => {
+          setReprobadosLocal(newReprobados);
+        }, 3000);
+      } catch (error) {
+        console.error('Error al actualizar reprobados en Firebase:', error);
+      }
   
-//       try {
-//         const newMatriculados = matriculadosLocal.filter(id => id !== usuario.id);
-//         //console.log('ESTAMOS EN RECHAZAR: ', newMatriculados)
-//         await updateFirebaseDoc(rutaDocumentoFirebase, { matriculados: newMatriculados });
-//         setMatriculadosLocal(newMatriculados); // Actualiza el estado global de matriculados
-//         setMensajeExito('Se ha desmatriculado el usuario.');
+      setTimeout(() => {
   
-//         // onClose();
-//       } catch (error) {
-//         console.error('Error al actualizar matriculados en Firebase:', error);
-//       }
+        setMostrarNotificacion(false);
+        setLoading(false);
+        setMensajeExito('');
+        onClose();
+      }, 2500);
+
+    //   try{
+
+
+    //   } catch (error){
+        // console.error('(Caso: Alumno esperando evaluacion): Error al reprobar alumno en Firebase:', error);
+    //   }
       
       
-      
   
-//       setTimeout(async () => {
+      setTimeout(async () => {
 //         const enviadoExitoso = await SentEmailCoursesRejected(usuario.nombre, usuario.correo, nombreCurso);
 //         console.log(enviadoExitoso);
 //         setMensajeExito('');
   
-//         setLoading(false);
-//         onClose();
-//       }, 2000);
+        setLoading(false);
+        onClose();
+      }, 2000);
 //     }
     
    }
@@ -149,10 +197,20 @@ const handleClickCerrar = () => {
                          <button type="button" className="btn btn-danger" onClick={handleClickRechazar} disabled={loading}>Reprobar</button>
                          <button type="button" className="btn btn-secondary" onClick={handleClickCerrar} disabled={loading}>Cancelar</button>
                         </>
+                        
                      ) : (
                         <>
-                         <button type="button" className="btn btn-danger" onClick={handleClickRechazar} disabled={loading}>Reprobar</button>
-                         <button type="button" className="btn btn-success" onClick={handleClickAprobar} disabled={loading}>Aprobar</button>
+                         {isReprobado ? (
+                            <>
+                             <button type="button" className="btn btn-success" onClick={handleClickAprobar} disabled={loading}>Aprobar</button>
+                             <button type="button" className="btn btn-secondary" onClick={handleClickCerrar} disabled={loading}>Cancelar</button>
+                            </>
+                         ) : (
+                            <>
+                             <button type="button" className="btn btn-danger" onClick={handleClickRechazar} disabled={loading}>Reprobar</button>
+                             <button type="button" className="btn btn-success" onClick={handleClickAprobar} disabled={loading}>Aprobar</button>
+                            </>
+                         )}
                         </>
                      )}
                  </div>
