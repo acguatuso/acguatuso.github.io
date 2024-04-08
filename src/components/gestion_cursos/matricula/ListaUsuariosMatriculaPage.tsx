@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { getFirebaseDocs } from '../../../api/getFirebaseDocs/getFirebaseDocs';
 import DataTableBase from '../../dataTable/DataTableBase';
 import { AceptarRechazarUsuario } from './AceptarRechazarUsuario';
+import { FaArrowLeft } from 'react-icons/fa6';
 
 //interfaz de un usuario con datos reducido. 
 interface Users {
@@ -135,7 +136,12 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
                 <h5 className="text-muted pt-4" >
                     Interesados en el curso: {nombreCurso}
                 </h5>
-                <div className="d-flex justify-content-end mb-2">
+                <div className="d-flex justify-content-between">
+                    <button 
+                        className="btn btn-outline-primary mt-3 "
+                        onClick={handleClickRegresar}>
+                        <FaArrowLeft /> Volver
+                    </button>
                     <div className="col-md-2">
 
                         <input
@@ -147,11 +153,6 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
                     </div>
                 </div>
                 <DataTableBase columns={columns} data={filteredUsers} />
-                <button
-                    className="btn btn-primary"
-                    onClick={handleClickRegresar}>
-                    Regresar
-                </button>
             </div>
             <AceptarRechazarUsuario
                 mostrar={showDetailsUserModal}

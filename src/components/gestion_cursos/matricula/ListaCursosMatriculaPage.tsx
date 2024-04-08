@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 import { getFirebaseDocs } from "../../../api/getFirebaseDocs/getFirebaseDocs";
 import DataTableBase from "../../dataTable/DataTableBase";
 import { ListaUsuariosMatriculaPage } from '.';
+import { FaArrowLeft } from 'react-icons/fa6';
+import { useNavigate } from 'react-router-dom';
 
 //interfaz de un curso con datos reducido. 
 interface Course {
@@ -22,7 +24,7 @@ export const ListaCursosMatriculaPage = () => {
     const [usuariosMatriculados, setUsuariosMatriculados] = useState<string[]>([]);
     const [filteredCourses, setFilteredCourses] = useState<Course[]> ([]);
     const [filterText, setFilterText] = useState('');
-
+    const navigate = useNavigate();
     
     //Columnas de la tabla
     const columns = [
@@ -108,6 +110,9 @@ export const ListaCursosMatriculaPage = () => {
 
 
 
+    const regresarCursosPage = () => {
+        navigate('/Cursos');
+    }
   return (
     <div>
 
@@ -120,7 +125,9 @@ export const ListaCursosMatriculaPage = () => {
                     <h5 className="text-muted pt-4" >
                         Lista de Cursos
                     </h5>
-                    <div className="d-flex justify-content-end mb-2">
+                    <div className="d-flex justify-content-between">
+                    <button className="btn btn-outline-primary mt-3 "
+                                onClick={regresarCursosPage}><FaArrowLeft /> Volver</button>
                         <div className="col-md-2">
 
                             <input 
