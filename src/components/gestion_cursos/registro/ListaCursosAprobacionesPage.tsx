@@ -13,14 +13,16 @@ interface Course {
     descripcion: string;
     usuariosInteresados: string[];
     matriculados: string[];
+    aprobados: string[];
 }
 export const ListaCursosAprobacionesPage = () => {
     const [courses, setCourses] = useState<Course[]>([]);
     const [showUsuariosMatriculados, setShowUsuariosMatriculados] = useState(false); // Esto me servira, para cuando le doy clic al boton de gestionar me muestre el otro componente 
     const [idCursoConsular, setIdCursoConsultar] = useState('');
-    // const [nombreCurso, setNombreCurso] = useState('');
+    const [nombreCurso, setNombreCurso] = useState('');
     // const [usuariosInteresadosCurso, setUsuariosInteresadosCurso] = useState<string[]>([]);
-    // const [usuariosMatriculados, setUsuariosMatriculados] = useState<string[]>([]);
+    const [usuariosMatriculados, setUsuariosMatriculados] = useState<string[]>([]);
+    const [usuariosAprobados, setUsuariosAprobados] = useState<string []>([]);
     const [filteredCourses, setFilteredCourses] = useState<Course[]> ([]);
     const [filterText, setFilterText] = useState('');
     const navigate = useNavigate();
@@ -48,7 +50,7 @@ export const ListaCursosAprobacionesPage = () => {
                 
                 <button
                     className="btn btn-primary"
-                    onClick={() => handleClickListaUsuarios(row.id, row.nombre, row.usuariosInteresados, row.matriculados)}
+                    onClick={() => handleClickListaUsuarios(row.id, row.nombre, row.usuariosInteresados, row.matriculados, row.aprobados)}
                     >
                     <i className='fa-solid fa-users'></i>
                 </button>
@@ -57,14 +59,16 @@ export const ListaCursosAprobacionesPage = () => {
         }
     ];
   
-    const handleClickListaUsuarios = (idCurso: string, nombreCurso: string, usuariosInte: string[], matriculadosCurso: string[]) => {
+    const handleClickListaUsuarios = (idCurso: string, nombreCurso: string, usuariosInte: string[], matriculadosCurso: string[], aprobadosCurso: string[]) => {
     
         // setUsuariosInteresadosCurso(usuariosInte);
         setIdCursoConsultar(idCurso);
-        // setNombreCurso(nombreCurso);
-        // setUsuariosMatriculados(matriculadosCurso);
+        setNombreCurso(nombreCurso);
+        setUsuariosMatriculados(matriculadosCurso);
+        setUsuariosAprobados(aprobadosCurso);
+        //  console.log({usuariosAprobados})
         
-         setShowUsuariosMatriculados(true);
+        setShowUsuariosMatriculados(true);
     }
 
     const handleRegresarClick = () => {
@@ -81,6 +85,7 @@ export const ListaCursosAprobacionesPage = () => {
                     descripcion: doc.descripcion,
                     usuariosInteresados: doc.postulados,//doc.usuarios_interesados,
                     matriculados: doc.matriculados,
+                    aprobados: doc.aprobados,
                 }));
                 //console.log(coursesData);
                 setCourses(coursesData);
@@ -112,9 +117,11 @@ export const ListaCursosAprobacionesPage = () => {
         <div>
 
             {showUsuariosMatriculados ? (
-                <UsuariosMatriculadosPage onRegresarClick={handleRegresarClick} /* idCurso={idCursoConsular} */ 
-                //     nombreCurso = {nombreCurso} usuariosInteresados={usuariosInteresadosCurso}
-                     /* matriculados = {usuariosMatriculados} *//>
+                <UsuariosMatriculadosPage onRegresarClick={handleRegresarClick}
+                                          nombreCurso = {nombreCurso} //usuariosInteresados={usuariosInteresadosCurso}
+                                          matriculados = {usuariosMatriculados}
+                                          aprobados = {usuariosAprobados}
+                                          idCurso={idCursoConsular}/>
             ) : (
                 <>
                     <div>
