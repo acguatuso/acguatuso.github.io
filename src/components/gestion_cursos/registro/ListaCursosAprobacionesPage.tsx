@@ -1,9 +1,10 @@
 import { useState, useEffect } from 'react';
 import { getFirebaseDocs } from "../../../api/getFirebaseDocs/getFirebaseDocs";
 import DataTableBase from "../../dataTable/DataTableBase";
-import { ListaUsuariosMatriculaPage } from '.';
-import { FaArrowLeft } from 'react-icons/fa6';
 import { useNavigate } from 'react-router-dom';
+import { UsuariosMatriculadosPage } from '.';
+import { FaArrowLeft } from 'react-icons/fa6';
+
 
 //interfaz de un curso con datos reducido. 
 interface Course {
@@ -12,20 +13,21 @@ interface Course {
     descripcion: string;
     usuariosInteresados: string[];
     matriculados: string[];
+    aprobados: string[];
 }
-
-export const ListaCursosMatriculaPage = () => {
-
+export const ListaCursosAprobacionesPage = () => {
     const [courses, setCourses] = useState<Course[]>([]);
-    const [showUsuariosMatricula, setShowUsuariosMatricula] = useState(false);
+    const [showUsuariosMatriculados, setShowUsuariosMatriculados] = useState(false); // Esto me servira, para cuando le doy clic al boton de gestionar me muestre el otro componente 
     const [idCursoConsular, setIdCursoConsultar] = useState('');
     const [nombreCurso, setNombreCurso] = useState('');
-    const [usuariosInteresadosCurso, setUsuariosInteresadosCurso] = useState<string[]>([]);
+    // const [usuariosInteresadosCurso, setUsuariosInteresadosCurso] = useState<string[]>([]);
     const [usuariosMatriculados, setUsuariosMatriculados] = useState<string[]>([]);
+    const [usuariosAprobados, setUsuariosAprobados] = useState<string []>([]);
+    const [usuariosReprobados, setUsuariosReprobados] = useState<string []>([]);
     const [filteredCourses, setFilteredCourses] = useState<Course[]> ([]);
     const [filterText, setFilterText] = useState('');
     const navigate = useNavigate();
-    
+  
     //Columnas de la tabla
     const columns = [
         {
@@ -34,7 +36,7 @@ export const ListaCursosMatriculaPage = () => {
             sortable: true,
             width: "30vw",
         },
-
+    
         {
             name: "Descripción",
             selector: (row: any) => row.descripcion,
@@ -49,7 +51,7 @@ export const ListaCursosMatriculaPage = () => {
                 
                 <button
                     className="btn btn-primary"
-                    onClick={() => handleClickListaUsuarios(row.id, row.nombre, row.usuariosInteresados, row.matriculados)}
+                    onClick={() => handleClickListaUsuarios(row.id, row.nombre, row.usuariosInteresados, row.matriculados, row.aprobados, row.reprobados)}
                     >
                     <i className='fa-solid fa-users'></i>
                 </button>
@@ -57,22 +59,23 @@ export const ListaCursosMatriculaPage = () => {
             width: "8vw",
         }
     ];
-
-    const handleClickListaUsuarios = (idCurso: string, nombreCurso: string, usuariosInte: string[], matriculadosCurso: string[]) => {
-        //console.log('ID del Curso: ', idCurso);
-        //console.log('Estos son los usuarios interesados: ', usuariosInte);
-        setUsuariosInteresadosCurso(usuariosInte);
+  
+    const handleClickListaUsuarios = (idCurso: string, nombreCurso: string, usuariosInte: string[], matriculadosCurso: string[], aprobadosCurso: string[], reprobadosCurso: string[]) => {
+    
+        // setUsuariosInteresadosCurso(usuariosInte);
         setIdCursoConsultar(idCurso);
         setNombreCurso(nombreCurso);
         setUsuariosMatriculados(matriculadosCurso);
+        setUsuariosAprobados(aprobadosCurso);
+        setUsuariosReprobados(reprobadosCurso);
+        //console.log({usuariosReprobados})
         
-        setShowUsuariosMatricula(true);
+        setShowUsuariosMatriculados(true);
     }
 
     const handleRegresarClick = () => {
-        setShowUsuariosMatricula(false); // Cambia el estado a true cuando se hace clic en Regresar
+         setShowUsuariosMatriculados(false); // Cambia el estado a true cuando se hace clic en Regresar
     }
-
     useEffect(() => {
     
         const fetchData = async() => {
@@ -84,8 +87,9 @@ export const ListaCursosMatriculaPage = () => {
                     descripcion: doc.descripcion,
                     usuariosInteresados: doc.postulados,//doc.usuarios_interesados,
                     matriculados: doc.matriculados,
+                    aprobados: doc.aprobados,
+                    reprobados: doc.reprobados,
                 }));
-                //console.log(coursesData);
                 setCourses(coursesData);
             }catch(error){
                 console.error('Error Al traer los cursos:', error);
@@ -95,7 +99,6 @@ export const ListaCursosMatriculaPage = () => {
         fetchData();
         
     }, [])
-
     useEffect(() => {
         if (filterText.trim() === ''){
             setFilteredCourses(courses);
@@ -108,40 +111,46 @@ export const ListaCursosMatriculaPage = () => {
         }
     }, [filterText, courses]);
 
-
-
     const regresarCursosPage = () => {
         navigate('/Cursos');
     }
-  return (
-    <div>
 
-        {showUsuariosMatricula ? (
-                <ListaUsuariosMatriculaPage onRegresarClick={handleRegresarClick} idCurso={idCursoConsular} 
-                    nombreCurso = {nombreCurso} usuariosInteresados={usuariosInteresadosCurso}
-                    matriculados = {usuariosMatriculados}/>
+    return (
+        <div>
+
+            {showUsuariosMatriculados ? (
+                <UsuariosMatriculadosPage onRegresarClick={handleRegresarClick}
+                                          nombreCurso = {nombreCurso} //usuariosInteresados={usuariosInteresadosCurso}
+                                          matriculados = {usuariosMatriculados}
+                                          aprobados = {usuariosAprobados}
+                                          reprobados = {usuariosReprobados}
+                                          idCurso={idCursoConsular}/>
             ) : (
                 <>
-                    <h5 className="text-muted pt-4" >
-                        Lista de Cursos
-                    </h5>
-                    <div className="d-flex justify-content-between">
-                    <button className="btn btn-outline-primary mt-3 "
+                    <div>
+                        <h5 className="text-muted pt-4" >
+                            Lista de Cursos
+                        </h5>
+
+                    </div>
+
+                    <div className='d-flex justify-content-between'>
+                        <button className="btn btn-outline-primary mt-3 "
                                 onClick={regresarCursosPage}><FaArrowLeft /> Volver</button>
                         <div className="col-md-2">
-
-                            <input 
+                            <input
                                 type="text"
-                                className='form-control bg-light text-dark mt-3 me-2 border border-primary shadow-lg' 
+                                className='form-control bg-light text-dark mt-3 border border-primary shadow-lg'
                                 placeholder='Filtrar por nombre'
-                                value = {filterText}
-                                onChange={e => setFilterText(e.target.value)}/>
+                                value={filterText}
+                                onChange={e => setFilterText(e.target.value)}
+                            />
                         </div>
                     </div>
-                        <DataTableBase columns={columns} data={filteredCourses} />
+                    <DataTableBase columns={columns} data={filteredCourses} />
                 </>
             )}
-         
-    </div>
-  )
+
+        </div>
+    )
 }
