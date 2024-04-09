@@ -90,14 +90,14 @@ export const Navbar = () => {
 
                                         <NavLink
                                             className={({ isActive }) => `nav-item nav-link ${isActive ? 'active' : ''} navbar-text-white`}
-                                            to="/nombre5"
+                                            to="/servicios"
                                         >
                                             Servicios
                                         </NavLink>
 
                                         <NavLink
                                             className={({ isActive }) => `nav-item nav-link ${isActive ? 'active' : ''} navbar-text-white`}
-                                            to="/nombre6"
+                                            to="/avisos"
                                         >
                                             Avisos
                                         </NavLink>

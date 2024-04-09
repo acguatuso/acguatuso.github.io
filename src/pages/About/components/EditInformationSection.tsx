@@ -1,11 +1,10 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { useAppDispatch, useAppSelector } from '../../../hooks/hooks';
 import { setEmpresaData, EmpresaData, empresaSelector } from '../../../redux/reducers/empresaSlice';
 import { updateFirebaseDoc } from "../../../api/updateFirebaseDoc/updateFirebaseDoc";
 
 export const EditInformationSection = () => {
     const empresa = useAppSelector(empresaSelector)
-    //console.log(empresa)
     const dispatch = useAppDispatch()
     const initialState = {
         correo: empresa!.correo,
@@ -60,7 +59,6 @@ export const EditInformationSection = () => {
         ]
 
     }
-    //console.log(data, 'handleUpdateInformation')
     await updateFirebaseDoc('/Empresa/ZktZQqsBnqVVoL4dfRHv',data)
     dispatch(setEmpresaData(data))
   }

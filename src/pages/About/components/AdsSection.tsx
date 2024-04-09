@@ -1,6 +1,6 @@
 import { AdsSectionEditModal } from './AdsSectionEditModal';
 import { AdsSectionDelete } from './AdsSectionDelete';
-import { adsSection } from './about.interface';
+import { adsSection } from '../about.interface';
 import { useAppSelector } from '../../../hooks/hooks';
 import { aboutSelector } from '../../../redux/reducers/aboutSlice';
 import { useEffect, useState } from 'react';
@@ -13,9 +13,12 @@ export const AdsSection = () => {
         setSections(about.sections)
     }, [about])
 
+    
     return (
+        
     <>   
-    {
+    {about.loading &&  <div>Cargando...</div>}
+    {        
         sections.map((element: adsSection)=>{        
             
             return ( 

@@ -4,17 +4,13 @@ import { Toast } from "../../../components/Toast/Toast";
 import { showToast } from "../../../components/Toast/toastMethods";
 import { useAppDispatch } from "../../../hooks/hooks";
 import { deleteSection } from "../../../redux/reducers/aboutSlice";
-import { idDelete } from './about.interface';
+import { idDelete } from '../about.interface';
 
 export const AdsSectionDelete = (prop: idDelete ) => {
     const dispatch = useAppDispatch()
     const handleDelete = async() =>{
-        console.log(prop!.id,'handleDelete')
-        await deleteFirebaseDoc(`/Empresa/ZktZQqsBnqVVoL4dfRHv/secciones/${prop!.id}`)
-        
-        console.log(prop.image_url)
-        await deleteFirebaseImages(prop.image_url)
-        
+        await deleteFirebaseDoc(`/Empresa/ZktZQqsBnqVVoL4dfRHv/secciones/${prop!.id}`)                
+        await deleteFirebaseImages(prop.image_url)        
         dispatch(deleteSection(prop))
         showToast('delete-modal-section')
     }

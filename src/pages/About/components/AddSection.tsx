@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { addFirebaseDoc } from '../../../api/addFirebaseDoc/addFirebaseDoc';
 import { uploadFirebaseImage } from '../../../api/uploadFirebaseImage/uploadFirebaseImage';
-import { adsSection } from './about.interface';
+import { adsSection } from '../about.interface';
 import { v4 } from "uuid"
 import { useAppDispatch } from '../../../hooks/hooks';
 import { addSection } from '../../../redux/reducers/aboutSlice';
@@ -33,10 +33,8 @@ export const AddSection = () => {
 
   const handleReset = () => {
     setForms(initialState)
-    //closeModal('add-section')
   }
   const handleSetFile = (evt: any) =>{
-    //console.log(evt.target.files[0], 'handlesetfile add')
     setFileImage(evt.target.files[0])
     setForms({...forms, 
       image_url: `Empresa/Secciones/${v4()}`})
@@ -58,7 +56,6 @@ export const AddSection = () => {
       download_url: res!
     }
     const res2 = await addFirebaseDoc('/Empresa/ZktZQqsBnqVVoL4dfRHv/secciones',data)
-    //console.log(res2!.id)
     
     data = {
       ...data,

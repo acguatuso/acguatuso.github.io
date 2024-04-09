@@ -1,16 +1,14 @@
 import { createSlice, PayloadAction, createAsyncThunk } from '@reduxjs/toolkit';
 import { RootState } from '../store';
-import { adsSection, updateMainSection, idDelete } from '../../pages/About/components/about.interface';
+import { adsSection, updateMainSection, idDelete } from '../../pages/About/about.interface';
 import { getFirebaseDoc } from '../../api/getFirebaseDoc/getFirebaseDoc';
 import { getFirebaseDocs } from '../../api/getFirebaseDocs/getFirebaseDocs';
-//import { useAppDispatch } from '../../hooks/hooks';
 
 //THUNKS
 export const fetchMainSection = createAsyncThunk(
     'about/fetchMainSection',
     async () => {
         const docSnap = await getFirebaseDoc('/Empresa/ZktZQqsBnqVVoL4dfRHv')
-        //console.log(docSnap)
         const data: updateMainSection = {            
             image_principal_url: docSnap!.image_principal_url, 
             subtitulo_principal: docSnap!.subtitulo_principal, 
@@ -25,9 +23,6 @@ export const fetchSections = createAsyncThunk(
     'about/fetchSections',
     async () => {
         const docSnap = await getFirebaseDocs('/Empresa/ZktZQqsBnqVVoL4dfRHv/secciones')
-        const data = docSnap as adsSection[]
-        //console.log(data)
-
         return docSnap as adsSection[]
     }
 )
@@ -38,7 +33,6 @@ export interface aboutState{
     error: string | undefined
     loading: boolean
 }
-
 
 const initialState: aboutState ={
     head: {
@@ -67,7 +61,6 @@ const aboutSlice = createSlice({
         },
         editSection(state, action: PayloadAction<adsSection>){
             const data = state.sections.map( (element: adsSection) => { 
-                //console.log(element.id,'identificador',action.payload.id,'payload')
                 if(element.id == action.payload.id){
                     return action.payload
                 }  
@@ -77,9 +70,7 @@ const aboutSlice = createSlice({
         },
         deleteSection(state, action: PayloadAction<idDelete>){
             const data = state.sections.filter((element)=> { 
-                console.log(element.id,action.payload.id,'deletesection')
                 return element.id != action.payload.id })
-            //console.log(action.payload.id,'deletesection')
             state.sections = data
         }
     },
@@ -99,14 +90,12 @@ const aboutSlice = createSlice({
             state.head = {} as updateMainSection,
             state.error = action.error.message;            
         });
-
         
         builder.addCase(fetchSections.pending, (state) => {
             state.loading = true
         });
         builder.addCase(fetchSections.fulfilled, (state,action: PayloadAction<adsSection[]>) => {
             state.loading = false,
-            //console.log(action.payload, 'fulfilled')
             state.sections = action.payload
         });
         builder.addCase(fetchSections.rejected, (state,action) => {
@@ -117,10 +106,8 @@ const aboutSlice = createSlice({
     }
 
 });
-//const dispatch = useAppDispatch()
 export const aboutSelector = (state: RootState) => state.about
 export const headAboutSelector = (state: RootState) => state.about.head
 export const sectionsAboutSelector = (state: RootState) => state.about.sections
 export const { mainSection,adsSections,addSection,editSection,deleteSection } = aboutSlice.actions;
 export default aboutSlice.reducer;
-
