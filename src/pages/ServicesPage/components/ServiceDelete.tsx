@@ -3,25 +3,25 @@ import { deleteFirebaseImages } from '../../../api/deleteFirebaseImage/deleteFir
 import { Toast } from '../../../components/Toast/Toast';
 import { showToast } from '../../../components/Toast/toastMethods';
 import { useAppDispatch } from '../../../hooks/hooks';
-import { deleteAds } from '../../../redux/reducers/adsSlice';
+import { deleteService } from '../../../redux/reducers/servicesSlice';
 import { idDelete } from '../../About/about.interface';
 
-export const AdsDelete = (props: idDelete) => {
+export const ServiceDelete = (props: idDelete) => {
   const dispatch = useAppDispatch()
     const handleDelete = async() =>{
-        await deleteFirebaseDoc(`/Avisos/1x9cYIlY1FaQcw9jZhf6/Anuncios/${props!.id}`)        
+        await deleteFirebaseDoc(`/Servicios/xsc94XcgZ4Agn9IisLop/Lista_servicios/${props!.id}`)        
         await deleteFirebaseImages(props.image_url)        
-        dispatch(deleteAds(props))
+        dispatch(deleteService(props))
         showToast('delete-modal-section')
     }
     
     return (
     <>
-    <button type="button" className="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target={`#ad-section-modal-delete${props.id}`}>
+    <button type="button" className="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target={`#service-section-modal-delete${props.id}`}>
     Eliminar
     </button>
 
-    <div className="modal fade" id={`ad-section-modal-delete${props.id}`} data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-labelledby="staticBackdropLabel" aria-hidden="true">
+    <div className="modal fade" id={`service-section-modal-delete${props.id}`} data-bs-backdrop="static" data-bs-keyboard="false" tabIndex={-1} aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div className="modal-dialog">
             <div className="modal-content">
             <div className="modal-header">
@@ -41,8 +41,8 @@ export const AdsDelete = (props: idDelete) => {
 
     <Toast
     id='delete-modal-section' 
-    message='¡Se ha eliminado con éxito el aviso!' 
-    title='Seccion de avisos'
+    message='¡Se ha eliminado con éxito el servicio!' 
+    title='Seccion de servicios'
     />
     </>
   )

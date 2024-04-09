@@ -3,33 +3,13 @@ import { RootState } from '../store';
 import { idDelete } from '../../pages/About/about.interface';
 import { getFirebaseDoc } from '../../api/getFirebaseDoc/getFirebaseDoc';
 import { getFirebaseDocs } from '../../api/getFirebaseDocs/getFirebaseDocs';
-
-export type adsMain = {
-    estado: number,
-    titulo: string,
-    subtitulo: string,
-    image_url: string,
-    download_url: string    
-}
-
-export type ads = {
-    estado: number
-    id: string,
-    titulo: string,
-    subtitulo: string,
-    descripcion: string,
-    posicion_id: number,
-    image_url: string,
-    download_url: string,
-    links: Object[],    
-}
+import { ads, adsMain } from '../../pages/Ads/ads.interface';
 
 interface adsState {
     loading: boolean,
     error: string | undefined,
     adsList: ads[],
     main: adsMain
-
 }
 
 //thunks
@@ -38,7 +18,6 @@ export const fetchMainAds = createAsyncThunk(
     async () => {
         
         const docSnap = await getFirebaseDoc('/Avisos/1x9cYIlY1FaQcw9jZhf6')
-        console.log(docSnap, 'fetchMainAds')
         return docSnap
     }
 )
@@ -47,7 +26,6 @@ export const fetchAds = createAsyncThunk(
     'ads/fetchAds',
     async () => {        
         const docSnap = await getFirebaseDocs('/Avisos/1x9cYIlY1FaQcw9jZhf6/Anuncios')
-        console.log(docSnap, 'fetchAds')
         return docSnap
     }
 )
@@ -89,7 +67,6 @@ const adsSlice =  createSlice({
         },
         deleteAds(state, action: PayloadAction<idDelete>){
             const data = state.adsList.filter((element)=> { 
-                console.log(element.id,action.payload.id,'deleteAds')
                 return element.id != action.payload.id })
             state.adsList = data
         }
@@ -106,7 +83,6 @@ const adsSlice =  createSlice({
         });
         builder.addCase(fetchMainAds.rejected, (state,action) => {
             state.loading = false
-            //state.main
             state.error = action.error.message;            
         });
     }
@@ -114,5 +90,5 @@ const adsSlice =  createSlice({
 )
 
 export const adsSelector = (state: RootState) => state.avisos
-export const { mainAds,ads,addAds,deleteAds,editAds } = adsSlice.actions;
+export const { mainAds,addAds,deleteAds,editAds } = adsSlice.actions;
 export default adsSlice.reducer;

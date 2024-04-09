@@ -6,7 +6,6 @@ import { useAppDispatch } from '../../../hooks/hooks';
 import { editSection } from '../../../redux/reducers/aboutSlice';
 import { showToast } from '../../../components/Toast/toastMethods';
 import { Toast } from '../../../components/Toast/Toast';
-//import { init } from '@emailjs/browser';
 
 export const AdsSectionEditModal = (props: adsSection) => {
     const [fileImage, setFileImage] = useState<File | undefined>(undefined)
@@ -35,18 +34,14 @@ export const AdsSectionEditModal = (props: adsSection) => {
     }
     const handleSetFile = (evt: any) =>{
         if(evt.target.files[0] != undefined){
-            console.log(evt.target.files[0],'handleSetfile')
             setFileImage(evt.target.files[0])
         }else{ setFileImage(undefined)}
       }
     const handleUpdate = async()=> {
-        console.log('cuando entraa al handleupdate',forms.download_url)
         let res: string | undefined;
         if(fileImage != undefined){
-            console.log(fileImage, 'handleupdateeeee???')
             res = await uploadFirebaseImage(fileImage!,forms.image_url)
         }else{
-            console.log(initialState.download_url,'entra al else')
             res = initialState.download_url
         }
         let data: adsSection = {                        
@@ -70,7 +65,7 @@ export const AdsSectionEditModal = (props: adsSection) => {
     return (
     <>
     <button type="button" className="btn btn-outline-warning mb-1 btn-sm" data-bs-toggle="modal" data-bs-target={`#${props.id}`}>
-    Editar
+        Editar
     </button>     
     <div className="modal fade" id={props.id} data-bs-backdrop="static" data-bs-keyboard="false"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
         <div className="modal-dialog modal-xl">
@@ -93,8 +88,7 @@ export const AdsSectionEditModal = (props: adsSection) => {
                     <input className="form-control mb-3" id={`uploadImage-${props.id}`}  name='image_url' type="file" onChange={(evt)=>handleSetFile(evt)}/>    
 
                     <div className="btn-group" data-toggle="buttons">
-                        <label className="btn btn-secondary">
-                        
+                        <label className="btn btn-secondary">                        
                             <input type="radio" name="options" id="option1" autoComplete="off" onClick={() => setForms({...forms, posicion_id: 1})}/> Izquierda
                         </label>
                         <label className="btn btn-secondary">

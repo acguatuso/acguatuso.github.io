@@ -9,7 +9,6 @@ export const fetchMainSection = createAsyncThunk(
     'about/fetchMainSection',
     async () => {
         const docSnap = await getFirebaseDoc('/Empresa/ZktZQqsBnqVVoL4dfRHv')
-        //console.log(docSnap)
         const data: updateMainSection = {            
             image_principal_url: docSnap!.image_principal_url, 
             subtitulo_principal: docSnap!.subtitulo_principal, 
@@ -71,7 +70,6 @@ const aboutSlice = createSlice({
         },
         deleteSection(state, action: PayloadAction<idDelete>){
             const data = state.sections.filter((element)=> { 
-                console.log(element.id,action.payload.id,'deletesection')
                 return element.id != action.payload.id })
             state.sections = data
         }

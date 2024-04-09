@@ -36,10 +36,8 @@ export const fetchEmpresaData = (): AppThunk => async dispatch => {
     try{
         const docRef = await getFirebaseDocs('Empresa');
         const docSnap = docRef[0];
-        //console.log(docSnap,'docSnap')
         if(docSnap){
             const empresaData: EmpresaData = {
-                //nombre: docSnap.nombre,
                 correo: docSnap.correo,
                 facebookUrl: docSnap.redes[0].red_url,
                 titulo_footer: docSnap.titulo_principal,
@@ -63,7 +61,6 @@ export const fetchEmpresaData = (): AppThunk => async dispatch => {
                 ]
                 
             };
-            //console.log(empresaData, 'empresadata')
             dispatch(setEmpresaData(empresaData));
         }
     } catch (error){

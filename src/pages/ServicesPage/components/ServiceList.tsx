@@ -1,27 +1,28 @@
-import { adsSelector } from '../../../redux/reducers/adsSlice'
 import { useAppSelector } from '../../../hooks/hooks'
-import { AdsEditModal } from './AdsEditModal'
-import { AdsDelete } from './AdsDelete';
-import { ads } from '../ads.interface';
 import { useEffect, useState } from 'react';
-import { AdsLinkField } from './AdsLinkField';
+import { ServiceSelector } from '../../../redux/reducers/servicesSlice';
+import { service } from '../service.interface';
+import { ServiceEditModal } from './ServiceEditModal';
+import { ServiceDelete } from './ServiceDelete';
+import { ServiceLinkField } from './ServiceLinkField';
 
-export const AdsList = () => {
-    const ads = useAppSelector(adsSelector)  
+export const ServiceList = () => {
+    const service = useAppSelector(ServiceSelector)  
     
-    const [links, setLinks] = useState<ads[]>()      
+    const [services, setServices] = useState<service[]>()      
     //se utiliza para que funcione el map con el delete correctamente
     useEffect(() => {
-      setLinks(ads.adsList)
-    }, [ads])
+      setServices(service.ServiceList)
+    }, [service])
     
     return (
         
     <>   
-    {ads.loading &&  <div>Cargando...</div>}
-    {links != undefined &&        
-        links?.map((element: ads)=>{        
-            return (                                  
+    {service.loading &&  <div>Cargando...</div>}
+    {services != undefined &&        
+        services?.map((element: service)=>{        
+            return ( 
+                                 
                 element.posicion_id  == 1 ?(
                     <div key={`${element.id}-div1`} className="row mb-3 border">    
                         <div className="col">
@@ -37,16 +38,16 @@ export const AdsList = () => {
                             </button>
                             <div className="collapse" id={`collapse-${element.id}`}>
                                 <div className="card card-body">
-                                <AdsLinkField
-                                key={`${element.id}-ads-linkfield1`}
+                                <ServiceLinkField
+                                key={`${element.id}-service-linkfield1`}
                                 link={element.links}                        
                                 />
                                 </div>
                             </div>
                         </div>
 
-                        <AdsEditModal
-                            key={`${element.id}-adssection1`} 
+                        <ServiceEditModal
+                            key={`${element.id}-servicesection1`} 
                             id = {element.id}
                             posicion_id={element.posicion_id}           
                             descripcion= {element.descripcion} 
@@ -57,7 +58,7 @@ export const AdsList = () => {
                             download_url={element!.download_url}   
                             links={element.links}                 
                         />     
-                        <AdsDelete
+                        <ServiceDelete
                             key={`${element.id}-delete1`}
                             id={element.id}
                             image_url={element.image_url}
@@ -81,8 +82,8 @@ export const AdsList = () => {
                         </button>
                         <div className="collapse mb-2" id={`collapse-${element.id}`}>
                             <div className="card card-body">
-                            <AdsLinkField
-                            key={`${element.id}-ads-linkfield2`}
+                            <ServiceLinkField
+                            key={`${element.id}-service-linkfield2`}
                             link={element.links}                        
                             />
                             </div>
@@ -95,8 +96,8 @@ export const AdsList = () => {
                         <img  className='img-thumbnail' src={element.download_url}/>
                     </div>
                     
-                    <AdsEditModal                
-                        key={`${element.id}-adssection2`} 
+                    <ServiceEditModal                
+                        key={`${element.id}-servicesection2`} 
                         id = {element.id}
                         posicion_id={element.posicion_id}           
                         descripcion= {element.descripcion} 
@@ -107,7 +108,7 @@ export const AdsList = () => {
                         download_url={element.download_url}
                         links={element.links}
                     />
-                    <AdsDelete
+                    <ServiceDelete
                         key={`${element.id}-delete2`}
                         id={element.id}
                         image_url={element.image_url}

@@ -9,12 +9,8 @@ import { idDelete } from '../about.interface';
 export const AdsSectionDelete = (prop: idDelete ) => {
     const dispatch = useAppDispatch()
     const handleDelete = async() =>{
-        console.log(prop!.id,'handleDelete')
-        await deleteFirebaseDoc(`/Empresa/ZktZQqsBnqVVoL4dfRHv/secciones/${prop!.id}`)
-        
-        console.log(prop.image_url)
-        await deleteFirebaseImages(prop.image_url)
-        
+        await deleteFirebaseDoc(`/Empresa/ZktZQqsBnqVVoL4dfRHv/secciones/${prop!.id}`)                
+        await deleteFirebaseImages(prop.image_url)        
         dispatch(deleteSection(prop))
         showToast('delete-modal-section')
     }
