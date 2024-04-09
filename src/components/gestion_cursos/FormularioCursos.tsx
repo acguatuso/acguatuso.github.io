@@ -10,6 +10,7 @@ import { useAppDispatch } from '../../hooks/hooks';
 import { addCurso, editCurso } from '../../redux/reducers/cursosSlice';
 import { Timestamp } from 'firebase/firestore';
 import NotificationModal from '../Modal/NotificationModal';
+import { showToast } from '../Toast/toastMethods';
 
 interface formProps{
     id: string
@@ -33,13 +34,12 @@ export const FormularioCursos = (props: formProps) => {
     const [fechaInicio, setFechaInicio] = useState<Date | null >(null);
     const [fechaFin, setFechaFin] = useState<Date | null>(null);
     const [linkCurso, setLinkCurso] = useState('');
-    const [horarios, setHorarios] = useState<Horario[]>([{ dia: '', hora: '' }]); // Lista de Horarios
-    const [selectedDia, setSelectedDia] = useState('');
-    const [newHorario, setNewHorario] = useState('');
+    const [horarios, setHorarios] = useState<Horario[]>([{dia: '', hora: '' }]); // Lista de Horarios
     const [fileImage, setFileImage] = useState<File | null>(null); 
-    const [mensajeExito, setMensajeExito] = useState('');
     const [intentadoEnviar, setIntentadoEnviar] = useState(false);
     const [mostrarModal, setMostrarModal] = useState(false);
+    const [mostrarFechaInicio, setMostrarFechaInicio] = useState(false); 
+    const [mostrarFechaFin, setMostrarFechaFin] = useState(false); 
     const dispatch = useAppDispatch();
     
     useEffect(() => {
@@ -47,12 +47,29 @@ export const FormularioCursos = (props: formProps) => {
             setNombreCurso(props.curso.nombre);
             setDescripcionCurso(props.curso.descripcion);
             setModalidad(props.curso.modalidad);
-            setFechaInicio(new Date(props.curso.fecha_inicio.seconds * 1000));
-            setFechaFin(new Date(props.curso.fecha_finalizacion.seconds * 1000)); 
+            setFechaInicio(props.curso.fecha_inicio instanceof Timestamp ? props.curso.fecha_inicio.toDate() : null);
+            setFechaFin(props.curso.fecha_finalizacion instanceof Timestamp ? props.curso.fecha_finalizacion.toDate() : null); 
             setLinkCurso(props.curso.link_plataforma);
-            setHorarios(props.curso.horario || [{ dia: '', hora: '' }]);
+            setHorarios(props.curso.horario);
+            setMostrarFechaInicio(true);
+            setMostrarFechaFin(true);
         }
     }, [props.curso]);
+
+    const handleCancelarEdicion = () => {
+        if (props.curso !== null) {
+            setNombreCurso(props.curso.nombre);
+            setDescripcionCurso(props.curso.descripcion);
+            setModalidad(props.curso.modalidad);
+            setFechaInicio(props.curso.fecha_inicio instanceof Timestamp ? props.curso.fecha_inicio.toDate() : null);
+            setFechaFin(props.curso.fecha_finalizacion instanceof Timestamp ? props.curso.fecha_finalizacion.toDate() : null); 
+            setLinkCurso(props.curso.link_plataforma);
+            setHorarios(props.curso.horario);
+            setMostrarFechaInicio(true);
+            setMostrarFechaFin(true);
+            setFileImage(null);
+        }
+    };
    
     const handleModalidadChange = (e: ChangeEvent<HTMLSelectElement>) => {
       setModalidad(e.target.value);
@@ -71,34 +88,41 @@ export const FormularioCursos = (props: formProps) => {
     };
   
     const handleFechaInicioChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setMostrarFechaInicio(false);
       const fechaSeleccionada = e.target.value;
       setFechaInicio(new Date(fechaSeleccionada));
     };
     
     const handleFechaFinChange = (e: ChangeEvent<HTMLInputElement>) => {
+      setMostrarFechaFin(false);
       const fechaSeleccionada = e.target.value;
       setFechaFin(new Date(fechaSeleccionada));
     };
-  
-    const handleHorariosChange = (index: number, key: keyof Horario, value: string) => {
-        const newHorarios = [...horarios];
-        newHorarios[index][key] = value;
-        if (key === 'dia') {
-            setSelectedDia(value);
-        } else if (key === 'hora') {
-            setNewHorario(value);
-        }
+
+    const diasOptions = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes', 'Sábado', 'Domingo'];
+
+    const handleDiaChange = (index: number, event: React.ChangeEvent<HTMLSelectElement>) => {
+        const newHorarios = horarios.map((horario, i) => {
+            if (i === index) {
+                return { ...horario, dia: event.target.value };
+            }
+            return horario;
+        });
         setHorarios(newHorarios);
-        console.log(horarios);
+    };
+    
+    const handleHoraChange = (index: number, event: React.ChangeEvent<HTMLInputElement>) => {
+        const newHorarios = horarios.map((horario, i) => {
+            if (i === index) {
+                return { ...horario, hora: event.target.value };
+            }
+            return horario;
+        });
+        setHorarios(newHorarios);
     };
 
-    const handleAddHorario = (): void => {
-        if (selectedDia && newHorario || horarios[horarios.length - 1].dia !== "" && horarios[horarios.length - 1].hora !== "" ) {
-            setNewHorario(''); 
-            setSelectedDia(''); 
-            setHorarios([...horarios, { dia: '', hora: '' }]);
-            console.log(horarios);
-        }
+    const handleAddHorario = () => {
+        setHorarios([...horarios, {dia: '', hora: '' }]);
     };
 
     const handleRemoveHorario = (index: number) => {
@@ -118,14 +142,13 @@ export const FormularioCursos = (props: formProps) => {
         setLinkCurso('');
         setFileImage(null);
         setIntentadoEnviar(false);
-        setHorarios([{ dia: '', hora: '' }]);
+        setHorarios([{dia: '', hora: '' }]);
     };
 
     const handleCrearCurso = async() => {
       let res2: string | undefined;
       if(fileImage != null){
-        res2 = await uploadFirebaseImage(fileImage, `/Cursos/${nombreCurso}/image1`)
-        setFileImage(null);
+        res2 = await uploadFirebaseImage(fileImage!, `/Cursos/${nombreCurso}/image1`)
       }
       let cursoData : Curso = {
           nombre: nombreCurso,
@@ -153,24 +176,19 @@ export const FormularioCursos = (props: formProps) => {
         id: res!.id
       }
       dispatch(addCurso(cursoData))
-
-  
-      // Después de enviar los datos, mostrar el mensaje de éxito
-      setMensajeExito("Curso agregado con éxito!");
-  
+      $(`#${props.id}`).modal('hide');
+      handleReset();
       // Limpiar el formulario y cerrar el modal después de unos segundos
       setTimeout(() => {
-        handleReset();
-        setMensajeExito('');
-      }, 3000); // El mensaje de éxito se mostrará durante 5 segundos (5000 milisegundos)
+        showToast('toast-form-cursos-add');
+      }, 1000); // El mensaje de éxito se mostrará durante 5 segundos (5000 milisegundos)
     };
  
 
     const handleEditarCurso = async () => {
         let res2: string | undefined;
         if(fileImage != null){
-          res2 = await uploadFirebaseImage(fileImage, `/Cursos/${nombreCurso}/image1`)
-          setFileImage(null);
+          res2 = await uploadFirebaseImage(fileImage!, `/Cursos/${nombreCurso}/image1`)
         } else {
             res2 = props.curso?.download_url;
         }
@@ -199,12 +217,13 @@ export const FormularioCursos = (props: formProps) => {
             }
             dispatch(editCurso(data))
             // Después de enviar los datos, mostrar el mensaje de éxito
-            setMensajeExito("Curso editado con éxito!");
             $(`#${props.id}`).modal('hide');
+            setFileImage(null);
+            setIntentadoEnviar(false);
             setMostrarModal(false);
             setTimeout(() => {
-              setMensajeExito('');
-            }, 3000); // El mensaje de éxito se mostrará durante 5 segundos (5000 milisegundos)
+              showToast('toast-form-cursos-edit');
+            }, 1000); // El mensaje de éxito se mostrará durante 5 segundos (5000 milisegundos)
         } 
     }
 
@@ -229,7 +248,6 @@ export const FormularioCursos = (props: formProps) => {
         switch (true) {
             case props.id.startsWith('course-section-modal-add'):
                 handleCrearCurso();
-                $(`#${props.id}`).modal('hide');
                 break;
             case props.id.startsWith('course-section-modal-edit'):
                 setMostrarModal(true);
@@ -237,8 +255,28 @@ export const FormularioCursos = (props: formProps) => {
             default:
                 console.error('ID de modal no reconocido:', props.id);
         }
+        setFileImage(null);
     };
-    
+
+    function formatearFecha(fecha: Date | undefined, mostrar: boolean): string | undefined {
+        if (!mostrar && fecha){
+            return fecha ? fecha.toISOString().substring(0, 10) : undefined;
+        }
+        else {
+           if (fecha) {
+                const fechaFormateada = fecha.toLocaleDateString()?.split('/');
+                if (fechaFormateada) {
+                    return fechaFormateada[2] + '-' + pad(fechaFormateada[1]) + '-' + pad(fechaFormateada[0]);
+                }
+            } 
+        }
+        return undefined;
+    }
+
+    function pad(num: string) {
+        return num.length < 2 ? '0' + num : num;
+    }
+
     return (
       <>
         <button type="button" className={props.styleButton}  data-bs-toggle="modal" data-bs-target={`#${props.id}`}>
@@ -249,7 +287,7 @@ export const FormularioCursos = (props: formProps) => {
                 <div className="modal-content">
                     <div className="modal-header border-0">
                         <h1 className="modal-title fs-5" id="staticBackdropLabel">{props.titulo}</h1>
-                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={props.id.startsWith('course-section-modal-add') ? handleReset : undefined}></button>
+                        <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={props.id.startsWith('course-section-modal-add') ? handleReset : handleCancelarEdicion}></button>
                     </div>
                     <div className="modal-body text-start">
                         <form id='form-modal-cursos'>
@@ -288,11 +326,11 @@ export const FormularioCursos = (props: formProps) => {
                                             <div className="row">
                                                 <div className="col">
                                                     <label className="form-label"  htmlFor="fechaInicio">Fecha de Inicio <span className="required-indicator text-danger">*</span></label>
-                                                    <input type="date" className={`form-control ${intentadoEnviar && fechaInicio === null ? 'is-invalid' : ''}`} id="fechaInicio" name="fechaInicio" value={fechaInicio ? fechaInicio.toISOString().substring(0, 10) : ''} onChange={handleFechaInicioChange} required/>
+                                                    <input type="date" className={`form-control ${intentadoEnviar && fechaInicio === null ? 'is-invalid' : ''}`} id="fechaInicio" name="fechaInicio" value={fechaInicio ? formatearFecha(fechaInicio, mostrarFechaInicio) : ''} onChange={handleFechaInicioChange} required/>
                                                 </div>
                                                 <div className="col">
                                                     <label className="form-label" htmlFor="fechaFin">Fecha de Fin <span className="required-indicator text-danger">*</span></label>
-                                                    <input type="date" className={`form-control ${intentadoEnviar && fechaFin === null ? 'is-invalid' : ''}`} id="fechaFin" name="fechaFin" value={fechaFin ? fechaFin.toISOString().substring(0, 10) : ''} onChange={handleFechaFinChange} required/>
+                                                    <input type="date" className={`form-control ${intentadoEnviar && fechaFin === null ? 'is-invalid' : ''}`} id="fechaFin" name="fechaFin" value={fechaFin? formatearFecha(fechaFin, mostrarFechaFin) : ''} onChange={handleFechaFinChange} required/>
                                                 </div>
                                             </div>
                                             <div className="row">
@@ -302,7 +340,7 @@ export const FormularioCursos = (props: formProps) => {
                                                 </div>
                                                 <div className="col">
                                                     <label className="form-label" htmlFor="imagen">Imagen Ilustrativa  {props.id.startsWith('course-section-modal-add') ? (<span className="required-indicator text-danger">*</span>) : null} </label>
-                                                    <input type="file" className={`form-control ${intentadoEnviar && props.id.startsWith('course-section-modal-add') && fileImage === null ? 'is-invalid' : ''}`} id="imagen" name="imagen" onChange={ (event) => setFileImage(event.target.files![0])}/>
+                                                    <input type="file" accept="image/png, image/jpeg, image/jpg" className={`form-control ${intentadoEnviar && props.id.startsWith('course-section-modal-add') && fileImage === null ? 'is-invalid' : ''}`} id="imagen" name="imagen" value={!fileImage ? "" : undefined}   onChange={ (event) => setFileImage(event.target.files![0])}/>
                                                 </div>
                                             </div>
                                         </div>
@@ -316,27 +354,25 @@ export const FormularioCursos = (props: formProps) => {
                                     </h2>
                                     <div id="horariosCollapse" className="accordion-collapse collapse" aria-labelledby="horariosHeading">
                                         <div className="accordion-body">
-                                        {horarios.map((horario, index) => (
-                                            <div key={index} className="input-group mb-3 has-validation">
-                                                <select className={`form-select input-group-text text-start ${intentadoEnviar && selectedDia === '' ? 'is-invalid' : ''}`} value={horario.dia} onChange={(e) => handleHorariosChange(index, 'dia', e.target.value)} required>
-                                                    <option disabled value="">Selecciona un día</option>
-                                                    <option value="Lunes">Lunes</option>
-                                                    <option value="Martes">Martes</option>
-                                                    <option value="Miércoles">Miércoles</option>
-                                                    <option value="Jueves">Jueves</option>
-                                                    <option value="Viernes">Viernes</option>
-                                                    <option value="Sábado">Sábado</option>
-                                                    <option value="Domingo">Domingo</option>
-                                                </select>
-                                                <input type="text" className={`form-control ${intentadoEnviar && newHorario === '' ? 'is-invalid' : ''}`} value={horario.hora} onChange={(e) => handleHorariosChange(index, 'hora', e.target.value)} aria-label="horario" aria-describedby="inputGroup-sizing-default8" required/>
-                                                <button type="button" className="btn btn-danger" onClick={() => handleRemoveHorario(index)}> <MdDelete/> </button>
+                                            <div>
+                                                {horarios.map((horario, index) => (
+                                                    <div key={index} className="input-group mb-3 has-validation">
+                                                    <select value={horario.dia} className={`form-select input-group-text text-start ${intentadoEnviar && horario.dia === '' ? 'is-invalid' : ''}`} onChange={(event) => handleDiaChange(index, event)}>
+                                                        <option value="">Seleccione un día</option>
+                                                        {diasOptions.map((diaOption, i) => (
+                                                        <option key={i} value={diaOption}>{diaOption}</option>
+                                                        ))}
+                                                    </select>
+                                                    <input type="text" className={`form-control ${intentadoEnviar && horario.hora === '' ? 'is-invalid' : ''}`} value={horario.hora} onChange={(event) => handleHoraChange(index, event)} />
+                                                    <button type="button" className="btn btn-danger" onClick={() => handleRemoveHorario(index)}> <MdDelete/> </button>
+                                                    </div>
+                                                ))}
+                                                 <div className='text-end'>
+                                                <button type="button" className="btn btn-primary" onClick={handleAddHorario}>
+                                                    Agregar Día
+                                                </button>
+                                                </div>
                                             </div>
-                                        ))}  
-                                        <div className='text-end'>
-                                          <button type="button" className="btn btn-primary" onClick={handleAddHorario}>
-                                             Agregar Día
-                                          </button>
-                                        </div>
                                         </div>
                                     </div>
                                 </div>
@@ -344,8 +380,8 @@ export const FormularioCursos = (props: formProps) => {
                         </form>
                     </div>
                     <div className="modal-footer border-0">
-                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={props.id.startsWith('course-section-modal-add') ? handleReset : undefined}>Cancelar</button>
-                        <button type="button" className="btn btn-primary" /* data-bs-dismiss="modal" */ onClick={handleSubmit}>{props.submitButton}</button>
+                        <button type="button" className="btn btn-secondary" data-bs-dismiss="modal" onClick={props.id.startsWith('course-section-modal-add') ? handleReset : handleCancelarEdicion}>Cancelar</button>
+                        <button type="button" className="btn btn-primary"  onClick={handleSubmit}>{props.submitButton}</button>
                     </div>
                 </div>
             </div>
@@ -357,19 +393,18 @@ export const FormularioCursos = (props: formProps) => {
                 onClose={handleCancelSave}
                 onConfirm={handleEditarCurso}
             />
-        {/* <Toast 
-        id='toast-form-cursos' 
-        message={mensajeExito} 
+
+        
+        <Toast 
+        id='toast-form-cursos-add' 
+        message={'Curso agregado con éxito!'} 
         title='Seccion de avisos'
-        /> */}
-        <div>
-          {mensajeExito && (
-            <div className="alert alert-success centered-alert" role="alert">
-              {mensajeExito}
-              <button type="button" className="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-          )}
-        </div>
+        />
+        <Toast 
+        id='toast-form-cursos-edit' 
+        message={'Curso editado con éxito!'} 
+        title='Seccion de avisos'
+        />
       </>
 )}
 

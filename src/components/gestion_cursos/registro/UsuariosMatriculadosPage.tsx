@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { getFirebaseDocs } from '../../../api/getFirebaseDocs/getFirebaseDocs';
+import { FaArrowLeft } from 'react-icons/fa';
 import DataTableBase from '../../dataTable/DataTableBase';
-import { AceptarRechazarUsuario } from './AceptarRechazarUsuario';
-import { FaArrowLeft } from 'react-icons/fa6';
+import { getFirebaseDocs } from '../../../api/getFirebaseDocs/getFirebaseDocs';
+import { AprobarReprobarUsuario } from '.';
 
 //interfaz de un usuario con datos reducido. 
 interface Users {
@@ -13,18 +13,16 @@ interface Users {
     correo: string;
 }
 
-export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCurso, usuariosInteresados, matriculados }:
-    { onRegresarClick: () => void; idCurso: string; nombreCurso: string; usuariosInteresados: string[]; matriculados: string[] }) => {
-
+export const UsuariosMatriculadosPage = ({ onRegresarClick, nombreCurso, matriculados, idCurso, aprobados, reprobados }:
+    {onRegresarClick: () => void; nombreCurso: string; matriculados: string[]; idCurso: string;  aprobados: string[]; reprobados: string[]; }) => {
+  
     const [users, setUsers] = useState<Users[]>([]);
     const [showDetailsUserModal, setShowDetailsUserModal] = useState(false); // estado para controlar la visibilidad del modal
     const [selectedUser, setSelectedUser] = useState<Users | null>(null);
     const [filteredUsers, setFilteredUsers] = useState<Users[]>([]);
     const [filterText, setFilterText] = useState('');
 
-
     //Columnas a usar dentro de la tabla
-    //Columnas de la tabla
     const columns = [
         {
             name: "Nombre",
@@ -33,17 +31,17 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
             width: "30vw",
         },
 
-        // {
-        //     name: "Cédula",
-        //     selector: (row: any) => row.cedula,
-        //     sortable: true,
-        // },
+        {
+            name: "Cédula",
+            selector: (row: any) => row.cedula,
+            sortable: true,
+        },
 
         {
             name: "Correo",
             selector: (row: any) => row.correo,
             sortable: true,
-            width: "50vw",
+            width: "40vw",
         },
 
         // {
@@ -72,7 +70,7 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
             try {
                 const docSnap = await getFirebaseDocs('Usuarios');
                 const usuariosFiltrados = docSnap.filter((doc: any) =>
-                    usuariosInteresados.includes(doc.id)
+                    matriculados.includes(doc.id)
                 );
                 const userData = usuariosFiltrados.map((doc: any) => ({
                     id: doc.id,
@@ -80,15 +78,14 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
                     cedula: doc.cedula,
                     telefono: doc.telefono,
                     correo: doc.correo,
-                    //descripcion: doc.descripcion,
-                    //usuariosInteresados: doc.usuarios_interesados,
+
                 }));
                 //console.log('DATOS DE LOS USUARIOS: ', userData);
                 setUsers(userData);
-                console.log('Lista de aceptados en curso> ', matriculados);
+                //console.log('Lista de aceptados en curso> ', matriculados);
 
             } catch (error) {
-                console.error('Error Al traer los usuarios:', error);
+                console.error('Error Al traer los usuarios matriculados:', error);
             }
         }
 
@@ -116,53 +113,46 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
     }
 
     const handleClickVer = (usuario: Users): void => {
-        console.log("Boton click:", usuario);
+
         openSeeUserModal();
         setSelectedUser(usuario);
     }
-
-
+    
     const handleClickRegresar = () => {
-        onRegresarClick(); // aqui estoy llamando a la funcion del componente ListaCursosMAtriculaPage para que cambie el estado de showUsuariosMatriculados a false. Y asi se vuelva a mostrar la lista de los cursos matriculados
+        onRegresarClick(); // aqui estoy llamando a la funcion del componente ListaCursosAprobacionesPage para que cambie el estado de showListaUsuarios a false. Y asi se vuelva a mostrar la lista de los cursos matriculados
     }
-
-    //console.log(`ESTE ES EL NOMBRE DEL CURSO ${nombreCurso}`, 'Y este el id de sus usuarios interesados: ', usuariosInteresados);
-
+    
     return (
         <>
-
             <div>
+                <h5 className="text-muted pt-4">Usuarios matriculados en el curso de: {nombreCurso}</h5>
 
-                <h5 className="text-muted pt-4" >
-                    Interesados en el curso: {nombreCurso}
-                </h5>
-                <div className="d-flex justify-content-between">
-                    <button 
-                        className="btn btn-outline-primary mt-3 "
+                <div className='d-flex justify-content-between'>
+                    <button className="btn btn-outline-primary mt-3 "
                         onClick={handleClickRegresar}>
                         <FaArrowLeft /> Volver
                     </button>
                     <div className="col-md-2">
-
                         <input
                             type="text"
-                            className='form-control bg-light text-dark mt-3 me-2 border border-primary shadow-lg'
+                            className='form-control bg-light text-dark mt-3 border border-primary shadow-lg'
                             placeholder='Filtrar por nombre'
                             value={filterText}
-                            onChange={e => setFilterText(e.target.value)} />
+                            onChange={e => setFilterText(e.target.value)}
+                        />
                     </div>
                 </div>
-                <DataTableBase columns={columns} data={filteredUsers} />
+                    <DataTableBase columns={columns} data = {filteredUsers}></DataTableBase>
             </div>
-            <AceptarRechazarUsuario
-                mostrar={showDetailsUserModal}
+            <AprobarReprobarUsuario
+                mostrar = {showDetailsUserModal}
                 onClose={closeSeeUserModal}
                 usuario={selectedUser}
-                usuariosMatriculados={matriculados}
-                idCurso={idCurso} 
-                nombreCurso={nombreCurso}/>
+                idCurso={idCurso}
+                nombreCurso={nombreCurso}
+                usuariosAprobados={aprobados}
+                usuariosReprobados={reprobados}
+            />
         </>
-        /* idCurso = {idCurso} */
-
     )
 }

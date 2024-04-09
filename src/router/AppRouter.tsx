@@ -7,7 +7,7 @@ import About from '../pages/About/About';
 import { HomePageApp } from '../pages/HomePage';
 import MiPerfil from '../components/gestion_usuarios/MiPerfil';
 import Students from '../pages/Students/Students';
-import { MatriculaPage } from '../components/gestion_cursos';
+import { MatriculaPage, EvaluacionPage } from '../components/gestion_cursos';
 import { Ads } from '../pages/Ads/Ads';
 import { ServicePage } from '../pages/ServicesPage/ServicePage';
 
@@ -25,6 +25,7 @@ export const AppRouter = () => {
       <Route path='/Students' element={<Students />} />
       <Route path='/mi-perfil' element={<MiPerfil />} />
       <Route path='/matriculaAdmin' element={<MatriculaPage />}></Route>
+      <Route path='/evaluacionEstudiantes' element={<EvaluacionPage />}></Route>
       <Route path='/avisos' element={<Ads/>}></Route>
       <Route path='/servicios' element={<ServicePage />}></Route>
     </Routes>

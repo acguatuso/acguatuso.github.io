@@ -1,12 +1,13 @@
 import { FaEye } from "react-icons/fa"
 import { Curso } from "./curso.interface"
+import { Timestamp } from "firebase/firestore"
 
 interface formProps{
     curso: Curso 
 }
 
 function DetallesCurso(props: formProps) {
-   
+ 
   return (
     <>
         <button type="button" className="btn btn-primary" data-bs-toggle="modal" data-bs-target={`#ver-${props.curso.id}`}>
@@ -32,8 +33,8 @@ function DetallesCurso(props: formProps) {
                   <p><strong>Nombre:</strong> {props.curso.nombre}</p>
                   <p><strong>Descripción:</strong> {props.curso.descripcion}</p>
                   <p><strong>Modalidad:</strong> {props.curso.modalidad}</p>
-                  <p><strong>Fecha de Inicio:</strong> {new Date(props.curso.fecha_inicio.seconds * 1000).toLocaleDateString()}</p>
-              <p><strong>Fecha de Fin:</strong> {new Date(props.curso.fecha_finalizacion.seconds * 1000).toLocaleDateString()}</p>
+                  <p><strong>Fecha de Inicio:</strong> {props.curso.fecha_inicio instanceof Timestamp ? props.curso.fecha_inicio.toDate().toLocaleDateString() : ''}</p>
+                  <p><strong>Fecha de Fin:</strong> {props.curso.fecha_finalizacion instanceof Timestamp ? props.curso.fecha_finalizacion.toDate().toLocaleDateString() : ''}</p>
               {props.curso.link_plataforma && (
                 <p>
                   <strong>Link del Curso:</strong>{" "}

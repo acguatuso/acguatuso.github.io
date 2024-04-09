@@ -30,7 +30,9 @@ function CursosMain() {
                             <button className="btn btn-primary">Aceptar/Rechazar</button>
                         </Link>
                         <h3>Registro</h3>
-                        <button className="btn btn-primary">Aprobar/Reprobar</button>
+                        <Link to = '/evaluacionEstudiantes'>
+                            <button className="btn btn-primary">Aprobar/Reprobar</button>
+                        </Link>
                     </div>
                     <div className="col-6">
                         <h3>Cursos</h3>
