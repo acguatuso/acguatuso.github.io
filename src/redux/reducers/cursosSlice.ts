@@ -7,12 +7,14 @@ import { idDelete } from "../../pages/About/about.interface";
 export interface CursoState {
     loading: boolean;
     cursos: Array<Curso>;
+    numSolicitantes: { [idCurso: string]: number };
     error: string | undefined;
 }
 
 const initialState: CursoState = {
     loading: false,
     cursos: [],
+    numSolicitantes: {},
     error: undefined,
 }
 
@@ -22,7 +24,17 @@ export const fetchCursos = createAsyncThunk(
         const docSnap = await getFirebaseDocs("Cursos")
         const data = docSnap as Curso[]
         /* console.log(data) */
-         // Filtrar los cursos que tienen una fecha de creación definida
+        
+        // Calcula el número de solicitantes para cada curso y actualiza el estado numSolicitantes
+        const numSolicitantes: { [idCurso: string]: number } = {};
+        data.forEach(curso => {
+          if (curso.id) { // Verifica que curso.id esté definido
+            numSolicitantes[curso.id] = curso.postulados.length;
+          }
+        });
+        
+        
+        // Filtrar los cursos que tienen una fecha de creación definida
         const cursosConFechaCreacion = data.filter(curso => curso.fechaCreacion !== undefined);
 
         // Ordenar los cursos por fecha de creación descendente
@@ -30,7 +42,7 @@ export const fetchCursos = createAsyncThunk(
           return b.fechaCreacion!.toMillis() - a.fechaCreacion!.toMillis();
         });
 
-        return cursosOrdenados;
+        return { cursos: cursosOrdenados, numSolicitantes };//return cursosOrdenados;
         }
 )
 
@@ -41,9 +53,10 @@ const cursosSlice = createSlice({
       builder.addCase(fetchCursos.pending, (state) => {
         state.loading = true;
       });
-      builder.addCase(fetchCursos.fulfilled, (state, action: PayloadAction<Array<Curso>>) => {
+      builder.addCase(fetchCursos.fulfilled, (state, action: PayloadAction<{ cursos: Curso[]; numSolicitantes: { [idCurso: string]: number } }>) => {
         state.loading = false;
-        state.cursos = action.payload;
+        state.cursos = action.payload.cursos;
+        state.numSolicitantes = action.payload.numSolicitantes;
       });
       builder.addCase(fetchCursos.rejected, (state, action) => {
         state.loading = false;
@@ -54,6 +67,7 @@ const cursosSlice = createSlice({
     reducers: {
       addCurso: (state, action: PayloadAction<Curso>) => {
         state.cursos.unshift(action.payload);
+        state.numSolicitantes[action.payload.id as string] = 0; // Inicializa el contador de solicitantes para el nuevo curso
       },
       editCurso(state, action: PayloadAction<Curso>) {
         const newData = state.cursos.map((element: Curso) => {

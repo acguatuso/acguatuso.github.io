@@ -53,6 +53,12 @@ export const ListaCursosMatriculaPage = () => {
         //     sortable: true,
         //     width: "20vw",
         // },
+        {
+            name: "Usuarios Interesados",
+            selector: (row: Curso) => row.postulados.length,
+            sortable: true,
+            width: "20vw",
+        },
 
         {
             name: "Horario",
