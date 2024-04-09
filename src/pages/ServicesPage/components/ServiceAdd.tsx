@@ -46,8 +46,8 @@ export const ServiceAdd = () => {
         setForms(data1)        
     }
     const handleChangeLink = (evt: any,index: any) => {
-        forms.links[index] = {...forms.links[index],[evt.target.name]: evt.target.value}
-        setForms(forms)
+        const data = forms.links.map((e:any,i: number)=>{if(i == index){return {...forms.links[i],[evt.target.name]:evt.target.value}}else{return e}})
+        setForms({...forms,links:data})
     }
     const handleAddNewLink = () => {       
         const data = {...forms, links: [...forms.links,{titulo_link: '',link: ''}]}
