@@ -35,6 +35,9 @@ export const ListaCursosMatriculaPage = () => {
     const [filterText, setFilterText] = useState('');
     const navigate = useNavigate();
     
+    
+
+
     //Columnas de la tabla
     const columns = [
         {
@@ -69,8 +72,11 @@ export const ListaCursosMatriculaPage = () => {
         {
             name: "Fecha Inicio",
             selector: (row:any) => {
-                const fechaInicio = row.fecha_inicio.toDate(); // Convertir el timestamp a objeto de fecha
-                return fechaInicio.toLocaleDateString(); // Formatear la fecha como cadena legible
+                if (row.fecha_inicio && typeof row.fecha_inicio.toDate === 'function') {
+                    return row.fecha_inicio.toDate().toLocaleDateString();
+                } else {
+                    return "Cargando...";
+                }
             },
             sortable: true,
             width: "15vw",
@@ -79,8 +85,11 @@ export const ListaCursosMatriculaPage = () => {
         {
             name: "Fecha Fin",
             selector: (row:any) => {
-                const fechaFin = row.fecha_finalizacion.toDate(); // Convertir el timestamp a objeto de fecha
-                return fechaFin.toLocaleDateString(); // Formatear la fecha como cadena legible
+                if (row.fecha_finalizacion && typeof row.fecha_finalizacion.toDate === 'function') {
+                    return row.fecha_finalizacion.toDate().toLocaleDateString();
+                } else {
+                    return "Cargando...";
+                }
             },
             sortable: true,
             width: "15vw",
