@@ -41,16 +41,57 @@ export const ListaCursosMatriculaPage = () => {
             name: "Nombre",
             selector: (row: any) => row.nombre,
             sortable: true,
-            width: "30vw",
+            width: "20vw",
+        },
+
+        // {
+        //     name: "Descripción",
+        //     selector: (row: any) => row.descripcion,
+        //     sortable: true,
+        //     width: "20vw",
+        // },
+
+        {
+            name: "Horario",
+            cell: (row: any) => (
+                <div className='text-start'>
+                    {row.horario.map((h: any, index: number) => (
+                        <div key={index}>
+                            {h.dia}: {h.hora}
+                        </div>
+                    ))}
+                </div>
+            ),
+            sortable: true,
+            
         },
 
         {
-            name: "Descripción",
-            selector: (row: any) => row.descripcion,
+            name: "Fecha Inicio",
+            selector: (row:any) => {
+                const fechaInicio = row.fecha_inicio.toDate(); // Convertir el timestamp a objeto de fecha
+                return fechaInicio.toLocaleDateString(); // Formatear la fecha como cadena legible
+            },
             sortable: true,
-            width: "50vw",
+            width: "15vw",
         },
-    
+
+        {
+            name: "Fecha Fin",
+            selector: (row:any) => {
+                const fechaFin = row.fecha_finalizacion.toDate(); // Convertir el timestamp a objeto de fecha
+                return fechaFin.toLocaleDateString(); // Formatear la fecha como cadena legible
+            },
+            sortable: true,
+            width: "15vw",
+        },
+
+        {
+            name: "Modalidad",
+            selector: (row: any) => row.modalidad,
+            sortable: true,
+            width: "15vw",
+        },
     
         {
             name: "Gestionar",
