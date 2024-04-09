@@ -2,6 +2,9 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppThunk, RootState } from '../store';
 import { getFirebaseDocs } from "../../api/getFirebaseDocs/getFirebaseDocs";
+import { collection, getDocs } from "firebase/firestore";
+import { data_base } from "../../firebase";
+import { RxCounterClockwiseClock } from "react-icons/rx";
 
 export type EmpresaData = {
     correo: string;
@@ -34,8 +37,14 @@ const empresaSlice = createSlice({
 
 export const fetchEmpresaData = (): AppThunk => async dispatch => {
     try{
-        const docRef = await getFirebaseDocs('Empresa');
-        const docSnap = docRef[0];
+        const docRef = await collection(data_base,'Empresa');
+        const docs1 = await getDocs(docRef)
+        // Obtener el primer documento en el QuerySnapshot
+        const primerDocumento = docs1.docs[0];
+        // Obtener los datos del documento
+      const userData = primerDocumento.data()
+        //console.log(userData)
+        const docSnap = userData
         if(docSnap){
             const empresaData: EmpresaData = {
                 correo: docSnap.correo,
