@@ -39,11 +39,18 @@ export const ListaCursosAprobacionesPage = () => {
 
     //Columnas de la tabla
     const columns = [
+
+        {
+            name: "Alumnos",
+            selector: (row: Curso) => row.matriculados?.length || 0,
+            sortable: true,
+            width: "8vw",
+        },
         {
             name: "Nombre",
             selector: (row: any) => row.nombre,
             sortable: true,
-            width: "20vw",
+            width: "15vw",
         },
 
         // {
