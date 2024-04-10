@@ -3,6 +3,8 @@ import { getFirebaseDocs } from '../../../api/getFirebaseDocs/getFirebaseDocs';
 import DataTableBase from '../../dataTable/DataTableBase';
 import { AceptarRechazarUsuario } from './AceptarRechazarUsuario';
 import { FaArrowLeft } from 'react-icons/fa6';
+import { FaCheck, FaTimes } from 'react-icons/fa';
+
 
 //interfaz de un usuario con datos reducido. 
 interface Users {
@@ -21,6 +23,7 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
     const [selectedUser, setSelectedUser] = useState<Users | null>(null);
     const [filteredUsers, setFilteredUsers] = useState<Users[]>([]);
     const [filterText, setFilterText] = useState('');
+    const [updatedMatriculados, setUpdatedMatriculados] = useState<string[]>(matriculados);
 
 
     //Columnas a usar dentro de la tabla
@@ -46,11 +49,33 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
             width: "50vw",
         },
 
-        // {
-        //     name: "Teléfono",
-        //     selector: (row: any) => row.telefono,
-        //     sortable: true,
-        // },
+        {
+            name: "Estado",
+            // cell: (row: Users) => (
+            //     <span style={{ color: updatedMatriculados.includes(row.id) ? 'green' : 'red' }}>
+            //         {updatedMatriculados.includes(row.id) ? "Matriculado" : "No matriculado"}
+            //     </span>
+            // ),
+            cell: (row: Users) => (
+                <span style={{ color: updatedMatriculados.includes(row.id) ? 'green' : 'red' }}>
+                    {updatedMatriculados.includes(row.id) ? <FaCheck color="green" /> : <FaTimes color="red" />}
+                </span>
+            ),
+            sortable: true,
+            sortFunction: (a: Users, b: Users) => {
+                const aMatriculado = updatedMatriculados.includes(a.id);
+                const bMatriculado = updatedMatriculados.includes(b.id);
+        
+                if (aMatriculado && !bMatriculado) {
+                    return -1; // Muestra los matriculados primero
+                } else if (!aMatriculado && bMatriculado) {
+                    return 1; // Muestra los no matriculados después
+                } else {
+                    return 0; // Mantén el orden original si ambos estados son iguales
+                }
+            },
+            width: "10vw",
+        },
 
         {
             name: "Detalles",
@@ -121,6 +146,9 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
         setSelectedUser(usuario);
     }
 
+    const handleUpdateMatriculados = (newMatriculados: string[]) => {
+        setUpdatedMatriculados(newMatriculados);
+    }
 
     const handleClickRegresar = () => {
         onRegresarClick(); // aqui estoy llamando a la funcion del componente ListaCursosMAtriculaPage para que cambie el estado de showUsuariosMatriculados a false. Y asi se vuelva a mostrar la lista de los cursos matriculados
@@ -160,7 +188,9 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
                 usuario={selectedUser}
                 usuariosMatriculados={matriculados}
                 idCurso={idCurso} 
-                nombreCurso={nombreCurso}/>
+                nombreCurso={nombreCurso}
+                onUpdateMatriculados={handleUpdateMatriculados} // Pasar la función de actualización
+                />
         </>
         /* idCurso = {idCurso} */
 

@@ -11,9 +11,10 @@ interface ModalProps {
   usuariosMatriculados: string[];
   idCurso: string;
   nombreCurso: string;
+  onUpdateMatriculados: (newMatriculados: string[]) => void;
 }
 
-export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose, usuario, usuariosMatriculados, idCurso, nombreCurso }) => {
+export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose, usuario, usuariosMatriculados, idCurso, nombreCurso, onUpdateMatriculados  }) => {
 
   //console.log("DPG", idCurso);
   const rutaDocumentoFirebase = `Cursos/${idCurso}`;
@@ -33,6 +34,7 @@ export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
 
   const handleClickAceptar = async () => {
     //console.log('Estoy en el modal con los usuarios Matriculados: ', usuariosMatriculados)
+    
     //TODO
     setLoading(true);
 
@@ -41,11 +43,12 @@ export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
       await updateFirebaseDoc(rutaDocumentoFirebase, { matriculados: newMatriculados });
       //console.log('NEW MATRICULADOS: ',newMatriculados)
       setMostrarNotificacion(true);
-      const enviadoExitoso = await SentEmailCoursesAcepted(usuario.nombre, usuario.correo, nombreCurso);
-      console.log(enviadoExitoso);
-
+      //const enviadoExitoso = await SentEmailCoursesAcepted(usuario.nombre, usuario.correo, nombreCurso);
+      //console.log(enviadoExitoso);
+      
       setTimeout(() => {
         setMatriculadosLocal(newMatriculados);
+        onUpdateMatriculados(newMatriculados);
 
       }, 3000);
       //onClose();
@@ -75,7 +78,7 @@ export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
         console.warn('El usuario no está matriculado, no es necesario rechazarlo.');
         setLoading(false);
         onClose();
-        await SentEmailCoursesRejected(usuario.nombre, usuario.correo, nombreCurso); 
+        //await SentEmailCoursesRejected(usuario.nombre, usuario.correo, nombreCurso); 
         return; 
       }
   
@@ -85,6 +88,7 @@ export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
         await updateFirebaseDoc(rutaDocumentoFirebase, { matriculados: newMatriculados });
         setMatriculadosLocal(newMatriculados); // Actualiza el estado global de matriculados
         setMensajeExito('Se ha desmatriculado el usuario.');
+        onUpdateMatriculados(newMatriculados);
   
         // onClose();
       } catch (error) {
@@ -95,8 +99,8 @@ export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
       
   
       setTimeout(async () => {
-        const enviadoExitoso = await SentEmailCoursesRejected(usuario.nombre, usuario.correo, nombreCurso);
-        console.log(enviadoExitoso);
+        //const enviadoExitoso = await SentEmailCoursesRejected(usuario.nombre, usuario.correo, nombreCurso);
+        //console.log(enviadoExitoso);
         setMensajeExito('');
   
         setLoading(false);
