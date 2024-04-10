@@ -103,7 +103,24 @@ export const ListaCursosMatriculaPage = () => {
 
         {
             name: "Modalidad",
-            selector: (row: any) => row.modalidad,
+            // selector: (row: any) => row.modalidad,
+            cell: (row: any) => {
+                let modalidadTexto = '';
+                switch (row.modalidad) {
+                    case 0:
+                        modalidadTexto = 'Presencial';
+                        break;
+                    case 1:
+                        modalidadTexto = 'Virtual';
+                        break;
+                    case 2:
+                        modalidadTexto = 'Mixta';
+                        break;
+                    default:
+                        modalidadTexto = 'Desconocida';
+                }
+                return modalidadTexto;
+            },
             sortable: true,
             width: "15vw",
         },

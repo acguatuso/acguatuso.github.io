@@ -31,7 +31,7 @@ export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
   }, [usuariosMatriculados]);
 
   //console.log({usuario})
-  console.log({usuariosMatriculados})
+  // console.log({usuariosMatriculados})
   
   const isMatriculado = usuario?.id && matriculadosLocal.includes(usuario.id)//usuariosMatriculados.includes(usuario.id);
 

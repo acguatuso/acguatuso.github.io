@@ -51,10 +51,10 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
         },
         {
             name: "Hora de Solicitud",
-        selector: (row: Users) => row.hora_solicitud.toLocaleString(), // Mostrar la hora_solicitud formateada como string
-        sortable: true,
+            selector: (row: Users) => row.hora_solicitud.toLocaleString(), // Mostrar la hora_solicitud formateada como string
+            sortable: true,
         },
-        
+
 
 
 
@@ -75,7 +75,7 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
             sortFunction: (a: Users, b: Users) => {
                 const aMatriculado = updatedMatriculados.includes(a.id);
                 const bMatriculado = updatedMatriculados.includes(b.id);
-        
+
                 if (aMatriculado && !bMatriculado) {
                     return -1; // Muestra los matriculados primero
                 } else if (!aMatriculado && bMatriculado) {
@@ -103,10 +103,10 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
 
     useEffect(() => {
 
-         console.log({usuariosInteresados})
+        // console.log({ usuariosInteresados })
         // console.log({matriculados});
 
-         const fetchData = async () => {
+        const fetchData = async () => {
             try {
                 const docSnap = await getFirebaseDocs('Usuarios');
                 // const usuariosFiltrados = docSnap.filter((doc: any) =>
@@ -116,7 +116,7 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
                 const usuariosFiltrados = docSnap.filter((doc) =>
                     usuariosInteresados.some((usuario) => usuario.id === doc.id)
                 );
-                
+
                 const userData = usuariosFiltrados.map((doc: any) => ({
                     id: doc.id,
                     nombre: doc.nombre,
@@ -127,15 +127,15 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
                     //usuariosInteresados: doc.usuarios_interesados,
                     hora_solicitud: usuariosInteresados.find((usuario) => usuario.id === doc.id)?.hora_solicitud.toDate() || new Date(),
                 }));
-                console.log('DATOS DE LOS USUARIOS: ', userData);
+                // console.log('DATOS DE LOS USUARIOS: ', userData);
 
                 // Formatear la fecha en userData utilizando toLocaleDateString con las opciones adecuadas
-        const formattedUserData = userData.map((user) => ({
-            ...user,
-            hora_solicitud: user.hora_solicitud.toLocaleDateString('es-ES', { day: 'numeric', month: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }),
-        }));
+                const formattedUserData = userData.map((user) => ({
+                    ...user,
+                    hora_solicitud: user.hora_solicitud.toLocaleDateString('es-ES', { day: 'numeric', month: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }),
+                }));
 
-        setUsers(formattedUserData);
+                setUsers(formattedUserData);
                 //setUsers(userData);
                 //console.log('Lista de aceptados en curso> ', matriculados);
 
@@ -144,7 +144,7 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
             }
         }
 
-        fetchData(); 
+        fetchData();
 
     }, [])
 
@@ -168,7 +168,7 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
     }
 
     const handleClickVer = (usuario: Users): void => {
-        console.log("Boton click:", usuario);
+        // console.log("Boton click:", usuario);
         openSeeUserModal();
         setSelectedUser(usuario);
     }
@@ -182,7 +182,7 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
     }
 
     //console.log(`ESTE ES EL NOMBRE DEL CURSO ${nombreCurso}`, 'Y este el id de sus usuarios interesados: ', usuariosInteresados);
-    console.log({filteredUsers})
+    // console.log({ filteredUsers })
     return (
         <>
 
@@ -192,7 +192,7 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
                     Interesados en el curso: {nombreCurso}
                 </h5>
                 <div className="d-flex justify-content-between">
-                    <button 
+                    <button
                         className="btn btn-outline-primary mt-3 "
                         onClick={handleClickRegresar}>
                         <FaArrowLeft /> Volver
@@ -214,10 +214,10 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
                 onClose={closeSeeUserModal}
                 usuario={selectedUser}
                 usuariosMatriculados={matriculados}
-                idCurso={idCurso} 
+                idCurso={idCurso}
                 nombreCurso={nombreCurso}
                 onUpdateMatriculados={handleUpdateMatriculados} // Pasar la función de actualización
-                />
+            />
         </>
         /* idCurso = {idCurso} */
 
