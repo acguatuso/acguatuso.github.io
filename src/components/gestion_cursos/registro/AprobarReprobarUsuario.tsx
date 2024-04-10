@@ -1,6 +1,10 @@
 import { useEffect, useState } from "react";
 import { updateFirebaseDoc } from "../../../api/updateFirebaseDoc/updateFirebaseDoc";
 import NotificationModal from "../../Modal/NotificationModal";
+import { useAppDispatch } from "../../../hooks/hooks";
+import { useSelector } from "react-redux";
+import { RootState } from "../../../redux/store";
+import { fetchCursos } from "../../../redux/reducers/cursosSlice";
 
 
 interface ModalProps {
@@ -19,6 +23,33 @@ export const AprobarReprobarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
                                                                usuariosReprobados, idCurso, nombreCurso,
                                                                onUpdateAprobados, onUpdateReprobados }) => {
 
+    //REDUX/////////////////////////////////////////////////////
+    // El dispatch lo necesito para lo de Redux con los cursos
+    const dispatch = useAppDispatch();
+    const coursesRedux = useSelector((state: RootState) => state.cursos.cursos);
+
+    // Estado local para controlar la recarga de datos
+  const [reloadData, setReloadData] = useState(false);
+
+    useEffect(() => {
+        (async () => {
+            await dispatch(fetchCursos())
+        })()
+
+         // Si reloadData cambia, volvemos a cargar los datos
+    if (reloadData) {
+      (async () => {
+        await dispatch(fetchCursos())
+      })()
+      setReloadData(false);
+    }
+    }, [dispatch, reloadData])
+
+    // console.log({coursesRedux});
+    //REDUX///////////////////////////////////////////////////////
+
+
+
     const rutaDocumentoFirebase = `Cursos/${idCurso}`;
 
     const [mostrarNotificacion, setMostrarNotificacion] = useState(false); // opcion 1 modal de notificacion
@@ -31,6 +62,13 @@ export const AprobarReprobarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
 
     useEffect(() => {
         // Actualizar aprobados y reprobados locales al recibir nuevos datos
+        const cursoActual = coursesRedux.find(curso => curso.id === idCurso);
+        console.log({cursoActual});
+        const listaAprobados = cursoActual?.aprobados;
+        console.log({listaAprobados});
+        const listaReprobados = cursoActual?.reprobados;
+        console.log({listaReprobados});
+
         setAprobadosLocal(usuariosAprobados);
         setReprobadosLocal(usuariosReprobados);
     }, [usuariosAprobados, usuariosReprobados]);
@@ -69,6 +107,8 @@ export const AprobarReprobarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
             setTimeout(() => {
                 setAprobadosLocal(newAprobados);
                 onUpdateAprobados(newAprobados);
+                // Activar reloadData para volver a cargar los datos
+                setReloadData(true);
             }, 3000);
         } catch (error) {
             console.error('Error al actualizar aprobados en Firebase:', error);
@@ -119,8 +159,11 @@ export const AprobarReprobarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
             console.error('Error al actualizar reprobados en Firebase:', error);
         }
 
+        // Activar reloadData para volver a cargar los datos
+        setReloadData(true);
         setTimeout(() => {
-
+            // Activar reloadData para volver a cargar los datos
+            //setReloadData(true);
             setMostrarNotificacion(false);
             setLoading(false);
             setMensajeExito('');
