@@ -178,7 +178,7 @@ function GestionCursos() {
         </h2>
       </div>
       <div className="alert alert-info mt-3" role="alert">
-        <strong>Nota:</strong> La <strong><em>disponibilidad</em></strong> indica si el curso está disponible o no para la visualización y matrícula por parte del usuario. Los  <strong>cursos disponibles</strong> aparecerán en la sección de matrícula. Por otro lado, el <strong><em>estado</em></strong> indica si el curso está disponible de forma inmediata o si estará disponible próximamente. Marcar un curso como  <strong>activo</strong>  lo mostrará en la sección de cursos disponibles próximante.
+        <strong>Nota:</strong> El <strong><em>Estado</em></strong> si se encuentra activado, se podrá seleccionar la <strong>Visibilidad</strong> del curso entre: <em>Sección de Matrícula, Sección de Próximamente y No Visible.</em> Si el <strong><em>Estado</em></strong> se encuentra inactivo la  <strong>Visibilidad </strong> del curso se encontrará <em>No Visible.</em>
       </div>
       <div className="d-flex justify-content-between mb-2">
         <div className="d-flex">

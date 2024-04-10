@@ -21,6 +21,8 @@ export const UsuariosMatriculadosPage = ({ onRegresarClick, nombreCurso, matricu
     const [selectedUser, setSelectedUser] = useState<Users | null>(null);
     const [filteredUsers, setFilteredUsers] = useState<Users[]>([]);
     const [filterText, setFilterText] = useState('');
+    const [updateAprobados, setUpdateAprobados] = useState<string[]>(aprobados);
+    const [updateReprobados, setUpdateReprobados] = useState<string[]>(reprobados);
 
     //Columnas a usar dentro de la tabla
     const columns = [
@@ -49,6 +51,15 @@ export const UsuariosMatriculadosPage = ({ onRegresarClick, nombreCurso, matricu
         //     selector: (row: any) => row.telefono,
         //     sortable: true,
         // },
+
+        {
+            name: "Estado",
+            cell: (row: Users) => (
+                <span style={{ color: updateAprobados.includes(row.id) ? 'green' : 'red'}}>
+                    {updateAprobados.includes(row.id)? 'Aprobado' : 'Reprobado'}
+                </span>
+            ),
+        },
 
         {
             name: "Detalles",
@@ -117,6 +128,14 @@ export const UsuariosMatriculadosPage = ({ onRegresarClick, nombreCurso, matricu
         openSeeUserModal();
         setSelectedUser(usuario);
     }
+
+    const handleUpdateAprobados = (newAprobados: string[]) => {
+        setUpdateAprobados(newAprobados);
+    }
+    
+    const handleUpdateReprobados = (newReprobados: string[]) => {
+        setUpdateReprobados(newReprobados);
+    }
     
     const handleClickRegresar = () => {
         onRegresarClick(); // aqui estoy llamando a la funcion del componente ListaCursosAprobacionesPage para que cambie el estado de showListaUsuarios a false. Y asi se vuelva a mostrar la lista de los cursos matriculados
@@ -152,6 +171,8 @@ export const UsuariosMatriculadosPage = ({ onRegresarClick, nombreCurso, matricu
                 nombreCurso={nombreCurso}
                 usuariosAprobados={aprobados}
                 usuariosReprobados={reprobados}
+                onUpdateAprobados={handleUpdateAprobados}
+                onUpdateReprobados={handleUpdateReprobados}
             />
         </>
     )

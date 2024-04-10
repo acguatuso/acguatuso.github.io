@@ -70,9 +70,20 @@ export const ListaCursosAprobacionesPage = () => {
 
         {
             name: "Fecha Inicio",
+            // selector: (row:any) => {
+            //     if (row.fecha_inicio && typeof row.fecha_inicio.toDate === 'function') {
+            //         return row.fecha_inicio.toDate().toLocaleDateString();
+            //     } else {
+            //         return "Cargando...";
+            //     }
+            // },
             selector: (row:any) => {
                 if (row.fecha_inicio && typeof row.fecha_inicio.toDate === 'function') {
-                    return row.fecha_inicio.toDate().toLocaleDateString();
+                    const fecha = row.fecha_inicio.toDate();
+                    const dia = fecha.getDate();
+                    const mes = fecha.getMonth() + 1; // Los meses en JavaScript van de 0 a 11
+                    const año = fecha.getFullYear();
+                    return `${dia}/${mes}/${año}`;
                 } else {
                     return "Cargando...";
                 }
@@ -83,9 +94,20 @@ export const ListaCursosAprobacionesPage = () => {
 
         {
             name: "Fecha Fin",
+            // selector: (row:any) => {
+            //     if (row.fecha_finalizacion && typeof row.fecha_finalizacion.toDate === 'function') {
+            //         return row.fecha_finalizacion.toDate().toLocaleDateString();
+            //     } else {
+            //         return "Cargando...";
+            //     }
+            // },
             selector: (row:any) => {
                 if (row.fecha_finalizacion && typeof row.fecha_finalizacion.toDate === 'function') {
-                    return row.fecha_finalizacion.toDate().toLocaleDateString();
+                    const fecha = row.fecha_finalizacion.toDate();
+                    const dia = fecha.getDate();
+                    const mes = fecha.getMonth() + 1; // Los meses en JavaScript van de 0 a 11
+                    const año = fecha.getFullYear();
+                    return `${dia}/${mes}/${año}`;
                 } else {
                     return "Cargando...";
                 }
@@ -97,6 +119,23 @@ export const ListaCursosAprobacionesPage = () => {
         {
             name: "Modalidad",
             selector: (row: any) => row.modalidad,
+            cell: (row: any) => {
+                let modalidadTexto = '';
+                switch (row.modalidad){
+                    case 0:
+                        modalidadTexto = 'Presencial';
+                        break;
+                    case 1:
+                        modalidadTexto = 'Virtual';
+                        break;
+                    case 2:
+                        modalidadTexto = 'Mixta';
+                        break;
+                    default:
+                        modalidadTexto = 'Desconocida';
+                }
+                return modalidadTexto;
+            },
             sortable: true,
             width: "15vw",
         },

@@ -11,9 +11,13 @@ interface ModalProps {
     usuariosReprobados: string[];
     idCurso: string;
     nombreCurso: string;
+    onUpdateAprobados: (newAprobados: string[]) => void;
+    onUpdateReprobados: (newReprobados: string[]) => void;
 }
 
-export const AprobarReprobarUsuario: React.FC<ModalProps> = ({ mostrar, onClose, usuario, usuariosAprobados, usuariosReprobados, idCurso, nombreCurso }) => {
+export const AprobarReprobarUsuario: React.FC<ModalProps> = ({ mostrar, onClose, usuario, usuariosAprobados, 
+                                                               usuariosReprobados, idCurso, nombreCurso,
+                                                               onUpdateAprobados, onUpdateReprobados }) => {
 
     const rutaDocumentoFirebase = `Cursos/${idCurso}`;
 
@@ -48,6 +52,7 @@ export const AprobarReprobarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
                     const newReprobados = reprobadosLocal.filter(id => id !== usuario.id);
                     await updateFirebaseDoc(rutaDocumentoFirebase, { reprobados: newReprobados });
                     setReprobadosLocal(newReprobados); // Actualiza el estado global de reprobados
+                    onUpdateReprobados(newReprobados);
 
                 } catch (error) {
                     console.error('(Caso: Alumno anteriormente Reprobado): Error al Aprobar alumno en Firebase:', error);
@@ -63,6 +68,7 @@ export const AprobarReprobarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
             setMostrarNotificacion(true);
             setTimeout(() => {
                 setAprobadosLocal(newAprobados);
+                onUpdateAprobados(newAprobados);
             }, 3000);
         } catch (error) {
             console.error('Error al actualizar aprobados en Firebase:', error);
@@ -89,7 +95,8 @@ export const AprobarReprobarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
                     const newAprobados = aprobadosLocal.filter(id => id !== usuario.id);
                     await updateFirebaseDoc(rutaDocumentoFirebase, { aprobados: newAprobados });
                     setAprobadosLocal(newAprobados); // Actualiza el estado global de aprobados
-                    //setMensajeExito('El estudiante ha sido Reprobado.');    
+                    //setMensajeExito('El estudiante ha sido Reprobado.');
+                    onUpdateAprobados(newAprobados);  
                 } catch (error) {
                     console.error('(Caso: Alumno anteriormente Aprobado): Error al reprobar alumno en Firebase:', error);
                 }
@@ -106,6 +113,7 @@ export const AprobarReprobarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
             setMensajeExito('El estudiante ha sido Reprobado.');
             setTimeout(() => {
                 setReprobadosLocal(newReprobados);
+                onUpdateReprobados(newReprobados);
             }, 3000);
         } catch (error) {
             console.error('Error al actualizar reprobados en Firebase:', error);

@@ -41,6 +41,12 @@ export const ListaCursosMatriculaPage = () => {
     //Columnas de la tabla
     const columns = [
         {
+            name: "Postulados",
+            selector: (row: Curso) => row.postulados?.length || 0,
+            sortable: true,
+            width: "9vw",
+        },
+        {
             name: "Nombre",
             selector: (row: any) => row.nombre,
             sortable: true,
@@ -53,12 +59,6 @@ export const ListaCursosMatriculaPage = () => {
         //     sortable: true,
         //     width: "20vw",
         // },
-        {
-            name: "Postulados",
-            selector: (row: Curso) => row.postulados?.length || 0,
-            sortable: true,
-            width: "9vw",
-        },
 
         {
             name: "Horario",
@@ -77,22 +77,47 @@ export const ListaCursosMatriculaPage = () => {
 
         {
             name: "Fecha Inicio",
+            // selector: (row:any) => {
+            //     if (row.fecha_inicio && typeof row.fecha_inicio.toDate === 'function') {
+            //         return row.fecha_inicio.toDate().toLocaleDateString();
+            //     } else {
+            //         return "Cargando...";
+            //     }
+            // },
+
             selector: (row:any) => {
                 if (row.fecha_inicio && typeof row.fecha_inicio.toDate === 'function') {
-                    return row.fecha_inicio.toDate().toLocaleDateString();
+                    const fecha = row.fecha_inicio.toDate();
+                    const dia = fecha.getDate();
+                    const mes = fecha.getMonth() + 1; // Los meses en JavaScript van de 0 a 11
+                    const año = fecha.getFullYear();
+                    return `${dia}/${mes}/${año}`;
                 } else {
                     return "Cargando...";
                 }
             },
+
+
             sortable: true,
             width: "10vw",
         },
 
         {
             name: "Fecha Fin",
+            // selector: (row:any) => {
+            //     if (row.fecha_finalizacion && typeof row.fecha_finalizacion.toDate === 'function') {
+            //         return row.fecha_finalizacion.toDate().toLocaleDateString();
+            //     } else {
+            //         return "Cargando...";
+            //     }
+            // },
             selector: (row:any) => {
                 if (row.fecha_finalizacion && typeof row.fecha_finalizacion.toDate === 'function') {
-                    return row.fecha_finalizacion.toDate().toLocaleDateString();
+                    const fecha = row.fecha_finalizacion.toDate();
+                    const dia = fecha.getDate();
+                    const mes = fecha.getMonth() + 1; // Los meses en JavaScript van de 0 a 11, por eso sumamos 1
+                    const año = fecha.getFullYear();
+                    return `${dia}/${mes}/${año}`;
                 } else {
                     return "Cargando...";
                 }
@@ -103,7 +128,7 @@ export const ListaCursosMatriculaPage = () => {
 
         {
             name: "Modalidad",
-            // selector: (row: any) => row.modalidad,
+            selector: (row: any) => row.modalidad,
             cell: (row: any) => {
                 let modalidadTexto = '';
                 switch (row.modalidad) {
@@ -142,11 +167,14 @@ export const ListaCursosMatriculaPage = () => {
 
     const handleClickListaUsuarios = (idCurso: string, nombreCurso: string, usuariosInte: [], matriculadosCurso: string[]) => {   
         // console.log({matriculadosCurso});
+
         setUsuariosInteresadosCurso(usuariosInte);
         setIdCursoConsultar(idCurso);
         setNombreCurso(nombreCurso);
         setUsuariosMatriculados(matriculadosCurso);
         setShowUsuariosMatricula(true);
+ 
+
     }
 
     const handleRegresarClick = () => {
