@@ -13,6 +13,7 @@ interface Users {
     cedula: string;
     telefono: string;
     correo: string;
+    hora_solicitud: Date; // Agregar la propiedad hora_solicitud de tipo Date
 }
 
 export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCurso, usuariosInteresados, matriculados }:
@@ -48,6 +49,12 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
             sortable: true,
             //width: "30vw",
         },
+        {
+            name: "Hora de Solicitud",
+        selector: (row: Users) => row.hora_solicitud.toLocaleString(), // Mostrar la hora_solicitud formateada como string
+        sortable: true,
+        },
+        
 
 
 
@@ -96,7 +103,7 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
 
     useEffect(() => {
 
-        // console.log({usuariosInteresados})
+         console.log({usuariosInteresados})
         // console.log({matriculados});
 
          const fetchData = async () => {
@@ -118,9 +125,18 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
                     correo: doc.correo,
                     //descripcion: doc.descripcion,
                     //usuariosInteresados: doc.usuarios_interesados,
+                    hora_solicitud: usuariosInteresados.find((usuario) => usuario.id === doc.id)?.hora_solicitud.toDate() || new Date(),
                 }));
                 console.log('DATOS DE LOS USUARIOS: ', userData);
-                setUsers(userData);
+
+                // Formatear la fecha en userData utilizando toLocaleDateString con las opciones adecuadas
+        const formattedUserData = userData.map((user) => ({
+            ...user,
+            hora_solicitud: user.hora_solicitud.toLocaleDateString('es-ES', { day: 'numeric', month: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit', hour12: true }),
+        }));
+
+        setUsers(formattedUserData);
+                //setUsers(userData);
                 //console.log('Lista de aceptados en curso> ', matriculados);
 
             } catch (error) {
@@ -166,7 +182,7 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
     }
 
     //console.log(`ESTE ES EL NOMBRE DEL CURSO ${nombreCurso}`, 'Y este el id de sus usuarios interesados: ', usuariosInteresados);
-
+    console.log({filteredUsers})
     return (
         <>
 
