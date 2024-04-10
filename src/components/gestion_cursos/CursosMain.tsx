@@ -3,6 +3,7 @@ import './CursosMain.css'
 import { RootState } from "../../redux/store";
 import { useEffect } from 'react';
 import { useSelector } from 'react-redux';
+import { FaBook, FaGraduationCap, FaUserPlus } from 'react-icons/fa';
 
 function CursosMain() {
     // LOGICA PARA REDIRECCIONAR SI NO SE ESTA LOGUEADO, PARA QUE NO SE PUEDA ACCEDER MENDIATE URL DIRECTA
@@ -22,22 +23,32 @@ function CursosMain() {
     return (
         <>
             <h2>Gestión del Sistema de Matrícula</h2>
-            <div className="container opciones-container">
+            <div >
                 <div className="row">
-                    <div className="col-6">
-                        <h3>Matrícula</h3>
-                        <Link to = '/matriculaAdmin'>
-                            <button className="btn btn-primary">Aceptar/Rechazar</button>
+                    <div className="col-md-6">
+                        <Link to="/matriculaAdmin" className="card my-3 custom-card">
+                            <div className="card-body">
+                                <h5 className="card-title">Gestión de Matrícula</h5>
+                                <p className="card-text text-secondary">Administre las solicitudes de matrícula.</p>
+                                <FaUserPlus style={{ fontSize: '48px', color: "#4dd46d" }} />
+                            </div>
                         </Link>
-                        <h3>Registro</h3>
-                        <Link to = '/evaluacionEstudiantes'>
-                            <button className="btn btn-primary">Aprobar/Reprobar</button>
+
+                        <Link to="/evaluacionEstudiantes" className="card my-3 custom-card">
+                            <div className="card-body">
+                                <h5 className="card-title">Gestión de Aprobaciones</h5>
+                                <p className="card-text text-secondary">Apruebe o repruebe estudiantes en los cursos.</p>
+                                <FaGraduationCap style={{ fontSize: '48px', color: "#4dd46d" }} />
+                            </div>
                         </Link>
                     </div>
-                    <div className="col-6">
-                        <h3>Cursos</h3>
-                        <Link to="/gestionar-cursos">
-                            <button className="btn btn-primary">Gestionar Oferta de Cursos</button>
+                    <div className="col-md-6">
+                        <Link to="/gestionar-cursos" className="card my-3 custom-card">
+                            <div className="card-body">
+                                <h5 className="card-title"> Gestión de Cursos</h5>
+                                <p className="card-text text-secondary">Administre la oferta de cursos disponibles.</p>
+                                <FaBook style={{ fontSize: '48px', color: "#4dd46d" }} />
+                            </div>
                         </Link>
                     </div>
                 </div>

@@ -10,10 +10,10 @@ export interface Curso {
     horario: Horario[];
     link_plataforma: string;
     image_url: string;
-    aprobados: [];
-    reprobados: [];
-    matriculados: [];
-    postulados: [];
+    aprobados?: [];
+    reprobados?: [];
+    matriculados?: [];
+    postulados?: [];
     estado?: number;
     disponibilidad?: number;
     download_url: string;

@@ -203,10 +203,6 @@ export const FormularioCursos = (props: formProps) => {
               link_plataforma: linkCurso,
               horario: horarios,
               image_url: `/Cursos/${nombreCurso}/image1`,
-              aprobados: [],
-              reprobados: [],
-              matriculados: [],
-              postulados: [],
               estado: 0,
               download_url: res2!,
             }

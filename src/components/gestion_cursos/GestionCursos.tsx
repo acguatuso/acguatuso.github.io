@@ -17,6 +17,7 @@ function GestionCursos() {
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | undefined>(undefined);
   const [filterText, setFilterText] = useState("");
+  const [disponible, setDisponible] = useState("No disponible");
   const selectedCursos = useAppSelector(cursosSelector);
   const dispatch = useAppDispatch();
 
@@ -35,37 +36,12 @@ function GestionCursos() {
   }, [selectedCursos]) 
 
   function handleSwitchToggleEstado(row: any): void {
-    // Desactivar la disponibilidad cuando se activa el estado
-    if (row.disponibilidad === 1) {
-      updateFirebaseDoc(`/Cursos/${row.id}`, {
-        disponibilidad: 0,
-      });
-      dispatch(changeCursoDisponibilidad(row.id));
-    }
-    
     // Activar o desactivar el estado
     updateFirebaseDoc(`/Cursos/${row.id}`, {
       estado: row.estado === 0 ? 1 : 0,
     });
     dispatch(changeCursoEstado(row.id));
   }
-  
-  function handleSwitchToggleDisponibilidad(row: any): void {
-    // Desactivar el estado cuando se activa la disponibilidad
-    if (row.estado === 1) {
-      updateFirebaseDoc(`/Cursos/${row.id}`, {
-        estado: 0,
-      });
-      dispatch(changeCursoEstado(row.id));
-    }
-    
-    // Activar o desactivar la disponibilidad
-    updateFirebaseDoc(`/Cursos/${row.id}`, {
-      disponibilidad: row.disponibilidad === 0 ? 1 : 0,
-    });
-    dispatch(changeCursoDisponibilidad(row.id));
-  }
-  
 
   const columns = [
     {
@@ -107,19 +83,16 @@ function GestionCursos() {
       width: "5vw",
     },
     {
-      name: "Disponibilidad",
+      name: "Visualización",
       cell: (row: any) => (
-        <div className="form-check form-switch">
-          <input
-            className="form-check-input"
-            type="checkbox"
-            role="switch"
-            checked={row.disponibilidad}
-            onChange={() => handleSwitchToggleDisponibilidad(row)}
-          ></input>
-        </div>
+        <select id="modalidad" className={"form-select"} name="modalidad" value={disponible} onChange={(e) => setDisponible(e.target.value)} required>
+          <option disabled value="">Selecciona donde será visible el curso</option>
+          <option value="Matrícula">Sección de Matrícula</option>
+          <option value="Próximamente">Sección de Próximamente</option>
+          <option value="No disponible">No disponible</option>
+        </select>
       ),
-      width: "5vw",
+      width: "15vw",
     },
     {
       name: "Ver",
