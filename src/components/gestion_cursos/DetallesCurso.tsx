@@ -1,6 +1,7 @@
 import { FaEye } from "react-icons/fa"
 import { Curso } from "./curso.interface"
 import { Timestamp } from "firebase/firestore"
+import { obtenerNombreModalidad } from "../../redux/reducers/cursosSlice"
 
 interface formProps{
     curso: Curso 
@@ -32,7 +33,7 @@ function DetallesCurso(props: formProps) {
                 <div className="col">
                   <p><strong>Nombre:</strong> {props.curso.nombre}</p>
                   <p><strong>Descripción:</strong> {props.curso.descripcion}</p>
-                  <p><strong>Modalidad:</strong> {props.curso.modalidad}</p>
+                  <p><strong>Modalidad:</strong> {obtenerNombreModalidad(props.curso.modalidad)}</p>
                   <p><strong>Fecha de Inicio:</strong> {props.curso.fecha_inicio instanceof Timestamp ? props.curso.fecha_inicio.toDate().toLocaleDateString() : ''}</p>
                   <p><strong>Fecha de Fin:</strong> {props.curso.fecha_finalizacion instanceof Timestamp ? props.curso.fecha_finalizacion.toDate().toLocaleDateString() : ''}</p>
               {props.curso.link_plataforma && (

@@ -27,10 +27,17 @@ declare global {
     }
 }
 
+enum Modalidad {
+    NoDefinida = -1,
+    Presencial = 0,
+    Virtual = 1,
+    Mixta = 2
+}
+
 export const FormularioCursos = (props: formProps) => {
     const [nombreCurso, setNombreCurso] = useState('');
     const [descripcionCurso, setDescripcionCurso] = useState('');
-    const [modalidad, setModalidad] = useState('');
+    const [modalidad, setModalidad] = useState<number>(Modalidad.NoDefinida); 
     const [fechaInicio, setFechaInicio] = useState<Date | null >(null);
     const [fechaFin, setFechaFin] = useState<Date | null>(null);
     const [linkCurso, setLinkCurso] = useState('');
@@ -72,7 +79,7 @@ export const FormularioCursos = (props: formProps) => {
     };
    
     const handleModalidadChange = (e: ChangeEvent<HTMLSelectElement>) => {
-      setModalidad(e.target.value);
+        setModalidad(parseInt(e.target.value));
     };
   
     const handleNombreCursoChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -136,7 +143,7 @@ export const FormularioCursos = (props: formProps) => {
     const handleReset = () => {
         setNombreCurso('');
         setDescripcionCurso('');
-        setModalidad('');
+        setModalidad(Modalidad.NoDefinida);
         setFechaInicio(null);
         setFechaFin(null);
         setLinkCurso('');
@@ -165,7 +172,7 @@ export const FormularioCursos = (props: formProps) => {
           matriculados: [],
           postulados: [],
           estado: 0,
-          disponibilidad: 0,
+          visible: 0,
           download_url: res2!,
       };
       console.log(cursoData)
@@ -232,11 +239,11 @@ export const FormularioCursos = (props: formProps) => {
         if (
             nombreCurso === '' ||
             descripcionCurso === '' ||
-            modalidad === '' ||
+            modalidad === Modalidad.NoDefinida ||
             fechaInicio === null ||
             fechaFin === null ||
             (props.id.startsWith('course-section-modal-add') && fileImage === undefined) || // La imagen es requerida solo al crear un curso
-            (modalidad === 'Virtual' || modalidad === 'Mixta') && linkCurso === '' ||
+            (modalidad === Modalidad.Virtual || modalidad === Modalidad.Mixta) && linkCurso === '' ||
             (horarios.length > 0 && (horarios[horarios.length - 1].dia === "" || horarios[horarios.length - 1].hora === ""))
         ) {
             return; // Detener el envío del formulario si algún campo requerido está vacío
@@ -311,11 +318,11 @@ export const FormularioCursos = (props: formProps) => {
                                                 </div>
                                                 <div className="col">
                                                     <label className="form-label" htmlFor="modalidad">Modalidad <span className="required-indicator text-danger">*</span></label>
-                                                    <select id="modalidad" className={`form-select ${intentadoEnviar && modalidad === '' ? 'is-invalid' : ''}`} name="modalidad" value={modalidad} onChange={handleModalidadChange} required>
-                                                    <option disabled value="">Selecciona una modalidad</option>
-                                                    <option value="Presencial">Presencial</option>
-                                                    <option value="Virtual">Virtual</option>
-                                                    <option value="Mixta">Mixta</option>
+                                                    <select id="modalidad" className={`form-select ${intentadoEnviar && modalidad === Modalidad.NoDefinida ? 'is-invalid' : ''}`} name="modalidad" value={modalidad} onChange={handleModalidadChange} required>
+                                                    <option disabled value={Modalidad.NoDefinida}>Selecciona una modalidad</option>
+                                                    <option value={Modalidad.Presencial}>Presencial</option>
+                                                    <option value={Modalidad.Virtual}>Virtual</option>
+                                                    <option value={Modalidad.Mixta}>Mixta</option>
                                                     </select>
                                                 </div>
                                             </div>
@@ -331,8 +338,8 @@ export const FormularioCursos = (props: formProps) => {
                                             </div>
                                             <div className="row">
                                                 <div className="col">
-                                                    <label className="form-label" htmlFor="linkClase" >Link de Clase {modalidad === 'Virtual' || modalidad === 'Mixta' ? (<span className=" required-indicator text-danger">*</span>) : null}</label>
-                                                    <input type="url" className={`form-control ${intentadoEnviar && (modalidad === 'Virtual' || modalidad === 'Mixta') && linkCurso === '' ? 'is-invalid' : ''}`} id="linkClase" name="linkClase" value={linkCurso} onChange={handleLinkCursoChange} required={modalidad === 'Virtual' || modalidad === 'Mixta'}/>
+                                                    <label className="form-label" htmlFor="linkClase" >Link de Clase {modalidad === Modalidad.Virtual || modalidad === Modalidad.Mixta ? (<span className=" required-indicator text-danger">*</span>) : null}</label>
+                                                    <input type="url" className={`form-control ${intentadoEnviar && (modalidad === Modalidad.Virtual || modalidad === Modalidad.Mixta) && linkCurso === '' ? 'is-invalid' : ''}`} id="linkClase" name="linkClase" value={linkCurso} onChange={handleLinkCursoChange} required={modalidad === Modalidad.Virtual || modalidad === Modalidad.Mixta}/>
                                                 </div>
                                                 <div className="col">
                                                     <label className="form-label" htmlFor="imagen">Imagen Ilustrativa  {props.id.startsWith('course-section-modal-add') ? (<span className="required-indicator text-danger">*</span>) : null} </label>

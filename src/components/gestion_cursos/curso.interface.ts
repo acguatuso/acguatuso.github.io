@@ -3,7 +3,7 @@ export interface Curso {
     id?: string;
     nombre: string;
     descripcion: string;
-    modalidad: string;
+    modalidad: number;
     fechaCreacion?: Timestamp;
     fecha_inicio: Timestamp;
     fecha_finalizacion: Timestamp;
@@ -15,7 +15,7 @@ export interface Curso {
     matriculados?: [];
     postulados?: [];
     estado?: number;
-    disponibilidad?: number;
+    visible?: number;
     download_url: string;
 }
 

@@ -1,23 +1,28 @@
-import { useState, useEffect} from 'react';
+import { useState, useEffect, ChangeEvent} from 'react';
 import { FormularioCursos } from "./FormularioCursos";
 import { Curso } from './curso.interface';
 import EliminarCurso from './EliminarCurso';
 import DataTableBase from '../dataTable/DataTableBase';
-import { FaAddressCard, FaArrowLeft, FaEdit, FaEye } from 'react-icons/fa';
+import { FaArrowLeft, FaEdit } from 'react-icons/fa';
 import { RootState } from '../../redux/store';
 import { useSelector } from 'react-redux';
 import { useNavigate } from 'react-router-dom';
-import { changeCursoDisponibilidad, changeCursoEstado, cursosSelector, fetchCursos } from '../../redux/reducers/cursosSlice';
+import { changeCursoEstado, changeCursoVisible, cursosSelector, fetchCursos, obtenerNombreModalidad } from '../../redux/reducers/cursosSlice';
 import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
 import { updateFirebaseDoc } from '../../api/updateFirebaseDoc/updateFirebaseDoc';
 import DetallesCurso from './DetallesCurso';
+
+enum Visible {
+  NoVisible = 0, 
+  Matricula = 1, 
+  Proximamente = 2
+}
 
 function GestionCursos() {
   const [cursos, setCursos] = useState<Array<Curso>>([]);
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | undefined>(undefined);
   const [filterText, setFilterText] = useState("");
-  const [disponible, setDisponible] = useState("No disponible");
   const selectedCursos = useAppSelector(cursosSelector);
   const dispatch = useAppDispatch();
 
@@ -37,10 +42,24 @@ function GestionCursos() {
 
   function handleSwitchToggleEstado(row: any): void {
     // Activar o desactivar el estado
+    const nuevoEstado = row.estado === 0 ? 1 : 0; 
+  
     updateFirebaseDoc(`/Cursos/${row.id}`, {
-      estado: row.estado === 0 ? 1 : 0,
+      estado: nuevoEstado,
     });
-    dispatch(changeCursoEstado(row.id));
+    dispatch(changeCursoEstado(row.id)); 
+    const nuevoVisible = nuevoEstado === 0 ? Visible.NoVisible : row.estado;
+    updateFirebaseDoc(`/Cursos/${row.id}`, {
+      visible: parseInt(nuevoVisible),
+    });
+    dispatch(changeCursoVisible({ cursoId: row.id, visible: nuevoVisible })); 
+  }
+
+  function handleVisibleChange(e: ChangeEvent<HTMLSelectElement>, row: any, ) : void {
+    updateFirebaseDoc(`/Cursos/${row.id}`, {
+      visible: parseInt(e.target.value),
+    });
+    dispatch(changeCursoVisible({ cursoId: row.id, visible: parseInt(e.target.value) }));
   }
 
   const columns = [
@@ -64,7 +83,7 @@ function GestionCursos() {
     },
     {
       name: "Modalidad",
-      selector: (row: any) => row.modalidad,
+      selector: (row: any) => obtenerNombreModalidad(row.modalidad),
       sortable: true,
     },
     {
@@ -83,13 +102,13 @@ function GestionCursos() {
       width: "5vw",
     },
     {
-      name: "Visualización",
+      name: "Visibilidad",
       cell: (row: any) => (
-        <select id="modalidad" className={"form-select"} name="modalidad" value={disponible} onChange={(e) => setDisponible(e.target.value)} required>
+        <select id="visible" className={"form-select"} name="visible" value={row.visible} onChange={(e) => handleVisibleChange(e, row)} disabled={row.estado === 0} required>
           <option disabled value="">Selecciona donde será visible el curso</option>
-          <option value="Matrícula">Sección de Matrícula</option>
-          <option value="Próximamente">Sección de Próximamente</option>
-          <option value="No disponible">No disponible</option>
+          <option value={Visible.Matricula}>Sección de Matrícula</option>
+          <option value={Visible.Proximamente}>Sección de Próximamente</option>
+          <option value={Visible.NoVisible}>No visible</option>
         </select>
       ),
       width: "15vw",
@@ -191,7 +210,3 @@ function GestionCursos() {
 }
 
 export default GestionCursos;
-
-function handleButtonClick(name: any): void {
-  console.log(name)
-}

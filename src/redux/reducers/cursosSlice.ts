@@ -29,7 +29,7 @@ export const fetchCursos = createAsyncThunk(
         const numSolicitantes: { [idCurso: string]: number } = {};
         data.forEach(curso => {
           if (curso.id) { // Verifica que curso.id esté definido
-            numSolicitantes[curso.id] = curso.postulados.length;
+            numSolicitantes[curso.id] = curso.postulados!.length;
           }
         });
         
@@ -45,6 +45,19 @@ export const fetchCursos = createAsyncThunk(
         return { cursos: cursosOrdenados, numSolicitantes };//return cursosOrdenados;
         }
 )
+
+export function obtenerNombreModalidad(numeroModalidad: number): string {
+  switch (numeroModalidad) {
+      case 0:
+          return 'Presencial';
+      case 1:
+          return 'Virtual';
+      case 2:
+          return 'Mixta';
+      default:
+          return 'No Definida';
+  }
+}
 
 const cursosSlice = createSlice({
     name: 'cursos',
@@ -95,17 +108,17 @@ const cursosSlice = createSlice({
           curso.estado = curso.estado === 0 ? 1 : 0;
         }
       },
-      changeCursoDisponibilidad: (state, action: PayloadAction<string>) => {
-        const cursoId = action.payload;
+      changeCursoVisible: (state, action: PayloadAction<{ cursoId: string; visible: number }>) => {
+        const { cursoId, visible } = action.payload;
         const curso = state.cursos.find(curso => curso.id === cursoId);
         if (curso) {
-          curso.disponibilidad = curso.disponibilidad === 0 ? 1 : 0;
+          curso.visible = visible;
         }
       },
     }
   })
 
-  export const { addCurso, deleteCurso, editCurso, changeCursoEstado, changeCursoDisponibilidad } = cursosSlice.actions;
+  export const { addCurso, deleteCurso, editCurso, changeCursoEstado, changeCursoVisible } = cursosSlice.actions;
   export const cursosSelector = (state: RootState) => state.cursos;
   export default cursosSlice.reducer;
   
