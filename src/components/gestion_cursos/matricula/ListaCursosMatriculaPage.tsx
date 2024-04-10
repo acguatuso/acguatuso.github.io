@@ -29,7 +29,7 @@ export const ListaCursosMatriculaPage = () => {
     const [showUsuariosMatricula, setShowUsuariosMatricula] = useState(false);
     const [idCursoConsular, setIdCursoConsultar] = useState('');
     const [nombreCurso, setNombreCurso] = useState('');
-    const [usuariosInteresadosCurso, setUsuariosInteresadosCurso] = useState<string[]>([]);
+    const [usuariosInteresadosCurso, setUsuariosInteresadosCurso] = useState<[]>([]);
     const [usuariosMatriculados, setUsuariosMatriculados] = useState<string[]>([]);
     const [filteredCourses, setFilteredCourses] = useState<Curso[]> ([]);
     const [filterText, setFilterText] = useState('');
@@ -55,7 +55,7 @@ export const ListaCursosMatriculaPage = () => {
         // },
         {
             name: "Postulados",
-            selector: (row: Curso) => row.postulados.length,
+            selector: (row: Curso) => row.postulados?.length || 0,
             sortable: true,
             width: "9vw",
         },
@@ -123,7 +123,8 @@ export const ListaCursosMatriculaPage = () => {
         }
     ];
 
-    const handleClickListaUsuarios = (idCurso: string, nombreCurso: string, usuariosInte: string[], matriculadosCurso: string[]) => {   
+    const handleClickListaUsuarios = (idCurso: string, nombreCurso: string, usuariosInte: [], matriculadosCurso: string[]) => {   
+        // console.log({matriculadosCurso});
         setUsuariosInteresadosCurso(usuariosInte);
         setIdCursoConsultar(idCurso);
         setNombreCurso(nombreCurso);

@@ -16,7 +16,7 @@ interface Users {
 }
 
 export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCurso, usuariosInteresados, matriculados }:
-    { onRegresarClick: () => void; idCurso: string; nombreCurso: string; usuariosInteresados: string[]; matriculados: string[] }) => {
+    { onRegresarClick: () => void; idCurso: string; nombreCurso: string; usuariosInteresados: any[]; matriculados: string[] }) => {
 
     const [users, setUsers] = useState<Users[]>([]);
     const [showDetailsUserModal, setShowDetailsUserModal] = useState(false); // estado para controlar la visibilidad del modal
@@ -46,8 +46,11 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
             name: "Correo",
             selector: (row: any) => row.correo,
             sortable: true,
-            width: "50vw",
+            //width: "30vw",
         },
+
+
+
 
         {
             name: "Estado",
@@ -93,12 +96,20 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
 
     useEffect(() => {
 
-        const fetchData = async () => {
+        // console.log({usuariosInteresados})
+        // console.log({matriculados});
+
+         const fetchData = async () => {
             try {
                 const docSnap = await getFirebaseDocs('Usuarios');
-                const usuariosFiltrados = docSnap.filter((doc: any) =>
-                    usuariosInteresados.includes(doc.id)
+                // const usuariosFiltrados = docSnap.filter((doc: any) =>
+                //     usuariosInteresados.includes(doc.id)
+                // );
+
+                const usuariosFiltrados = docSnap.filter((doc) =>
+                    usuariosInteresados.some((usuario) => usuario.id === doc.id)
                 );
+                
                 const userData = usuariosFiltrados.map((doc: any) => ({
                     id: doc.id,
                     nombre: doc.nombre,
@@ -108,16 +119,16 @@ export const ListaUsuariosMatriculaPage = ({ onRegresarClick, idCurso, nombreCur
                     //descripcion: doc.descripcion,
                     //usuariosInteresados: doc.usuarios_interesados,
                 }));
-                //console.log('DATOS DE LOS USUARIOS: ', userData);
+                console.log('DATOS DE LOS USUARIOS: ', userData);
                 setUsers(userData);
-                console.log('Lista de aceptados en curso> ', matriculados);
+                //console.log('Lista de aceptados en curso> ', matriculados);
 
             } catch (error) {
                 console.error('Error Al traer los usuarios:', error);
             }
         }
 
-        fetchData();
+        fetchData(); 
 
     }, [])
 

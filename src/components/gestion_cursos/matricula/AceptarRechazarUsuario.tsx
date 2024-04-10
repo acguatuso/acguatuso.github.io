@@ -30,8 +30,12 @@ export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
     setMatriculadosLocal(usuariosMatriculados);
   }, [usuariosMatriculados]);
 
+  //console.log({usuario})
+  console.log({usuariosMatriculados})
+  
   const isMatriculado = usuario?.id && matriculadosLocal.includes(usuario.id)//usuariosMatriculados.includes(usuario.id);
 
+  
   const handleClickAceptar = async () => {
     //console.log('Estoy en el modal con los usuarios Matriculados: ', usuariosMatriculados)
     
