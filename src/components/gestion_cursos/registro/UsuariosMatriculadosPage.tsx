@@ -3,6 +3,8 @@ import { FaArrowLeft } from 'react-icons/fa';
 import DataTableBase from '../../dataTable/DataTableBase';
 import { getFirebaseDocs } from '../../../api/getFirebaseDocs/getFirebaseDocs';
 import { AprobarReprobarUsuario } from '.';
+import { FaCheck, FaTimes } from 'react-icons/fa'; // Importa los íconos necesarios
+
 
 //interfaz de un usuario con datos reducido. 
 interface Users {
@@ -43,22 +45,44 @@ export const UsuariosMatriculadosPage = ({ onRegresarClick, nombreCurso, matricu
             name: "Correo",
             selector: (row: any) => row.correo,
             sortable: true,
-            width: "40vw",
+            width: "30vw",
         },
-
-        // {
-        //     name: "Teléfono",
-        //     selector: (row: any) => row.telefono,
-        //     sortable: true,
-        // },
 
         {
             name: "Estado",
-            cell: (row: Users) => (
+            /*cell: (row: Users) => (
                 <span style={{ color: updateAprobados.includes(row.id) ? 'green' : 'red'}}>
                     {updateAprobados.includes(row.id)? 'Aprobado' : 'Reprobado'}
                 </span>
-            ),
+            ),*/
+            cell: (row: Users) => {
+                const estaAprobado = updateAprobados.includes(row.id);
+                const estaReprobado = updateReprobados.includes(row.id);
+                const noCalificado = !estaAprobado && !estaReprobado; // no se encuentra ni en aprobados ni en reprobados
+
+                let icono;
+                let color = 'gray';
+                let estado = 'No calificado';
+
+                if(estaAprobado){
+                    color = 'green';
+                    //estado = 'Aprobado';
+                    icono = <FaCheck color="green" />;
+                } else if (estaReprobado){
+                    icono = <FaTimes color="red" />;
+                    color = 'red';
+                    estado = 'Reprobado';
+                } else {
+                    icono = '?';
+                }
+
+                return (
+                    <span style={{ color }}>
+                        {icono}{/* {estado} */}
+                    </span>
+                )
+            },
+            width: "10vw",
         },
 
         {
