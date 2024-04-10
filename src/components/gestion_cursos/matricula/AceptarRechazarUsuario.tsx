@@ -3,6 +3,11 @@ import { updateFirebaseDoc } from '../../../api/updateFirebaseDoc/updateFirebase
 import NotificationModal from '../../Modal/NotificationModal';
 import { SentEmailCoursesRejected } from './SentEmailCoursesRejected';
 import { SentEmailCoursesAcepted } from './SentEmailCoursesAcepted';
+import { useAppDispatch } from '../../../hooks/hooks';
+import { useSelector } from 'react-redux';
+import { RootState } from '../../../redux/store';
+import { fetchCursos } from '../../../redux/reducers/cursosSlice';
+import { reload } from 'firebase/auth';
 
 interface ModalProps {
   mostrar: boolean;
@@ -16,6 +21,31 @@ interface ModalProps {
 
 export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose, usuario, usuariosMatriculados, idCurso, nombreCurso, onUpdateMatriculados  }) => {
 
+  //REDUX/////////////////////////////////////////////////////
+    // El dispatch lo necesito para lo de Redux con los cursos
+    const dispatch = useAppDispatch();
+    const coursesRedux = useSelector((state: RootState) => state.cursos.cursos);
+
+    // Estado local para controlar la recarga de datos
+  const [reloadData, setReloadData] = useState(false);
+
+    useEffect(() => {
+        (async () => {
+            await dispatch(fetchCursos())
+        })()
+
+         // Si reloadData cambia, volvemos a cargar los datos
+    if (reloadData) {
+      (async () => {
+        await dispatch(fetchCursos())
+      })()
+      setReloadData(false);
+    }
+    }, [dispatch, reloadData])
+
+    // console.log({coursesRedux});
+    //REDUX///////////////////////////////////////////////////////
+
   //console.log("DPG", idCurso);
   const rutaDocumentoFirebase = `Cursos/${idCurso}`;
   //console.log('RUTA DEL CURSO: ', rutaDocumentoFirebase);
@@ -27,6 +57,12 @@ export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
 
   useEffect(() => {
     // Actualizar matriculados locales al recibir nuevos datos
+    const cursoActual = coursesRedux.find(curso => curso.id === idCurso);
+    console.log({cursoActual});
+    const listaMatriculados = cursoActual?.matriculados;
+    console.log({listaMatriculados});
+    console.log({usuariosMatriculados});
+    console.log({coursesRedux});
     setMatriculadosLocal(usuariosMatriculados);
   }, [usuariosMatriculados]);
 
@@ -38,6 +74,8 @@ export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
   
   const handleClickAceptar = async () => {
     //console.log('Estoy en el modal con los usuarios Matriculados: ', usuariosMatriculados)
+
+    
     
     //TODO
     setLoading(true);
@@ -53,6 +91,8 @@ export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
       setTimeout(() => {
         setMatriculadosLocal(newMatriculados);
         onUpdateMatriculados(newMatriculados);
+        // Activar reloadData para volver a cargar los datos
+        setReloadData(true);
 
       }, 3000);
       //onClose();
@@ -69,6 +109,8 @@ export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
   }
 
   const handleClickRechazar = async () => {
+
+    
     //TODO
     const seleccion = confirm('¿Está seguro de desmatricular/rechazar al usuario?');
     
@@ -106,6 +148,8 @@ export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
         //const enviadoExitoso = await SentEmailCoursesRejected(usuario.nombre, usuario.correo, nombreCurso);
         //console.log(enviadoExitoso);
         setMensajeExito('');
+        // Activar reloadData para volver a cargar los datos
+    setReloadData(true);
   
         setLoading(false);
         onClose();
