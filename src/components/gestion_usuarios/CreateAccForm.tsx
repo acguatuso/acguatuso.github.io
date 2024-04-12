@@ -1,12 +1,11 @@
 import React, { useEffect, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { signup } from '../../redux/reducers/authSlice';
+import { signup, signupFailure } from '../../redux/reducers/authSlice';
 import { RootState } from '../../redux/store';
 import '../../CSS/Components/CreateAccStyle.css';
 import { Link } from 'react-router-dom';
 import { fetchPaisInfoAsync, obtenerNombresCantonesDeProvincia, obtenerNombresDistritosDeCanton, obtenerNombresProvincias } from '../../redux/reducers/paisInfoSlice';
 import { useAppDispatch } from '../../hooks/hooks';
-import NotificationModal from '../Modal/NotificationModal';
 
 interface FormData {
   nombre: string;
@@ -43,7 +42,6 @@ const CreateAccountForm: React.FC = () => {
   const [cantones, setCantones] = useState<string[]>([]);
   const [distritos, setDistritos] = useState<string[]>([]);
   const [provincia, setSelectedProvincia] = useState<string>('')
-  const [showModal, setShowModal] = useState<boolean>(false);
 
   // Redux Hooks & Access
   const dispatch = useAppDispatch();
@@ -102,11 +100,8 @@ const CreateAccountForm: React.FC = () => {
     const isFormFilled = Object.values(formData).every(value => value.trim() !== '');
 
     if (!isFormFilled) {
-      setShowModal(true); // Mostrar el modal
-      setTimeout(() => {
-        setShowModal(false); // Ocultar el modal después de 3 segundos
-      }, 3000);
-      console.log(formData);
+      dispatch(signupFailure('Porfavor llene todos los campos.'));
+      //console.log(formData);
       return;
     }
 
@@ -131,16 +126,17 @@ const CreateAccountForm: React.FC = () => {
             <p>{notification}, Debes confirmar tu correo electrónico! </p>
           </div>
         )}
-        {error && (
-          <div>
-            <div>
-              <span>{error}</span>
-            </div>
-          </div>
-        )}
+
         {!notification && (
           <div className="card shadow-lg">
             <form onSubmit={handleSignUp} className="signup-form">
+              {error && (
+                <div className="alert-popup">
+                  <div className="alert-message alert alert-danger">
+                    <span>{error}</span>
+                  </div>
+                </div>
+              )}
               <div className="row">
                 <div className="col">
                   <div className="mb-3">
@@ -227,12 +223,6 @@ const CreateAccountForm: React.FC = () => {
           </div>
         </>
       )}
-      <NotificationModal
-        texto="Por favor llene todos los campos"
-        mostrar={showModal}
-        onConfirm={() => setShowModal(false)}
-        segundos={3} // Duración del modal en segundos
-      />
     </div>
   );
 };

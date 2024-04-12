@@ -170,6 +170,9 @@ export const signup = (formData: any): AppThunk => async dispatch => {
     if (error.message === 'Firebase: Error (auth/email-already-in-use).') {
       dispatch(signupFailure('El correo electrónico ya se encuentra en uso, inténte con otro porfavor.'));
     }
+    else{
+      dispatch(signupFailure('El correo electrónico está en un formato no permitido, revíselo porfavor.'));
+    }
 
   }
 };
