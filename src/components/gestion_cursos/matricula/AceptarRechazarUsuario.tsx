@@ -1,13 +1,10 @@
 import { useState, useEffect } from 'react';
 import { updateFirebaseDoc } from '../../../api/updateFirebaseDoc/updateFirebaseDoc';
 import NotificationModal from '../../Modal/NotificationModal';
-import { SentEmailCoursesRejected } from './SentEmailCoursesRejected';
-import { SentEmailCoursesAcepted } from './SentEmailCoursesAcepted';
 import { useAppDispatch } from '../../../hooks/hooks';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import { fetchCursos } from '../../../redux/reducers/cursosSlice';
-import { reload } from 'firebase/auth';
 
 interface ModalProps {
   mostrar: boolean;
@@ -18,7 +15,7 @@ interface ModalProps {
   nombreCurso: string;
   onUpdateMatriculados: (newMatriculados: string[]) => void;
 }
-
+// @ts-ignore
 export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose, usuario, usuariosMatriculados, idCurso, nombreCurso, onUpdateMatriculados  }) => {
 
   //REDUX/////////////////////////////////////////////////////

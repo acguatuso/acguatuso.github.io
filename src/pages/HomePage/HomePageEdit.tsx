@@ -7,6 +7,7 @@ export const HomePageEdit = ({ onClose, initialTitulo, initialDescription }: { o
     const [descripcion, setDescripcion] = useState('');
     const [editImage, setEditImage] = useState(false);
     const [showEditImageBoton, setShowEditImageBoton] = useState(true);
+    // @ts-ignore
     const [originalTitulo, setOriginalTitulo] = useState(''); 
 
 
@@ -29,7 +30,7 @@ export const HomePageEdit = ({ onClose, initialTitulo, initialDescription }: { o
 
         
     };
-
+    // @ts-ignore
     const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
         
         //firebase

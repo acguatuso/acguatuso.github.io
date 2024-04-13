@@ -1,10 +1,8 @@
 
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { AppThunk, RootState } from '../store';
-import { getFirebaseDocs } from "../../api/getFirebaseDocs/getFirebaseDocs";
 import { collection, getDocs } from "firebase/firestore";
 import { data_base } from "../../firebase";
-import { RxCounterClockwiseClock } from "react-icons/rx";
 
 export type EmpresaData = {
     correo: string;
