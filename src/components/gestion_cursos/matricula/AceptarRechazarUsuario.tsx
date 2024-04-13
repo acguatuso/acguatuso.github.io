@@ -85,8 +85,7 @@ export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
       await updateFirebaseDoc(rutaDocumentoFirebase, { matriculados: newMatriculados });
       //console.log('NEW MATRICULADOS: ',newMatriculados)
       setMostrarNotificacion(true);
-      //const enviadoExitoso = await SentEmailCoursesAcepted(usuario.nombre, usuario.correo, nombreCurso);
-      //console.log(enviadoExitoso);
+      await SentEmailCoursesAcepted(usuario.nombre, usuario.correo, nombreCurso);
       
       setTimeout(() => {
         setMatriculadosLocal(newMatriculados);
@@ -124,7 +123,7 @@ export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
         console.warn('El usuario no está matriculado, no es necesario rechazarlo.');
         setLoading(false);
         onClose();
-        //await SentEmailCoursesRejected(usuario.nombre, usuario.correo, nombreCurso); 
+        await SentEmailCoursesRejected(usuario.nombre, usuario.correo, nombreCurso); 
         return; 
       }
   
@@ -145,8 +144,7 @@ export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
       
   
       setTimeout(async () => {
-        //const enviadoExitoso = await SentEmailCoursesRejected(usuario.nombre, usuario.correo, nombreCurso);
-        //console.log(enviadoExitoso);
+        await SentEmailCoursesRejected(usuario.nombre, usuario.correo, nombreCurso);
         setMensajeExito('');
         // Activar reloadData para volver a cargar los datos
     setReloadData(true);
