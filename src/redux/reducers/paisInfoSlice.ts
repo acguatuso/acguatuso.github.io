@@ -1,5 +1,6 @@
 // Importar createSlice y otros tipos necesarios
 import { createSlice } from '@reduxjs/toolkit';
+import { AppThunk } from '../store';
 
 // Definir las interfaces para distrito, cantón y provincia
 type Distrito = {
@@ -21,7 +22,7 @@ interface Provincia {
 
 // Definir el tipo para el JSON
 type PaisInformacion = {
-    [provincia:string]: Provincia;   
+    [provincia: string]: Provincia;
 };
 
 // Definir el estado inicial
@@ -65,18 +66,24 @@ const paisInfo = createSlice({
 export const { fetchDataStart, fetchDataSuccess, fetchDataFailure } = paisInfo.actions;
 export default paisInfo.reducer;
 
-
+const obtenerPaisInfo = async () => {
+    const response = await fetch('https://gist.githubusercontent.com/josuenoel/80daca657b71bc1cfd95a4e27d547abe/raw');
+    const dataPaises = await response.json();
+    localStorage.setItem('data-paises', JSON.stringify(dataPaises));
+}
+const obtenerDatosDesdeRootElement = () => {
+    const dataPaises = JSON.parse(localStorage.getItem('data-paises')!);
+    return dataPaises
+}
 // Definir la función para obtener la información del país de forma asíncrona
-export const fetchPaisInfoAsync = () => async (dispatch: any) => {
-    dispatch(paisInfo.actions.fetchDataStart());
+export const fetchPaisInfoAsync = (): AppThunk => async (dispatch: any) => {
     try {
-        const response = await fetch('https://gist.githubusercontent.com/josuenoel/80daca657b71bc1cfd95a4e27d547abe/raw');
-        if (!response.ok) {
-            throw new Error('La solicitud no fue exitosa');
-        }
-        const data: PaisInformacion = await response.json();
+        // Obtener los datos del país de forma asíncrona
+        await obtenerPaisInfo();
+        // @ts-ignore
+        const data: PaisInformacion = await obtenerDatosDesdeRootElement();
         // Adaptar los datos para permitir el acceso por nombre
-        const newData: PaisInformacion = {} ;
+        const newData: PaisInformacion = {};
         Object.values(data.provincias).forEach((provincia) => {
             //console.log(provincia)
             const cantonesByName: { [nombre: string]: Canton } = {};

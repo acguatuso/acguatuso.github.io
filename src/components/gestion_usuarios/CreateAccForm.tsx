@@ -53,9 +53,11 @@ const CreateAccountForm: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
   const [formData, setFormData] = useState<FormData>(initialState);
 
+  //console.log(paisInfo)
   useEffect(() => {
-    // Realiza la solicitud de la información del país al montar el componente
+    
     dispatch(fetchPaisInfoAsync());
+    // Realiza la solicitud de la información del país al montar el componente
     if (paisInfo) {
       const provincias = obtenerNombresProvincias(paisInfo);
       setProvincias(provincias);
