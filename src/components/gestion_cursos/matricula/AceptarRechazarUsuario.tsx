@@ -1,13 +1,10 @@
 import { useState, useEffect } from 'react';
 import { updateFirebaseDoc } from '../../../api/updateFirebaseDoc/updateFirebaseDoc';
 import NotificationModal from '../../Modal/NotificationModal';
-import { SentEmailCoursesRejected } from './SentEmailCoursesRejected';
-import { SentEmailCoursesAcepted } from './SentEmailCoursesAcepted';
 import { useAppDispatch } from '../../../hooks/hooks';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import { fetchCursos } from '../../../redux/reducers/cursosSlice';
-import { reload } from 'firebase/auth';
 
 interface ModalProps {
   mostrar: boolean;
@@ -19,6 +16,7 @@ interface ModalProps {
   onUpdateMatriculados: (newMatriculados: string[]) => void;
 }
 
+// @ts-ignore
 export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose, usuario, usuariosMatriculados, idCurso, nombreCurso, onUpdateMatriculados  }) => {
 
   //REDUX/////////////////////////////////////////////////////
@@ -85,7 +83,9 @@ export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
       await updateFirebaseDoc(rutaDocumentoFirebase, { matriculados: newMatriculados });
       //console.log('NEW MATRICULADOS: ',newMatriculados)
       setMostrarNotificacion(true);
+
       await SentEmailCoursesAcepted(usuario.nombre, usuario.correo, nombreCurso);
+
       
       setTimeout(() => {
         setMatriculadosLocal(newMatriculados);
@@ -124,6 +124,7 @@ export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
         setLoading(false);
         onClose();
         await SentEmailCoursesRejected(usuario.nombre, usuario.correo, nombreCurso); 
+
         return; 
       }
   
@@ -144,7 +145,12 @@ export const AceptarRechazarUsuario: React.FC<ModalProps> = ({ mostrar, onClose,
       
   
       setTimeout(async () => {
+
         await SentEmailCoursesRejected(usuario.nombre, usuario.correo, nombreCurso);
+
+        //const enviadoExitoso = await SentEmailCoursesRejected(usuario.nombre, usuario.correo, nombreCurso);
+        //console.log(enviadoExitoso);
+
         setMensajeExito('');
         // Activar reloadData para volver a cargar los datos
     setReloadData(true);

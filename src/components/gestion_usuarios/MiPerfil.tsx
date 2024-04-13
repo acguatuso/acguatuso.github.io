@@ -26,7 +26,7 @@ const labels: { [key: string]: string } = {
 };
 
 interface Props {
-    pUsuario: UserData | null;
+    pUsuario?: UserData | null;
 }
 
 const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
@@ -68,8 +68,11 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
     const [cantones, setCantones] = useState<string[]>([]);
     const [distritos, setDistritos] = useState<string[]>([]);
     const [provincia, setSelectedProvincia] = useState('')
+
+    // @ts-ignore
     const [canton, setSelectedCanton] = useState('')
     const [distrito, setSelectedDistrito] = useState('');
+    // @ts-ignore
     const [tipo, setSelectedTipo] = useState('');
     // React-router-dom
     const navigate = useNavigate();

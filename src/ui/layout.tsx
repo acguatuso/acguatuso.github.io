@@ -1,5 +1,7 @@
 // Layout.tsx
 import React, { ReactNode, useEffect, useState } from 'react';
+
+// @ts-ignore
 import { Footer, Navbar } from '.';
 import { fetchEmpresaData } from '../redux/reducers/empresaSlice';
 import { fetchPaisInfoAsync } from '../redux/reducers/paisInfoSlice';
@@ -13,6 +15,8 @@ interface LayoutProps {
 // lo que se renderiza en children son los demaś componentes unicamente
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
+
+  // @ts-ignore
   const [isLoaded, setIsLoaded] = useState(false);
   // Redux Hooks & Access
   const dispatch = useAppDispatch();

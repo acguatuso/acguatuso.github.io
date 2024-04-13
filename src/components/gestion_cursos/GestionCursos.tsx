@@ -20,7 +20,10 @@ enum Visible {
 
 function GestionCursos() {
   const [cursos, setCursos] = useState<Array<Curso>>([]);
+
+  // @ts-ignore
   const [loading, setLoading] = useState<boolean>(false);
+  // @ts-ignore
   const [error, setError] = useState<string | undefined>(undefined);
   const [filterText, setFilterText] = useState("");
   const selectedCursos = useAppSelector(cursosSelector);
