@@ -81,6 +81,7 @@ export const fetchPaisInfoAsync = () => async (dispatch: any) => {
             //console.log(provincia)
             const cantonesByName: { [nombre: string]: Canton } = {};
             Object.values(provincia.cantones).forEach((canton) => {
+
                 // @ts-ignore
                 cantonesByName[canton.nombre] = canton;
             });
@@ -92,6 +93,7 @@ export const fetchPaisInfoAsync = () => async (dispatch: any) => {
         dispatch(paisInfo.actions.fetchDataSuccess(newData));
     } catch (error) {
         console.error('Ocurrió un error al obtener el JSON:', error);
+
         // @ts-ignore
         dispatch(paisInfo.actions.fetchDataFailure(error.message || 'Ha ocurrido un error'));
     }

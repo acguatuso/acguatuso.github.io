@@ -58,6 +58,7 @@ export const UsuariosMatriculadosPage = ({ onRegresarClick, nombreCurso, matricu
             cell: (row: Users) => {
                 const estaAprobado = updateAprobados.includes(row.id);
                 const estaReprobado = updateReprobados.includes(row.id);
+
                 // @ts-ignore
                 const noCalificado = !estaAprobado && !estaReprobado; // no se encuentra ni en aprobados ni en reprobados
 

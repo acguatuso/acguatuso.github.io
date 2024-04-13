@@ -18,6 +18,7 @@ interface ModalProps {
     onUpdateAprobados: (newAprobados: string[]) => void;
     onUpdateReprobados: (newReprobados: string[]) => void;
 }
+
 // @ts-ignore
 export const AprobarReprobarUsuario: React.FC<ModalProps> = ({ mostrar, onClose, usuario, usuariosAprobados,usuariosReprobados, idCurso, nombreCurso,
                                                                onUpdateAprobados, onUpdateReprobados }) => {

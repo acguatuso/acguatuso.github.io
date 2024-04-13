@@ -68,6 +68,7 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
     const [cantones, setCantones] = useState<string[]>([]);
     const [distritos, setDistritos] = useState<string[]>([]);
     const [provincia, setSelectedProvincia] = useState('')
+
     // @ts-ignore
     const [canton, setSelectedCanton] = useState('')
     const [distrito, setSelectedDistrito] = useState('');

@@ -1,4 +1,5 @@
 import { createAsyncThunk, createSlice, PayloadAction } from "@reduxjs/toolkit";
+
 import {  RootState } from '../store';
 import { Curso } from "../../components/gestion_cursos/curso.interface";
 import { getFirebaseDocs } from "../../api/getFirebaseDocs/getFirebaseDocs";

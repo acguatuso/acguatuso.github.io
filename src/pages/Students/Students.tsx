@@ -1,3 +1,4 @@
+
 import {  useEffect, useState } from "react";
 import DataTableBase from "../../components/dataTable/DataTableBase";
 import { FaAddressCard, FaEdit } from "react-icons/fa";
@@ -90,6 +91,7 @@ const Students = () => {
     },
     {
       name: "Eliminar",
+
       // @ts-ignore
       cell: (row: any) => (
         <button
@@ -237,6 +239,7 @@ const Students = () => {
       <MiPerfilModal
         mostrar={showEditAccountModal}
         onClose={closeEditAccountModal}
+
         // @ts-ignore
         usuario={selectedUser}
       />

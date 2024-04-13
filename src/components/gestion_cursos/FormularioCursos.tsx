@@ -183,7 +183,9 @@ export const FormularioCursos = (props: formProps) => {
         id: res!.id
       }
       dispatch(addCurso(cursoData))
+
       // @ts-ignore
+
       $(`#${props.id}`).modal('hide');
       handleReset();
       // Limpiar el formulario y cerrar el modal después de unos segundos
@@ -221,6 +223,7 @@ export const FormularioCursos = (props: formProps) => {
             }
             dispatch(editCurso(data))
             // Después de enviar los datos, mostrar el mensaje de éxito
+
             // @ts-ignore
             $(`#${props.id}`).modal('hide');
             setFileImage(null);

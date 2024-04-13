@@ -6,7 +6,9 @@ interface ModalProps {
   mostrar: boolean;
   onClose: () => void;
   segundos?: number;
+
   usuario?: UserData; // Definir el tipo de las props del usuario, puedes ajustarlo según la estructura de tus datos de usuario
+
 }
 
 const MiPerfilModal: React.FC<ModalProps> = ({ mostrar, onClose, usuario }) => {

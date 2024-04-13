@@ -10,7 +10,6 @@ import { ref, getDownloadURL }from 'firebase/storage';
 import { firebase_storage } from '../../firebase';
 
 export const HomePageApp = () => {
-
     //informacion de FireStore
     const [titulo, setTitulo] = useState('');
     const [descripcion, setDescripcion] = useState('');

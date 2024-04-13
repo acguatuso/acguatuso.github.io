@@ -20,6 +20,7 @@ enum Visible {
 
 function GestionCursos() {
   const [cursos, setCursos] = useState<Array<Curso>>([]);
+
   // @ts-ignore
   const [loading, setLoading] = useState<boolean>(false);
   // @ts-ignore
