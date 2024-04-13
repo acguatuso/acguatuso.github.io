@@ -8,8 +8,19 @@ import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { ref, getDownloadURL }from 'firebase/storage';
 import { firebase_storage } from '../../firebase';
+import { useAppDispatch } from '../../hooks/hooks';
+import { fetchEmpresaData } from '../../redux/reducers/empresaSlice';
 
 export const HomePageApp = () => {
+
+    //Fix Temporal: Este es el fix temporal para que cargue los datos de la empresa desde el primer arranque en navegadores que nunca han abierto la app 
+    const dispatch = useAppDispatch();
+    useEffect(() => {
+        (async () => {
+            await dispatch(fetchEmpresaData())
+        })()
+    }, [])
+    //
 
     //informacion de FireStore
     const [titulo, setTitulo] = useState('');
