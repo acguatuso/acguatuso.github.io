@@ -5,6 +5,8 @@ import { useAppDispatch } from '../../../hooks/hooks';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../../redux/store';
 import { fetchCursos } from '../../../redux/reducers/cursosSlice';
+import { SentEmailCoursesAcepted } from './SentEmailCoursesAcepted';
+import { SentEmailCoursesRejected } from './SentEmailCoursesRejected';
 
 interface ModalProps {
   mostrar: boolean;
