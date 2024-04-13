@@ -60,7 +60,7 @@ const CreateAccountForm: React.FC = () => {
       const provincias = obtenerNombresProvincias(paisInfo);
       setProvincias(provincias);
     }
-  }, [paisInfo, dispatch]);
+  }, []);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     const { name, value } = e.target;
