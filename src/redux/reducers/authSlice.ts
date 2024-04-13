@@ -88,9 +88,9 @@ export const login = (email: string, password: string): AppThunk => async dispat
     // Verificar si se obtuvo el usuario correctamente
     if (usuarioObtenido !== null) {
       // Hacer algo con el objeto de usuario obtenido
-      console.log("Usuario obtenido:", usuarioObtenido);
+      //console.log("Usuario obtenido:", usuarioObtenido);
     } else {
-      console.log("No se pudo obtener el usuario.");
+      //console.log("No se pudo obtener el usuario.");
     }
 
     // Emitir orden de logueo de usuario satisfactorio
