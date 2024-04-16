@@ -1,5 +1,4 @@
-
-import {  useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import DataTableBase from "../../components/dataTable/DataTableBase";
 import { FaAddressCard, FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
@@ -11,15 +10,18 @@ import { Student } from "./Student.interface";
 import CreateAccountModal from "../../components/Modal/CreateAccountModa";
 import MiPerfilModal from "../../components/Modal/EditUserModal";
 import { updateFirebaseDoc } from "../../api/updateFirebaseDoc/updateFirebaseDoc";
+import { set } from "firebase/database";
 
 const Students = () => {
   const [filteredData, setFilteredData] = useState<Student[]>([]);
+  const [baseData, setBaseData] = useState<Student[]>([]);
   const [filterText, setFilterText] = useState("");
   const [showCreateAccountModal, setShowCreateAccountModal] = useState(false); // Estado para controlar la visibilidad del modal
   const [showEditAccountModal, setShowEditAccountModal] = useState(false); // Estado para controlar la visibilidad del modal
   const [selectedUser, setSelectedUser] = useState<Student | null>(null);
   const [selectedSearch, setSelectedSearch] = useState("");
-  const [inputState, setInputState] = useState(true)
+  const [inputState, setInputState] = useState(true);
+  const [enterPressed, setEnterPressed] = useState(false);
 
   // React-router-dom
   const navigate = useNavigate();
@@ -66,42 +68,32 @@ const Students = () => {
       width: "5vw",
     },
     {
-      name: "Ver",
+      name: "Acciones",
       cell: (row: any) => (
-        <button
-          className="btn btn-primary"
-          onClick={() => handleButtonClick(row)}
-        >
-          <FaAddressCard />
-        </button>
+        <div className="d-flex">
+          <button
+            className="btn btn-primary"
+            onClick={() => handleButtonClick(row)}
+            title="Ver"
+          >
+            <FaAddressCard />
+          </button>
+          <button
+            className="btn btn-warning mx-3"
+            onClick={() => handleButtonClick(row)}
+            title="Editar"
+          >
+            <FaEdit />
+          </button>
+          <button
+            className="btn btn-danger"
+            onClick={() => console.log("eliminando...")}
+            title="Eliminar"
+          >
+            <MdDelete />
+          </button>
+        </div>
       ),
-      width: "5vw",
-    },
-    {
-      name: "Editar",
-      cell: (row: any) => (
-        <button
-          className="btn btn-warning"
-          onClick={() => handleButtonClick(row)}
-        >
-          <FaEdit />
-        </button>
-      ),
-      width: "5vw",
-    },
-    {
-      name: "Eliminar",
-
-      // @ts-ignore
-      cell: (row: any) => (
-        <button
-          className="btn btn-danger"
-          onClick={() => console.log("eliminando...")}
-        >
-          <MdDelete />
-        </button>
-      ),
-      width: "6vw",
     },
   ];
 
@@ -114,7 +106,7 @@ const Students = () => {
   }, [loggedIn, user, navigate]);
 
   useEffect(() => {
-    if (filterText !== "") {
+    if (enterPressed) {
       const filtered = filteredData.filter((item) => {
         const selectedValue = item[selectedSearch];
         if (typeof selectedValue === "string") {
@@ -122,10 +114,12 @@ const Students = () => {
         }
       });
       setFilteredData(filtered);
-    } else {
-      getUsers();
+      setEnterPressed(!enterPressed);
     }
-  }, [filterText, selectedSearch]);
+    if (filterText == "") {
+      setFilteredData(baseData);
+    }
+  }, [filterText, selectedSearch, enterPressed]);
 
   const getUsers = async () => {
     const data = await getFirebaseDocs("Usuarios");
@@ -149,6 +143,7 @@ const Students = () => {
       a.nombre.localeCompare(b.nombre, "en", { sensitivity: "base" })
     );
     setFilteredData(formatedData);
+    setBaseData(formatedData);
   };
 
   const openCreateAccountModal = () => {
@@ -182,10 +177,16 @@ const Students = () => {
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
     setSelectedSearch(event.target.value);
-    if(inputState){
+    if (inputState) {
       setInputState(!inputState);
     }
   };
+
+  function handleKeyDown(event: React.KeyboardEvent): void {
+    if (event.key === "Enter") {
+      setEnterPressed(!enterPressed);
+    }
+  }
 
   return (
     <div style={{ top: "18%", left: "10%", right: "10%", bottom: "10%" }}>
@@ -223,8 +224,11 @@ const Students = () => {
                 className="form-control bg-light text-dark mt-3 me-2 border border-secondary shadow"
                 placeholder="Buscar"
                 value={filterText}
-                disabled = {inputState}
-                onChange={(e) => setFilterText(e.target.value)}
+                disabled={inputState}
+                onChange={(e) => {
+                  setFilterText(e.target.value);
+                }}
+                onKeyDown={handleKeyDown}
               />
             </div>
           </div>
@@ -239,7 +243,6 @@ const Students = () => {
       <MiPerfilModal
         mostrar={showEditAccountModal}
         onClose={closeEditAccountModal}
-
         // @ts-ignore
         usuario={selectedUser}
       />
