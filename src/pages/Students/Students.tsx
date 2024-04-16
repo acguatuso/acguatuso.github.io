@@ -233,7 +233,14 @@ const Students = () => {
             </div>
           </div>
         </div>
-        <DataTableBase columns={columns} data={filteredData} />
+        <DataTableBase
+          columns={columns}
+          data={filteredData}
+          onChangePage={() => console.log("cambios")}
+          onChangeRowsPerPage={() => {
+            console.log("cambios 2")
+          }}
+        />
       </div>
       {/* Modal para el formulario de creación de cuenta */}
       <CreateAccountModal
