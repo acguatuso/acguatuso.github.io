@@ -26,7 +26,7 @@ export const fetchAds = createAsyncThunk(
     'ads/fetchAds',
     async () => {        
         const docSnap = await getFirebaseDocs('/Avisos/1x9cYIlY1FaQcw9jZhf6/Anuncios')
-        return docSnap
+        return docSnap as ads[]
     }
 )
 
@@ -85,6 +85,18 @@ const adsSlice =  createSlice({
             state.loading = false
             state.error = action.error.message;            
         });
+        builder.addCase(fetchAds.pending, (state) => {
+            state.loading = true
+        });
+        builder.addCase(fetchAds.fulfilled, (state,action: PayloadAction<ads[]>) => {
+            state.loading = false,
+            state.adsList = action.payload
+        });
+        builder.addCase(fetchAds.rejected, (state,action) => {
+            state.loading = false
+            state.adsList = [] as ads[],
+            state.error = action.error.message;            
+        });  
     }
 }
 )

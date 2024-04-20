@@ -15,8 +15,7 @@ interface ServiceState {
 //thunks
 export const fetchMainService = createAsyncThunk(
     'Service/fetchMainService',
-    async () => {
-        
+    async () => {        
         const docSnap = await getFirebaseDoc('/Servicios/xsc94XcgZ4Agn9IisLop')
         return docSnap
     }
@@ -25,8 +24,8 @@ export const fetchMainService = createAsyncThunk(
 export const fetchService = createAsyncThunk(
     'Service/fetchService',
     async () => {        
-        const docSnap = await getFirebaseDocs('/Servicios/xsc94XcgZ4Agn9IisLop/Lista_servicios')        
-        return docSnap
+        const docSnap = await getFirebaseDocs('/Servicios/xsc94XcgZ4Agn9IisLop/Lista_servicios')       
+        return docSnap as service[]
     }
 )
 
@@ -85,6 +84,18 @@ const serviceSlice =  createSlice({
             state.loading = false
             state.error = action.error.message;            
         });
+        builder.addCase(fetchService.pending, (state) => {
+            state.loading = true
+        });
+        builder.addCase(fetchService.fulfilled, (state,action: PayloadAction<service[]>) => {
+            state.loading = false,
+            state.ServiceList = action.payload
+        });
+        builder.addCase(fetchService.rejected, (state,action) => {
+            state.loading = false
+            state.ServiceList = [] as service[],
+            state.error = action.error.message;            
+        });  
     }
 }
 )
