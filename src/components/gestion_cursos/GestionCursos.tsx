@@ -1,21 +1,27 @@
-import { useState, useEffect, ChangeEvent} from 'react';
+import { useState, useEffect, ChangeEvent } from "react";
 import { FormularioCursos } from "./FormularioCursos";
-import { Curso } from './curso.interface';
-import EliminarCurso from './EliminarCurso';
-import DataTableBase from '../dataTable/DataTableBase';
-import { FaArrowLeft, FaEdit } from 'react-icons/fa';
-import { RootState } from '../../redux/store';
-import { useSelector } from 'react-redux';
-import { useNavigate } from 'react-router-dom';
-import { changeCursoEstado, changeCursoVisible, cursosSelector, fetchCursos, obtenerNombreModalidad } from '../../redux/reducers/cursosSlice';
-import { useAppDispatch, useAppSelector } from '../../hooks/hooks';
-import { updateFirebaseDoc } from '../../api/updateFirebaseDoc/updateFirebaseDoc';
-import DetallesCurso from './DetallesCurso';
+import { Curso } from "./curso.interface";
+import EliminarCurso from "./EliminarCurso";
+import DataTableBase from "../dataTable/DataTableBase";
+import { FaArrowLeft, FaEdit } from "react-icons/fa";
+import { RootState } from "../../redux/store";
+import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
+import {
+  changeCursoEstado,
+  changeCursoVisible,
+  cursosSelector,
+  fetchCursos,
+  obtenerNombreModalidad,
+} from "../../redux/reducers/cursosSlice";
+import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
+import { updateFirebaseDoc } from "../../api/updateFirebaseDoc/updateFirebaseDoc";
+import DetallesCurso from "./DetallesCurso";
 
 enum Visible {
-  NoVisible = 0, 
-  Matricula = 1, 
-  Proximamente = 2
+  NoVisible = 0,
+  Matricula = 1,
+  Proximamente = 2,
 }
 
 function GestionCursos() {
@@ -28,41 +34,49 @@ function GestionCursos() {
   const [filterText, setFilterText] = useState("");
   const selectedCursos = useAppSelector(cursosSelector);
   const dispatch = useAppDispatch();
+  const [selectedSearch, setSelectedSearch] = useState("");
+  const [inputState, setInputState] = useState(true);
+  const [enterPressed, setEnterPressed] = useState(false);
 
   useEffect(() => {
     (async () => {
-      await dispatch(fetchCursos())
-    })()
-  }, [dispatch])
+      await dispatch(fetchCursos());
+    })();
+  }, [dispatch]);
 
-  useEffect(() => { 
+  useEffect(() => {
     setLoading(selectedCursos.loading);
     setError(selectedCursos.error);
     if (!selectedCursos.loading && !selectedCursos.error) {
       setCursos(selectedCursos.cursos);
     }
-  }, [selectedCursos]) 
+  }, [selectedCursos]);
 
   function handleSwitchToggleEstado(row: any): void {
     // Activar o desactivar el estado
-    const nuevoEstado = row.estado === 0 ? 1 : 0; 
-  
+    const nuevoEstado = row.estado === 0 ? 1 : 0;
+
     updateFirebaseDoc(`/Cursos/${row.id}`, {
       estado: nuevoEstado,
     });
-    dispatch(changeCursoEstado(row.id)); 
+    dispatch(changeCursoEstado(row.id));
     const nuevoVisible = nuevoEstado === 0 ? Visible.NoVisible : row.estado;
     updateFirebaseDoc(`/Cursos/${row.id}`, {
       visible: parseInt(nuevoVisible),
     });
-    dispatch(changeCursoVisible({ cursoId: row.id, visible: nuevoVisible })); 
+    dispatch(changeCursoVisible({ cursoId: row.id, visible: nuevoVisible }));
   }
 
-  function handleVisibleChange(e: ChangeEvent<HTMLSelectElement>, row: any, ) : void {
+  function handleVisibleChange(
+    e: ChangeEvent<HTMLSelectElement>,
+    row: any
+  ): void {
     updateFirebaseDoc(`/Cursos/${row.id}`, {
       visible: parseInt(e.target.value),
     });
-    dispatch(changeCursoVisible({ cursoId: row.id, visible: parseInt(e.target.value) }));
+    dispatch(
+      changeCursoVisible({ cursoId: row.id, visible: parseInt(e.target.value) })
+    );
   }
 
   const columns = [
@@ -74,11 +88,11 @@ function GestionCursos() {
     {
       name: "Horario",
       cell: (row: any) => (
-        <div className='text-start'>
+        <div className="text-start">
           {row.horario.map((h: any, index: number) => (
-          <div key={index}>
+            <div key={index}>
               {h.dia}: {h.hora}
-          </div>
+            </div>
           ))}
         </div>
       ),
@@ -107,8 +121,18 @@ function GestionCursos() {
     {
       name: "Visibilidad",
       cell: (row: any) => (
-        <select id="visible" className={"form-select"} name="visible" value={row.visible} onChange={(e) => handleVisibleChange(e, row)} disabled={row.estado === 0} required>
-          <option disabled value="">Selecciona donde será visible el curso</option>
+        <select
+          id="visible"
+          className={"form-select"}
+          name="visible"
+          value={row.visible}
+          onChange={(e) => handleVisibleChange(e, row)}
+          disabled={row.estado === 0}
+          required
+        >
+          <option disabled value="">
+            Selecciona donde será visible el curso
+          </option>
           <option value={Visible.Matricula}>Sección de Matrícula</option>
           <option value={Visible.Proximamente}>Sección de Próximamente</option>
           <option value={Visible.NoVisible}>No visible</option>
@@ -117,35 +141,21 @@ function GestionCursos() {
       width: "15vw",
     },
     {
-      name: "Ver",
+      name: "Acciones",
       cell: (row: any) => (
-        <DetallesCurso curso={row}/>
+        <div className="d-flex">
+          <DetallesCurso curso={row} />
+          <FormularioCursos
+            id={`course-section-modal-edit-${row.id}`}
+            titulo={`Editar Curso: ${row.nombre}`}
+            nombreButton={<FaEdit />}
+            styleButton={"btn btn-warning mx-2"}
+            submitButton={"Guardar Cambios"}
+            curso={row}
+          />
+          <EliminarCurso id={row.id} image_url={row.image_url} />
+        </div>
       ),
-      width: "5vw",
-    },
-    {
-      name: "Editar",
-      cell: (row: any) => (
-        <FormularioCursos 
-        id={`course-section-modal-edit-${row.id}`}
-        titulo={`Editar Curso: ${row.nombre}`}
-        nombreButton={<FaEdit />}
-        styleButton={"btn btn-warning"}
-        submitButton={"Guardar Cambios"}
-        curso={row}
-        />
-      ),
-      width: "5vw",
-    },
-    {
-      name: "Eliminar",
-      cell: (row: any) => (
-        <EliminarCurso 
-          id={row.id}
-          image_url={row.image_url}
-        />
-      ),
-      width: "6vw",
     },
   ];
 
@@ -155,7 +165,7 @@ function GestionCursos() {
   // Redux Hooks & Access
   const user = useSelector((state: RootState) => state.auth.user);
   const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
-  console.log('Conectado: ', loggedIn);
+  console.log("Conectado: ", loggedIn);
   // Redireccionar si está no logueado, y no hay usuario
   useEffect(() => {
     if (!loggedIn && !user) {
@@ -164,9 +174,8 @@ function GestionCursos() {
   }, [loggedIn, user, navigate]);
 
   const goBack = () => {
-    navigate("/Cursos")
+    navigate("/Cursos");
   };
-
 
   return (
     <>
@@ -176,38 +185,64 @@ function GestionCursos() {
         </button>
       </div>
       <div style={{ top: "18%", left: "10%", right: "10%", bottom: "10%" }}>
-        <h2 className="text-secondary mb-0 pt-3 ps-2">
-          Gestión de Cursos
-        </h2>
+        <h2 className="text-secondary mb-0 pt-3 ps-2">Gestión de Cursos</h2>
       </div>
       <div className="alert alert-info mt-3" role="alert">
-        <strong>Nota:</strong> El <strong><em>Estado</em></strong> si se encuentra activado, se podrá seleccionar la <strong>Visibilidad</strong> del curso entre: <em>Sección de Matrícula, Sección de Próximamente y No Visible.</em> Si el <strong><em>Estado</em></strong> se encuentra inactivo la  <strong>Visibilidad </strong> del curso se encontrará <em>No Visible.</em>
+        <strong>Nota:</strong> El{" "}
+        <strong>
+          <em>Estado</em>
+        </strong>{" "}
+        si se encuentra activado, se podrá seleccionar la{" "}
+        <strong>Visibilidad</strong> del curso entre:{" "}
+        <em>Sección de Matrícula, Sección de Próximamente y No Visible.</em> Si
+        el{" "}
+        <strong>
+          <em>Estado</em>
+        </strong>{" "}
+        se encuentra inactivo la <strong>Visibilidad </strong> del curso se
+        encontrará <em>No Visible.</em>
       </div>
       <div className="d-flex justify-content-between mb-2">
         <div className="d-flex">
           <FormularioCursos
-          id={"course-section-modal-add"}
-          titulo={"Crear un Nuevo Curso"}
-          nombreButton={"Crear un Nuevo Curso"}
-          styleButton='btn btn-success py-0 ms-2 mt-3 shadow-lg'
-          submitButton={"Crear Curso"}
-          curso={null}
+            id={"course-section-modal-add"}
+            titulo={"Crear un Nuevo Curso"}
+            nombreButton={"Crear un Nuevo Curso"}
+            styleButton="btn btn-success py-0 ms-2 mt-3 shadow-lg"
+            submitButton={"Crear Curso"}
+            curso={null}
           />
         </div>
-        <div className="col-3">
-          <input
-            type="text"
-            className="form-control bg-light text-dark mt-3 me-2 border border-primary shadow-lg"
-            placeholder="Filtrar por Nombre"
-            value={filterText}
-            onChange={(e) => setFilterText(e.target.value)}
-          />
+        <div className="d-flex">
+          <div className="mt-3 mx-2">
+            <select
+              className="form-select border border-secondary shadow"
+              aria-label="Default select example"
+              onChange={() => {
+                console.log("change");
+              }}
+            >
+              <option hidden>Seleccione un filtro</option>
+              <option value="nombre">Nombre</option>
+              <option value="cedula">Cédula</option>
+              <option value="telefono">Teléfono</option>
+              <option value="correo">Correo</option>
+            </select>
+          </div>
+          <div>
+            <input
+              type="text"
+              className="form-control bg-light text-dark mt-3 me-2 border border-primary shadow-lg"
+              placeholder="Buscar"
+              value={filterText}
+              onChange={(e) => setFilterText(e.target.value)}
+            />
+          </div>
         </div>
       </div>
       <div>
-          <DataTableBase columns={columns} data={cursos}></DataTableBase>
+        <DataTableBase columns={columns} data={cursos}></DataTableBase>
       </div>
-
     </>
   );
 }

@@ -5,7 +5,7 @@ import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../../redux/store";
 import { useSelector } from "react-redux";
-import { getFirebaseDocs } from "../../api/getFirebaseDocs/getFirebaseDocs";
+import { getFirebaseDocs, getPaginatedDocs } from "../../api/getFirebaseDocs/getFirebaseDocs";
 import { Student } from "./Student.interface";
 import CreateAccountModal from "../../components/Modal/CreateAccountModa";
 import MiPerfilModal from "../../components/Modal/EditUserModal";
@@ -22,6 +22,9 @@ const Students = () => {
   const [selectedSearch, setSelectedSearch] = useState("");
   const [inputState, setInputState] = useState(true);
   const [enterPressed, setEnterPressed] = useState(false);
+  const [lastDoc, setLastDoc] = useState<any>(null);
+  const [loading, setLoading] = useState(false);
+  const [pageSize, setPageSize] = useState(5);
 
   // React-router-dom
   const navigate = useNavigate();
@@ -121,10 +124,11 @@ const Students = () => {
     }
   }, [filterText, selectedSearch, enterPressed]);
 
-  const getUsers = async () => {
-    const data = await getFirebaseDocs("Usuarios");
+  const getUsers = async (newPage: boolean = false) => {
+    setLoading(true);
+    const { dataList, lastDoc: newLastDoc } = await getPaginatedDocs("Usuarios", pageSize, newPage ? lastDoc : undefined);
     var formatedData: Student[] = [];
-    formatedData = data.map((student: any) => ({
+    formatedData = dataList.map((student: any) => ({
       nombre: student.nombre,
       id: student.id,
       canton: student.canton,
@@ -144,6 +148,9 @@ const Students = () => {
     );
     setFilteredData(formatedData);
     setBaseData(formatedData);
+    setLastDoc(newLastDoc);
+    setLoading(false);
+    console.log(formatedData.length);
   };
 
   const openCreateAccountModal = () => {
@@ -187,6 +194,16 @@ const Students = () => {
       setEnterPressed(!enterPressed);
     }
   }
+
+  const handlePageChange = async (page: number) => {
+    getUsers(true);
+  };
+
+  const handleRowsPerPageChange = async (newPageSize: number, page: number) => {
+    setPageSize(newPageSize);
+    // Fetch new data with the updated page size
+    handlePageChange(page);
+  };
 
   return (
     <div style={{ top: "18%", left: "10%", right: "10%", bottom: "10%" }}>
@@ -236,10 +253,10 @@ const Students = () => {
         <DataTableBase
           columns={columns}
           data={filteredData}
-          onChangePage={() => console.log("cambios")}
-          onChangeRowsPerPage={() => {
-            console.log("cambios 2")
-          }}
+          onChangePage={handlePageChange}
+          onChangeRowsPerPage={handleRowsPerPageChange}
+          paginationPerPage={pageSize}
+          progressPending={loading}
         />
       </div>
       {/* Modal para el formulario de creación de cuenta */}
