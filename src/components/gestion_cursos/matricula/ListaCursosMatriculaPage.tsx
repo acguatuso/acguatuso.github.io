@@ -36,6 +36,9 @@ export const ListaCursosMatriculaPage = () => {
   );
   const [filteredCourses, setFilteredCourses] = useState<Curso[]>([]);
   const [filterText, setFilterText] = useState("");
+  const [selectedSearch, setSelectedSearch] = useState("");
+  const [inputState, setInputState] = useState(true);
+  const [enterPressed, setEnterPressed] = useState(false);
   const navigate = useNavigate();
 
   //Columnas de la tabla
@@ -123,7 +126,7 @@ export const ListaCursosMatriculaPage = () => {
         }
       },
       sortable: true,
-      width: "15vw",
+      width: "10vw",
     },
 
     {
@@ -191,21 +194,37 @@ export const ListaCursosMatriculaPage = () => {
   };
 
   useEffect(() => {
+    if (enterPressed) {
+      const filtered = coursesRedux.filter((course) => {
+        const selectedValue = course[selectedSearch];
+        if (typeof selectedValue === "string") {
+          return selectedValue.toLowerCase().includes(filterText.toLowerCase());
+        }
+      });
+      setFilteredCourses(filtered);
+      setEnterPressed(!enterPressed);
+    }
     if (filterText.trim() === "") {
       setFilteredCourses(coursesRedux);
-    } else {
-      const filtered = coursesRedux.filter((course) =>
-        course.nombre
-          .toLocaleLowerCase()
-          .includes(filterText.toLocaleLowerCase())
-      );
-      setFilteredCourses(filtered);
     }
-  }, [filterText, coursesRedux]);
+  }, [filterText, coursesRedux, enterPressed]);
 
   const regresarCursosPage = () => {
     navigate("/Cursos");
   };
+
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedSearch(event.target.value);
+    if (inputState) {
+      setInputState(!inputState);
+    }
+  };
+
+  function handleKeyDown(event: React.KeyboardEvent): void {
+    if (event.key === "Enter") {
+      setEnterPressed(!enterPressed);
+    }
+  }
   return (
     <div>
       {showUsuariosMatricula ? (
@@ -231,13 +250,10 @@ export const ListaCursosMatriculaPage = () => {
                 <select
                   className="form-select border border-secondary shadow"
                   aria-label="Default select example"
-                  onChange={() => {
-                    console.log("change");
-                  }}
+                  onChange={handleSelectChange}
                 >
                   <option hidden>Seleccione un filtro</option>
                   <option value="nombre">Nombre</option>
-                  <option value="horario">Horario</option>
                   <option value="modalidad">Modalidad</option>
                 </select>
               </div>
@@ -247,7 +263,11 @@ export const ListaCursosMatriculaPage = () => {
                   className="form-control bg-light text-dark mt-3 me-2 border border-primary shadow-lg"
                   placeholder="Buscar"
                   value={filterText}
-                  onChange={(e) => setFilterText(e.target.value)}
+                  disabled={inputState}
+                  onChange={(e) => {
+                    setFilterText(e.target.value);
+                  }}
+                  onKeyDown={handleKeyDown}
                 />
               </div>
             </div>

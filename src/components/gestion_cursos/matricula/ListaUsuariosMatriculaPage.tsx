@@ -13,6 +13,7 @@ interface Users {
   telefono: string;
   correo: string;
   hora_solicitud: Date; // Agregar la propiedad hora_solicitud de tipo Date
+  [key: string]: string | number | Date;
 }
 
 export const ListaUsuariosMatriculaPage = ({
@@ -35,6 +36,9 @@ export const ListaUsuariosMatriculaPage = ({
   const [filterText, setFilterText] = useState("");
   const [updatedMatriculados, setUpdatedMatriculados] =
     useState<string[]>(matriculados);
+  const [selectedSearch, setSelectedSearch] = useState("");
+  const [inputState, setInputState] = useState(true);
+  const [enterPressed, setEnterPressed] = useState(false);
 
   //Columnas a usar dentro de la tabla
   //Columnas de la tabla
@@ -166,15 +170,20 @@ export const ListaUsuariosMatriculaPage = ({
   }, []);
 
   useEffect(() => {
+    if (enterPressed) {
+      const filtered = users.filter((user) => {
+        const selectedValue = user[selectedSearch];
+        if (typeof selectedValue === "string") {
+          return selectedValue.toLowerCase().includes(filterText.toLowerCase());
+        }
+      });
+      setFilteredUsers(filtered);
+      setEnterPressed(!enterPressed);
+    }
     if (filterText.trim() === "") {
       setFilteredUsers(users);
-    } else {
-      const filtered = users.filter((user) =>
-        user.nombre.toLowerCase().includes(filterText.toLowerCase())
-      );
-      setFilteredUsers(filtered);
     }
-  }, [filterText, users]);
+  }, [filterText, users, enterPressed]);
 
   const closeSeeUserModal = () => {
     setShowDetailsUserModal(false);
@@ -198,6 +207,19 @@ export const ListaUsuariosMatriculaPage = ({
     onRegresarClick(); // aqui estoy llamando a la funcion del componente ListaCursosMAtriculaPage para que cambie el estado de showUsuariosMatriculados a false. Y asi se vuelva a mostrar la lista de los cursos matriculados
   };
 
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedSearch(event.target.value);
+    if (inputState) {
+      setInputState(!inputState);
+    }
+  };
+
+  function handleKeyDown(event: React.KeyboardEvent): void {
+    if (event.key === "Enter") {
+      setEnterPressed(!enterPressed);
+    }
+  }
+
   //console.log(`ESTE ES EL NOMBRE DEL CURSO ${nombreCurso}`, 'Y este el id de sus usuarios interesados: ', usuariosInteresados);
   // console.log({ filteredUsers })
   return (
@@ -218,14 +240,10 @@ export const ListaUsuariosMatriculaPage = ({
               <select
                 className="form-select border border-secondary shadow"
                 aria-label="Default select example"
-                onChange={() => {
-                  console.log("change");
-                }}
+                onChange={handleSelectChange}
               >
                 <option hidden>Seleccione un filtro</option>
                 <option value="nombre">Nombre</option>
-                <option value="cedula">Cédula</option>
-                <option value="telefono">Teléfono</option>
                 <option value="correo">Correo</option>
               </select>
             </div>
@@ -235,7 +253,11 @@ export const ListaUsuariosMatriculaPage = ({
                 className="form-control bg-light text-dark mt-3 me-2 border border-primary shadow-lg"
                 placeholder="Buscar"
                 value={filterText}
-                onChange={(e) => setFilterText(e.target.value)}
+                disabled={inputState}
+                onChange={(e) => {
+                  setFilterText(e.target.value);
+                }}
+                onKeyDown={handleKeyDown}
               />
             </div>
           </div>
