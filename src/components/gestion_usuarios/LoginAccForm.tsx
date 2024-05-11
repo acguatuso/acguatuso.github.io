@@ -6,7 +6,6 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import '../../CSS/Components/LoginAccStyle.css';
 import ForgotPassword from './ForgotPassword';
-import NotificationModal from '../Modal/NotificationModal';
 
 const LoginAccountForm: React.FC = () => {
   // React-router-dom
@@ -17,7 +16,6 @@ const LoginAccountForm: React.FC = () => {
   const [password, setPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState(false);
   const [isForgotPasswordModalOpen, setIsForgotPasswordModalOpen] = useState(false);
-  const [showLoginSuccessModal, setShowLoginSuccessModal] = useState(false);
 
   // Redux Hooks & Access
   const dispatch = useDispatch();
@@ -52,9 +50,7 @@ const LoginAccountForm: React.FC = () => {
   useEffect(() => {
     if (loggedIn && user && emailVerified) {
       // Mostrar el modal de éxito de inicio de sesión
-      setShowLoginSuccessModal(true);
       const timeoutId = setTimeout(() => {
-        setShowLoginSuccessModal(false); // Ocultar el modal después del tiempo especificado
         navigate("/home"); // Redirige al usuario a la página de inicio
       }, 3 * 1000); // Convierte los segundos a milisegundos
 
@@ -124,13 +120,6 @@ const LoginAccountForm: React.FC = () => {
           </div>
         </div>
       </div>
-      {/* Componente del modal de éxito de inicio de sesión */}
-      <NotificationModal
-        texto="¡Inicio de sesión exitoso!"
-        mostrar={showLoginSuccessModal}
-        onConfirm={() => setShowLoginSuccessModal(false)}
-        segundos={3} // Duración del modal en segundos
-      />
     </>
   );
 
