@@ -52,6 +52,43 @@ function GestionCursos() {
     }
   }, [selectedCursos]);
 
+  useEffect(() => {
+    if (enterPressed) {
+      console.log("aca");
+
+      const filtered = cursos.filter((course) => {
+        const selectedValue = course[selectedSearch];
+        if (typeof selectedValue === "string") {
+          console.log("aca2");
+
+          return selectedValue.toLowerCase().includes(filterText.toLowerCase());
+        } else if (typeof selectedValue == "number") {
+          let modalidadText = "";
+          switch (selectedValue) {
+            case 0:
+              modalidadText = "presencial";
+              break;
+            case 1:
+              modalidadText = "virtual";
+              break;
+            case 2:
+              modalidadText = "mixta";
+              break;
+            default:
+              return false; // This handles unexpected numbers
+          }
+          return modalidadText.includes(filterText.toLowerCase());
+        }
+        return false; // Return false for any unhandled types or cases
+      });
+      setCursos(filtered);
+      setEnterPressed(!enterPressed);
+    }
+    if (filterText.trim() === "") {
+      setCursos(selectedCursos.cursos);
+    }
+  }, [selectedCursos, filterText, enterPressed]);
+
   function handleSwitchToggleEstado(row: any): void {
     // Activar o desactivar el estado
     const nuevoEstado = row.estado === 0 ? 1 : 0;
@@ -96,7 +133,6 @@ function GestionCursos() {
           ))}
         </div>
       ),
-      sortable: true,
     },
     {
       name: "Modalidad",
@@ -165,7 +201,7 @@ function GestionCursos() {
   // Redux Hooks & Access
   const user = useSelector((state: RootState) => state.auth.user);
   const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
-  console.log("Conectado: ", loggedIn);
+  // console.log("Conectado: ", loggedIn);
   // Redireccionar si está no logueado, y no hay usuario
   useEffect(() => {
     if (!loggedIn && !user) {
@@ -176,6 +212,19 @@ function GestionCursos() {
   const goBack = () => {
     navigate("/Cursos");
   };
+
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedSearch(event.target.value);
+    if (inputState) {
+      setInputState(!inputState);
+    }
+  };
+
+  function handleKeyDown(event: React.KeyboardEvent): void {
+    if (event.key === "Enter") {
+      setEnterPressed(!enterPressed);
+    }
+  }
 
   return (
     <>
@@ -218,15 +267,11 @@ function GestionCursos() {
             <select
               className="form-select border border-secondary shadow"
               aria-label="Default select example"
-              onChange={() => {
-                console.log("change");
-              }}
+              onChange={handleSelectChange}
             >
               <option hidden>Seleccione un filtro</option>
               <option value="nombre">Nombre</option>
-              <option value="cedula">Cédula</option>
-              <option value="telefono">Teléfono</option>
-              <option value="correo">Correo</option>
+              <option value="modalidad">Modalidad</option>
             </select>
           </div>
           <div>
@@ -235,7 +280,11 @@ function GestionCursos() {
               className="form-control bg-light text-dark mt-3 me-2 border border-primary shadow-lg"
               placeholder="Buscar"
               value={filterText}
-              onChange={(e) => setFilterText(e.target.value)}
+              disabled={inputState}
+              onChange={(e) => {
+                setFilterText(e.target.value);
+              }}
+              onKeyDown={handleKeyDown}
             />
           </div>
         </div>
