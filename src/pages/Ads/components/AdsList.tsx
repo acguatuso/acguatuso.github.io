@@ -9,7 +9,7 @@ import { AdsLinkField } from './AdsLinkField';
 export const AdsList = () => {
     const ads = useAppSelector(adsSelector)  
     
-    const [links, setLinks] = useState<ads[]>()      
+    const [links, setLinks] = useState<ads[]>([])      
     //se utiliza para que funcione el map con el delete correctamente
     useEffect(() => {
       setLinks(ads.adsList)
@@ -19,8 +19,7 @@ export const AdsList = () => {
         
     <>   
     {ads.loading &&  <div>Cargando...</div>}
-    {links != undefined &&        
-        links?.map((element: ads)=>{        
+    {links.map((element: ads)=>{        
             return (                                  
                 element.posicion_id  == 1 ?(
                     <div key={`${element.id}-div1`} className="row mb-3 border">    

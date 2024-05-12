@@ -9,7 +9,7 @@ import { ServiceLinkField } from './ServiceLinkField';
 export const ServiceList = () => {
     const service = useAppSelector(ServiceSelector)  
     
-    const [services, setServices] = useState<service[]>()      
+    const [services, setServices] = useState<service[]>([])      
     //se utiliza para que funcione el map con el delete correctamente
     useEffect(() => {
       setServices(service.ServiceList)
@@ -19,8 +19,8 @@ export const ServiceList = () => {
         
     <>   
     {service.loading &&  <div>Cargando...</div>}
-    {services != undefined &&        
-        services?.map((element: service)=>{        
+    {  
+        services.map((element: service)=>{        
             return ( 
                                  
                 element.posicion_id  == 1 ?(

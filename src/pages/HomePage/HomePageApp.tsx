@@ -25,7 +25,7 @@ export const HomePageApp = () => {
 
     useEffect(() => {
         if (!loggedIn && !user) {
-            navigate("/");
+            navigate("/ucag-admin/");
         }
         
         const imageRef = ref(firebase_storage, 'Home/imagen-inicio');

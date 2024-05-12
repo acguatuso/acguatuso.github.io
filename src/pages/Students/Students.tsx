@@ -109,7 +109,7 @@ const Students = () => {
   useEffect(() => {
     getUsers();
     if (!loggedIn && !user) {
-      navigate("/");
+      navigate("/ucag-admin/");
     }
   }, [loggedIn, user, navigate]);
 
