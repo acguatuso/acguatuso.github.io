@@ -25,9 +25,10 @@ const LoginAccountForm: React.FC = () => {
   const emailVerified = useSelector((state: RootState) => state.auth.emailVerified);
   //const states = useSelector((state: RootState) => state);
   //console.log(states, 'login')
-
+  
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Evita que se envíe la solicitud HTTP predeterminada
+    
     setTimeout(() => {
       dispatch(login(email, password) as any); // Usa dispatch para llamar a la acción login
     }, 1000);
@@ -49,9 +50,10 @@ const LoginAccountForm: React.FC = () => {
   // Redireccionar si está logueado, hay usuario y email verificado
   useEffect(() => {
     if (loggedIn && user && emailVerified) {
+      //console.log(user?.user_type)
       // Mostrar el modal de éxito de inicio de sesión
       const timeoutId = setTimeout(() => {
-        navigate("/home"); // Redirige al usuario a la página de inicio
+        navigate("/ucag-admin/home"); // Redirige al usuario a la página de inicio
       }, 3 * 1000); // Convierte los segundos a milisegundos
 
       // Limpia el temporizador si el componente se desmonta antes de que se complete
