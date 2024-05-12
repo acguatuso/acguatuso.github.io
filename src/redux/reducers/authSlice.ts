@@ -87,6 +87,7 @@ export const login = (email: string, password: string): AppThunk => async dispat
     const usuarioObtenido: UserData | null = await obtenerUsuario(email);
     // Verificar si se obtuvo el usuario correctamente
     if (usuarioObtenido !== null) {
+
       // Verificar el tipo de usuario
       
       if (usuarioObtenido.user_type == 0) {// Lanza un error si el tipo de usuario es '0'
@@ -97,6 +98,7 @@ export const login = (email: string, password: string): AppThunk => async dispat
         dispatch(loginSuccess(usuarioObtenido!));
       }
     } 
+
   } catch (error: any) {
     const msg = error.message.replace('Firebase: ', '');
     dispatch(loginFailure(msg));
