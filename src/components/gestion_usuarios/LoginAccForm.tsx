@@ -27,10 +27,10 @@ const LoginAccountForm: React.FC = () => {
   const emailVerified = useSelector((state: RootState) => state.auth.emailVerified);
   //const states = useSelector((state: RootState) => state);
   //console.log(states, 'login')
-  
+
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Evita que se envíe la solicitud HTTP predeterminada
-    
+
     setTimeout(() => {
       dispatch(login(email, password) as any); // Usa dispatch para llamar a la acción login
     }, 1000);
@@ -51,18 +51,18 @@ const LoginAccountForm: React.FC = () => {
 
   const [logoUrl, setLogoUrl] = useState('');
 
-  useEffect(() => { 
-      (async () => {
-          const imageRef = ref(firebase_storage, 'Empresa/Logo/logo');
-          getDownloadURL(imageRef)
-              .then((url) => {
-                  setLogoUrl(url);
-              })
-              .catch((error) => {
-                  console.error('Error descargando el logo:', error);
-              });
+  useEffect(() => {
+    (async () => {
+      const imageRef = ref(firebase_storage, 'Empresa/Logo/logo');
+      getDownloadURL(imageRef)
+        .then((url) => {
+          setLogoUrl(url);
+        })
+        .catch((error) => {
+          console.error('Error descargando el logo:', error);
+        });
 
-      })()
+    })()
   }, []);
 
   // Redireccionar si está logueado, hay usuario y email verificado
@@ -96,7 +96,7 @@ const LoginAccountForm: React.FC = () => {
               {!user && (
                 <form onSubmit={handleLogin}>
                   <div>
-                    <img ref={logoUrl} alt="Logo" width="200" height="150" />
+                    <img ref={logoUrl} alt="logo" width="200" height="150" />
                     <h3>Bienvenido!</h3>
                     <h3>Inicio de Sesión</h3>
                   </div>
@@ -129,7 +129,7 @@ const LoginAccountForm: React.FC = () => {
               {user && (
                 <div>
                   <div>
-                    <img ref={logoUrl} alt="Bootstrap" width="200" height="150" />
+                    <img ref={logoUrl} alt="logo" width="200" height="150" />
                     <h3>Bienvenido!</h3>
                   </div>
                   <label>Credenciales Correctas!</label>
