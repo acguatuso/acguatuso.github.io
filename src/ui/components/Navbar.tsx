@@ -3,9 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { logOut } from '../../redux/reducers/authSlice';
 import './Navbar.css';
-import { ref, getDownloadURL } from 'firebase/storage';
-import { useState, useEffect } from 'react';
+import { ref, getDownloadURL }from 'firebase/storage';
 import { firebase_storage } from '../../firebase';
+import { useEffect, useState } from 'react';
 
 export const Navbar = () => {
 
@@ -14,14 +14,6 @@ export const Navbar = () => {
     const user = useSelector((state: RootState) => state.auth.user);
     const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
     const empresaData = useSelector((state: RootState) => state.empresa.dataEmpresa);
-
-    const navigate = useNavigate();
-
-    const handleLogOut = () => {
-        dispatch(logOut());
-        navigate('/ucag-admin/iniciar-sesion', { replace: true })
-    }
-
     const [logoUrl, setLogoUrl] = useState('');
 
     useEffect(() => { 
@@ -34,9 +26,17 @@ export const Navbar = () => {
                 .catch((error) => {
                     console.error('Error descargando el logo:', error);
                 });
-  
+
         })()
     }, []);
+    const navigate = useNavigate();
+
+    const handleLogOut = () => {
+        dispatch(logOut());
+        navigate('/ucag-admin/iniciar-sesion', { replace: true })
+    }
+
+
 
     return (
 
@@ -48,7 +48,7 @@ export const Navbar = () => {
                             className="navbar-brand"
                             to="/ucag-admin/home"
                         >
-                            <img ref={logoUrl} alt="Logo" width="110" height="80" />
+                            <img src={logoUrl} alt="Logo" width="110" height="80" />
 
                         </NavLink>)}
                     {!user && !loggedIn && (
@@ -56,7 +56,7 @@ export const Navbar = () => {
                             className="navbar-brand"
                             to="/ucag-admin/"
                         >
-                            <img ref={logoUrl} alt="Bootstrap" width="110" height="80" />
+                            <img src={logoUrl} alt="Bootstrap" width="110" height="80" />
 
                         </NavLink>)}
                         <h4 className="navbar-text-white d-none d-sm-inline-block">

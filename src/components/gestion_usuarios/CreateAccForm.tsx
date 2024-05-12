@@ -35,7 +35,7 @@ const initialState = {
   genero: ''
 };
 
-const CreateAccountForm: React.FC = () => {
+const CreateAccountForm = () => {
 
   // Estado para almacenar las provincias, cantones y distritos
   const [provincias, setProvincias] = useState<string[]>([]);
@@ -221,7 +221,7 @@ const CreateAccountForm: React.FC = () => {
         <>
           <div>
             <label>¿Ya tiene cuenta?</label>
-            <Link to="/iniciar-sesion">Iniciar Sesión</Link>
+            <Link to="/ucag-admin/iniciar-sesion">Iniciar Sesión</Link>
           </div>
         </>
       )}
