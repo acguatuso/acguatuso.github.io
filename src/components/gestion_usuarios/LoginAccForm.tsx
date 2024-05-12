@@ -6,6 +6,8 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import '../../CSS/Components/LoginAccStyle.css';
 import ForgotPassword from './ForgotPassword';
+import { ref, getDownloadURL } from 'firebase/storage';
+import { firebase_storage } from '../../firebase';
 
 const LoginAccountForm: React.FC = () => {
   // React-router-dom
@@ -47,6 +49,22 @@ const LoginAccountForm: React.FC = () => {
     setShowPassword(!showPassword);
   };
 
+  const [logoUrl, setLogoUrl] = useState('');
+
+  useEffect(() => { 
+      (async () => {
+          const imageRef = ref(firebase_storage, 'Empresa/Logo/logo');
+          getDownloadURL(imageRef)
+              .then((url) => {
+                  setLogoUrl(url);
+              })
+              .catch((error) => {
+                  console.error('Error descargando el logo:', error);
+              });
+
+      })()
+  }, []);
+
   // Redireccionar si está logueado, hay usuario y email verificado
   useEffect(() => {
     if (loggedIn && user && emailVerified) {
@@ -78,7 +96,7 @@ const LoginAccountForm: React.FC = () => {
               {!user && (
                 <form onSubmit={handleLogin}>
                   <div>
-                    <img src="src\assets\LogoUCAG-E3vVaZ5h.png" alt="Logo" width="200" height="150" />
+                    <img ref={logoUrl} alt="Logo" width="200" height="150" />
                     <h3>Bienvenido!</h3>
                     <h3>Inicio de Sesión</h3>
                   </div>
@@ -111,7 +129,7 @@ const LoginAccountForm: React.FC = () => {
               {user && (
                 <div>
                   <div>
-                    <img src="/src/assets/LogoUCAG.png" alt="Bootstrap" width="200" height="150" />
+                    <img ref={logoUrl} alt="Bootstrap" width="200" height="150" />
                     <h3>Bienvenido!</h3>
                   </div>
                   <label>Credenciales Correctas!</label>

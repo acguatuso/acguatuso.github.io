@@ -2,6 +2,9 @@ import './Footer.css';
 import { useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { ContactenosFooter } from './ContactenosFooter';
+import { ref, getDownloadURL } from 'firebase/storage';
+import { useState, useEffect } from 'react';
+import { firebase_storage } from '../../firebase';
 
 
 export const Footer = () => {
@@ -10,6 +13,21 @@ export const Footer = () => {
     // Redux Hooks & Access
     const empresaData = useSelector((state: RootState) => state.empresa.dataEmpresa);
     //console.log(state,'footer')
+
+    const [logoFacebookUrl, setLogoFacebookUrl] = useState('');
+
+    useEffect(() => { 
+        (async () => {
+            const imageRef = ref(firebase_storage, 'Empresa/RedesSociales/Facebook/icono_facebook.svg');
+            getDownloadURL(imageRef)
+                .then((url) => {
+                    setLogoFacebookUrl(url);
+                })
+                .catch((error) => {
+                    console.error('Error descargando el logo:', error);
+            });
+        })()
+    }, []);
   return (
 
     <div className='footer-container'>
@@ -26,7 +44,7 @@ export const Footer = () => {
                 {/* Derecha */}
                 <div>
                     <a href={ empresaData?.facebookUrl } className='me-4 text-reset'>  
-                    <img className= 'facebook' src="/src/assets/icono_facebook.svg" alt="Facebook" width="40" height="35" />
+                    <img className= 'facebook' src={logoFacebookUrl} alt="Facebook" width="40" height="35" />
                         {/* <i className='fab fa-facebook-f facebook-color'> </i> */}
                     </a>
                 </div>

@@ -3,6 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { logOut } from '../../redux/reducers/authSlice';
 import './Navbar.css';
+import { ref, getDownloadURL } from 'firebase/storage';
+import { useState, useEffect } from 'react';
+import { firebase_storage } from '../../firebase';
 
 export const Navbar = () => {
 
@@ -19,6 +22,22 @@ export const Navbar = () => {
         navigate('/ucag-admin/iniciar-sesion', { replace: true })
     }
 
+    const [logoUrl, setLogoUrl] = useState('');
+
+    useEffect(() => { 
+        (async () => {
+            const imageRef = ref(firebase_storage, 'Empresa/Logo/logo');
+            getDownloadURL(imageRef)
+                .then((url) => {
+                    setLogoUrl(url);
+                })
+                .catch((error) => {
+                    console.error('Error descargando el logo:', error);
+                });
+  
+        })()
+    }, []);
+
     return (
 
         <div className="navbar-container shadow-lg">
@@ -29,7 +48,7 @@ export const Navbar = () => {
                             className="navbar-brand"
                             to="/ucag-admin/home"
                         >
-                            <img src="src\assets\LogoUCAG-E3vVaZ5h.png" alt="Logo" width="110" height="80" />
+                            <img ref={logoUrl} alt="Logo" width="110" height="80" />
 
                         </NavLink>)}
                     {!user && !loggedIn && (
@@ -37,7 +56,7 @@ export const Navbar = () => {
                             className="navbar-brand"
                             to="/ucag-admin/"
                         >
-                            <img src="src\assets\LogoUCAG-E3vVaZ5h.png" alt="Bootstrap" width="110" height="80" />
+                            <img ref={logoUrl} alt="Bootstrap" width="110" height="80" />
 
                         </NavLink>)}
                         <h4 className="navbar-text-white d-none d-sm-inline-block">
