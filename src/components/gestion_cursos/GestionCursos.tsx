@@ -116,6 +116,9 @@ function GestionCursos() {
     {
       name: "Nombre",
       selector: (row: any) => row.nombre,
+      cell: (row: any) => (
+        <div>{row.nombre}</div>
+      ),
       sortable: true,
     },
     {
@@ -130,14 +133,19 @@ function GestionCursos() {
           ))}
         </div>
       ),
+      sortable: true,
     },
     {
       name: "Modalidad",
       selector: (row: any) => obtenerNombreModalidad(row.modalidad),
+      cell: (row: any) => (
+        <div>{obtenerNombreModalidad(row.modalidad)}</div>
+      ),
       sortable: true,
     },
     {
       name: "Estado",
+      selector: (row: any) => (row.estado === 1 ? "Activo" : "Inactivo"),
       cell: (row: any) => (
         <div className="form-check form-switch">
           <input
@@ -149,10 +157,11 @@ function GestionCursos() {
           ></input>
         </div>
       ),
-      width: "5vw",
+      sortable: true,
     },
     {
       name: "Visibilidad",
+      selector: (row: any) => row.visible,
       cell: (row: any) => (
         <select
           id="visible"
@@ -171,7 +180,7 @@ function GestionCursos() {
           <option value={Visible.NoVisible}>No visible</option>
         </select>
       ),
-      width: "15vw",
+      sortable: true,
     },
     {
       name: "Acciones",
@@ -207,7 +216,7 @@ function GestionCursos() {
   }, [loggedIn, user, navigate]);
 
   const goBack = () => {
-    navigate("/Cursos");
+    navigate("/ucag-admin/Cursos");
   };
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {

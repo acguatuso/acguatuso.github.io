@@ -87,7 +87,6 @@ export const Navbar = () => {
                                             Cursos
                                         </NavLink>
 
-
                                         <NavLink
                                             className={({ isActive }) => `nav-item nav-link ${isActive ? 'active' : ''} navbar-text-white`}
                                             to="/ucag-admin/servicios"

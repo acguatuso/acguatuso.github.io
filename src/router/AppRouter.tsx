@@ -14,7 +14,7 @@ import { ServicePage } from '../pages/ServicesPage/ServicePage';
 export const AppRouter = () => {
   return (
       <Routes>
-
+        <Route path="/" element={<HomePageApp />} />
         <Route path="/ucag-admin/" element={<LoginAccountForm />} />
         <Route path="/ucag-admin/iniciar-sesion" element={<LoginAccountForm />} />
         <Route path="/ucag-admin/home" element={<HomePageApp />} />

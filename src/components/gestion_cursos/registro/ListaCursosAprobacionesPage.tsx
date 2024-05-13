@@ -48,14 +48,22 @@ export const ListaCursosAprobacionesPage = () => {
     {
       name: "Alumnos",
       selector: (row: Curso) => row.matriculados?.length || 0,
+      cell: (row: Curso) => (
+        <div className="text-start">
+          {row.matriculados?.length || 0}
+        </div>
+      ),
       sortable: true,
-      width: "6vw",
     },
     {
       name: "Nombre",
       selector: (row: any) => row.nombre,
+      cell: (row: any) => (
+        <div className="text-start">
+          {row.nombre}
+        </div>
+      ),
       sortable: true,
-      width: "10w",
     },
     {
       name: "Horario",
@@ -68,51 +76,44 @@ export const ListaCursosAprobacionesPage = () => {
           ))}
         </div>
       ),
-      width: "15vw",
     },
 
     {
       name: "Fecha Inicio",
       selector: (row: any) => {
+        row.fecha_inicio
+      },
+      cell: (row: any) => {
         if (row.fecha_inicio && typeof row.fecha_inicio.toDate === "function") {
           const fecha = row.fecha_inicio.toDate();
           const dia = fecha.getDate();
           const mes = fecha.getMonth() + 1; // Los meses en JavaScript van de 0 a 11
           const año = fecha.getFullYear();
-          return `${dia}/${mes}/${año}`;
+          return <div>{`${dia}/${mes}/${año}`}</div>;
         } else {
-          return "Cargando...";
+          return <div>Cargando...</div>;
         }
       },
       sortable: true,
-      width: "8vw",
     },
 
     {
       name: "Fecha Fin",
-      // selector: (row:any) => {
-      //     if (row.fecha_finalizacion && typeof row.fecha_finalizacion.toDate === 'function') {
-      //         return row.fecha_finalizacion.toDate().toLocaleDateString();
-      //     } else {
-      //         return "Cargando...";
-      //     }
-      // },
       selector: (row: any) => {
-        if (
-          row.fecha_finalizacion &&
-          typeof row.fecha_finalizacion.toDate === "function"
-        ) {
+        row.fecha_finalizacion
+      },
+      cell: (row: any) => {
+        if (row.fecha_finalizacion && typeof row.fecha_finalizacion.toDate === "function") {
           const fecha = row.fecha_finalizacion.toDate();
           const dia = fecha.getDate();
           const mes = fecha.getMonth() + 1; // Los meses en JavaScript van de 0 a 11
           const año = fecha.getFullYear();
-          return `${dia}/${mes}/${año}`;
+          return <div>{`${dia}/${mes}/${año}`}</div>;
         } else {
-          return "Cargando...";
+          return <div>Cargando...</div>;
         }
       },
       sortable: true,
-      width: "8vw",
     },
 
     {
@@ -133,10 +134,9 @@ export const ListaCursosAprobacionesPage = () => {
           default:
             modalidadTexto = "Desconocida";
         }
-        return modalidadTexto;
+        return <div>modalidadTexto</div>;
       },
       sortable: true,
-      width: "8vw",
     },
 
     {
@@ -157,7 +157,6 @@ export const ListaCursosAprobacionesPage = () => {
           <i className="fa-solid fa-users"></i>
         </button>
       ),
-      width: "8vw",
     },
   ];
 
@@ -216,7 +215,7 @@ export const ListaCursosAprobacionesPage = () => {
   }, [filterText, coursesRedux, enterPressed]);
 
   const regresarCursosPage = () => {
-    navigate("/Cursos");
+    navigate("/ucag-admin/Cursos");
   };
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {

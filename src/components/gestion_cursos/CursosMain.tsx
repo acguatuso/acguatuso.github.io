@@ -26,7 +26,7 @@ function CursosMain() {
             <div >
                 <div className="row">
                     <div className="col-md-6">
-                        <Link to="/matriculaAdmin" className="card my-3 custom-card">
+                        <Link to="/ucag-admin/matriculaAdmin" className="card my-3 custom-card">
                             <div className="card-body">
                                 <h5 className="card-title">Gestión de Matrícula</h5>
                                 <p className="card-text text-secondary">Administre las solicitudes de matrícula.</p>
@@ -34,7 +34,7 @@ function CursosMain() {
                             </div>
                         </Link>
 
-                        <Link to="/evaluacionEstudiantes" className="card my-3 custom-card">
+                        <Link to="/ucag-admin/evaluacionEstudiantes" className="card my-3 custom-card">
                             <div className="card-body">
                                 <h5 className="card-title">Gestión de Aprobaciones</h5>
                                 <p className="card-text text-secondary">Apruebe o repruebe estudiantes en los cursos.</p>
@@ -43,7 +43,7 @@ function CursosMain() {
                         </Link>
                     </div>
                     <div className="col-md-6">
-                        <Link to="/gestionar-cursos" className="card my-3 custom-card">
+                        <Link to="/ucag-admin/gestionar-cursos" className="card my-3 custom-card">
                             <div className="card-body">
                                 <h5 className="card-title"> Gestión de Cursos</h5>
                                 <p className="card-text text-secondary">Administre la oferta de cursos disponibles.</p>
