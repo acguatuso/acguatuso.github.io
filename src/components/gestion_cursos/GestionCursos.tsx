@@ -54,13 +54,9 @@ function GestionCursos() {
 
   useEffect(() => {
     if (enterPressed) {
-      console.log("aca");
-
       const filtered = cursos.filter((course) => {
         const selectedValue = course[selectedSearch];
         if (typeof selectedValue === "string") {
-          console.log("aca2");
-
           return selectedValue.toLowerCase().includes(filterText.toLowerCase());
         } else if (typeof selectedValue == "number") {
           let modalidadText = "";

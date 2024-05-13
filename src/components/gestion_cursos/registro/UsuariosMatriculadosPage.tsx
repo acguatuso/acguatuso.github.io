@@ -12,6 +12,7 @@ interface Users {
   cedula: string;
   telefono: string;
   correo: string;
+  [key: string]: string;
 }
 
 export const UsuariosMatriculadosPage = ({
@@ -37,6 +38,9 @@ export const UsuariosMatriculadosPage = ({
   const [updateAprobados, setUpdateAprobados] = useState<string[]>(aprobados);
   const [updateReprobados, setUpdateReprobados] =
     useState<string[]>(reprobados);
+  const [selectedSearch, setSelectedSearch] = useState("");
+  const [inputState, setInputState] = useState(true);
+  const [enterPressed, setEnterPressed] = useState(false);
 
   //Columnas a usar dentro de la tabla
   const columns = [
@@ -44,20 +48,21 @@ export const UsuariosMatriculadosPage = ({
       name: "Nombre",
       selector: (row: any) => row.nombre,
       sortable: true,
-      width: "15vw",
+      width: "13vw",
     },
 
     {
       name: "Cédula",
       selector: (row: any) => row.cedula,
       sortable: true,
+      width: "10vw",
     },
 
     {
       name: "Correo",
       selector: (row: any) => row.correo,
       sortable: true,
-      width: "30vw",
+      width: "20vw",
     },
 
     {
@@ -138,15 +143,20 @@ export const UsuariosMatriculadosPage = ({
   }, []);
 
   useEffect(() => {
+    if (enterPressed) {
+      const filtered = users.filter((item) => {
+        const selectedValue = item[selectedSearch];
+        if (typeof selectedValue === "string") {
+          return selectedValue.toLowerCase().includes(filterText.toLowerCase());
+        }
+      });
+      setFilteredUsers(filtered);
+      setEnterPressed(!enterPressed);
+    }
     if (filterText.trim() === "") {
       setFilteredUsers(users);
-    } else {
-      const filtered = users.filter((user) =>
-        user.nombre.toLowerCase().includes(filterText.toLowerCase())
-      );
-      setFilteredUsers(filtered);
     }
-  }, [filterText, users]);
+  }, [filterText, users, enterPressed]);
 
   const closeSeeUserModal = () => {
     setShowDetailsUserModal(false);
@@ -173,6 +183,19 @@ export const UsuariosMatriculadosPage = ({
     onRegresarClick(); // aqui estoy llamando a la funcion del componente ListaCursosAprobacionesPage para que cambie el estado de showListaUsuarios a false. Y asi se vuelva a mostrar la lista de los cursos matriculados
   };
 
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedSearch(event.target.value);
+    if (inputState) {
+      setInputState(!inputState);
+    }
+  };
+
+  function handleKeyDown(event: React.KeyboardEvent): void {
+    if (event.key === "Enter") {
+      setEnterPressed(!enterPressed);
+    }
+  }
+
   return (
     <>
       <div>
@@ -192,14 +215,11 @@ export const UsuariosMatriculadosPage = ({
               <select
                 className="form-select border border-secondary shadow"
                 aria-label="Default select example"
-                onChange={() => {
-                  console.log("change");
-                }}
+                onChange={handleSelectChange}
               >
                 <option hidden>Seleccione un filtro</option>
                 <option value="nombre">Nombre</option>
                 <option value="cedula">Cédula</option>
-                <option value="telefono">Teléfono</option>
                 <option value="correo">Correo</option>
               </select>
             </div>
@@ -209,7 +229,11 @@ export const UsuariosMatriculadosPage = ({
                 className="form-control bg-light text-dark mt-3 me-2 border border-primary shadow-lg"
                 placeholder="Buscar"
                 value={filterText}
-                onChange={(e) => setFilterText(e.target.value)}
+                disabled={inputState}
+                onChange={(e) => {
+                  setFilterText(e.target.value);
+                }}
+                onKeyDown={handleKeyDown}
               />
             </div>
           </div>

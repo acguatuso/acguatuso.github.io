@@ -53,7 +53,7 @@ export const ListaCursosMatriculaPage = () => {
       name: "Nombre",
       selector: (row: any) => row.nombre,
       sortable: true,
-      width: "15vw",
+      width: "10vw",
     },
 
     // {
@@ -150,7 +150,7 @@ export const ListaCursosMatriculaPage = () => {
         return modalidadTexto;
       },
       sortable: true,
-      width: "15vw",
+      width: "10vw",
     },
 
     {

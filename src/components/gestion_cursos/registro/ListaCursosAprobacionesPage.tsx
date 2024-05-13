@@ -38,6 +38,9 @@ export const ListaCursosAprobacionesPage = () => {
   //const [filteredCourses, setFilteredCourses] = useState<Course[]> ([]);
   const [filteredCourses, setFilteredCourses] = useState<Curso[]>([]);
   const [filterText, setFilterText] = useState("");
+  const [selectedSearch, setSelectedSearch] = useState("");
+  const [inputState, setInputState] = useState(true);
+  const [enterPressed, setEnterPressed] = useState(false);
   const navigate = useNavigate();
 
   //Columnas de la tabla
@@ -46,13 +49,13 @@ export const ListaCursosAprobacionesPage = () => {
       name: "Alumnos",
       selector: (row: Curso) => row.matriculados?.length || 0,
       sortable: true,
-      width: "8vw",
+      width: "6vw",
     },
     {
       name: "Nombre",
       selector: (row: any) => row.nombre,
       sortable: true,
-      width: "15vw",
+      width: "10w",
     },
     {
       name: "Horario",
@@ -65,7 +68,7 @@ export const ListaCursosAprobacionesPage = () => {
           ))}
         </div>
       ),
-      width:"15vw",
+      width: "15vw",
     },
 
     {
@@ -82,7 +85,7 @@ export const ListaCursosAprobacionesPage = () => {
         }
       },
       sortable: true,
-      width: "10vw",
+      width: "8vw",
     },
 
     {
@@ -109,7 +112,7 @@ export const ListaCursosAprobacionesPage = () => {
         }
       },
       sortable: true,
-      width: "10vw",
+      width: "8vw",
     },
 
     {
@@ -133,7 +136,7 @@ export const ListaCursosAprobacionesPage = () => {
         return modalidadTexto;
       },
       sortable: true,
-      width: "10vw",
+      width: "8vw",
     },
 
     {
@@ -180,22 +183,54 @@ export const ListaCursosAprobacionesPage = () => {
   };
 
   useEffect(() => {
+    if (enterPressed) {
+      const filtered = coursesRedux.filter((course) => {
+        const selectedValue = course[selectedSearch];
+        if (typeof selectedValue === "string") {
+          return selectedValue.toLowerCase().includes(filterText.toLowerCase());
+        } else if (typeof selectedValue == "number") {
+          let modalidadText = "";
+          switch (selectedValue) {
+            case 0:
+              modalidadText = "presencial";
+              break;
+            case 1:
+              modalidadText = "virtual";
+              break;
+            case 2:
+              modalidadText = "mixta";
+              break;
+            default:
+              return false; // This handles unexpected numbers
+          }
+          return modalidadText.includes(filterText.toLowerCase());
+        }
+        return false; // Return false for any unhandled types or cases
+      });
+      setFilteredCourses(filtered);
+      setEnterPressed(!enterPressed);
+    }
     if (filterText.trim() === "") {
       setFilteredCourses(coursesRedux);
-    } else {
-      const filtered = coursesRedux.filter((course) =>
-        course.nombre
-          .toLocaleLowerCase()
-          .includes(filterText.toLocaleLowerCase())
-      );
-      //console.log('Estos son los cursos filtrados por nombre: ', filtered);
-      setFilteredCourses(filtered);
-    }
-  }, [filterText, coursesRedux]);
+    } 
+  }, [filterText, coursesRedux, enterPressed]);
 
   const regresarCursosPage = () => {
     navigate("/Cursos");
   };
+
+  const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+    setSelectedSearch(event.target.value);
+    if (inputState) {
+      setInputState(!inputState);
+    }
+  };
+
+  function handleKeyDown(event: React.KeyboardEvent): void {
+    if (event.key === "Enter") {
+      setEnterPressed(!enterPressed);
+    }
+  }
 
   return (
     <div>
@@ -226,15 +261,11 @@ export const ListaCursosAprobacionesPage = () => {
                 <select
                   className="form-select border border-secondary shadow"
                   aria-label="Default select example"
-                  onChange={() => {
-                    console.log("change");
-                  }}
+                  onChange={handleSelectChange}
                 >
                   <option hidden>Seleccione un filtro</option>
                   <option value="nombre">Nombre</option>
-                  <option value="cedula">Cédula</option>
-                  <option value="telefono">Teléfono</option>
-                  <option value="correo">Correo</option>
+                  <option value="modalidad">Modalidad</option>
                 </select>
               </div>
               <div>
@@ -243,7 +274,11 @@ export const ListaCursosAprobacionesPage = () => {
                   className="form-control bg-light text-dark mt-3 me-2 border border-primary shadow-lg"
                   placeholder="Buscar"
                   value={filterText}
-                  onChange={(e) => setFilterText(e.target.value)}
+                  disabled={inputState}
+                  onChange={(e) => {
+                    setFilterText(e.target.value);
+                  }}
+                  onKeyDown={handleKeyDown}
                 />
               </div>
             </div>
