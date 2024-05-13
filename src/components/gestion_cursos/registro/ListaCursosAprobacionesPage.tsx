@@ -134,7 +134,7 @@ export const ListaCursosAprobacionesPage = () => {
           default:
             modalidadTexto = "Desconocida";
         }
-        return <div>modalidadTexto</div>;
+        return <div>{modalidadTexto}</div>;
       },
       sortable: true,
     },
