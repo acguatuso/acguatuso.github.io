@@ -10,7 +10,7 @@ function DataTableBase<T>(props: TableProps<T>): JSX.Element {
       noDataComponent="No hay información para mostrar."
       striped
       fixedHeader
-      fixedHeaderScrollHeight="80vh"
+      //fixedHeaderScrollHeight="80vh"
       responsive
       {...props}
     />

@@ -120,6 +120,7 @@ function GestionCursos() {
     },
     {
       name: "Horario",
+      selector: (row: any) => row.horario,
       cell: (row: any) => (
         <div className="text-start">
           {row.horario.map((h: any, index: number) => (
