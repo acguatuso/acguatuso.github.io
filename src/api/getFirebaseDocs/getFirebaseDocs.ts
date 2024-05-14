@@ -29,7 +29,7 @@ export const getPaginatedDocs = async (
     dataQuery = query(collection(data_base, path), limit(pageSize));
   }
   const data = await getDocs(dataQuery);
-  const dataList = data.docs.map((doc) => ({ ...doc.data() }));
+  const dataList = data.docs.map((doc) => ({ ...doc.data(), id: doc.id }));
   const newLastVisible = data.docs[data.docs.length - 1]; // Snapshot of the last document
 
   return { dataList, newLastVisible };

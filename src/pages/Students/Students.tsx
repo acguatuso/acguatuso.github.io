@@ -1,17 +1,20 @@
 import { useEffect, useState } from "react";
 import DataTableBase from "../../components/dataTable/DataTableBase";
-import { FaAddressCard, FaBullseye, FaEdit } from "react-icons/fa";
+import { FaAddressCard, FaEdit } from "react-icons/fa";
 import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../../redux/store";
 import { useSelector } from "react-redux";
-import { getFirebaseDocs, getPaginatedDocs } from "../../api/getFirebaseDocs/getFirebaseDocs";
+import {
+  getFirebaseDocs,
+  getPaginatedDocs,
+} from "../../api/getFirebaseDocs/getFirebaseDocs";
 import { Student } from "./Student.interface";
 import CreateAccountModal from "../../components/Modal/CreateAccountModa";
 import MiPerfilModal from "../../components/Modal/EditUserModal";
 import { updateFirebaseDoc } from "../../api/updateFirebaseDoc/updateFirebaseDoc";
-import { set } from "firebase/database";
 import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
+import DeleteUser from "./DeleteUserModal";
 
 const Students = () => {
   const [filteredData, setFilteredData] = useState<Student[]>([]);
@@ -23,10 +26,13 @@ const Students = () => {
   const [selectedSearch, setSelectedSearch] = useState("");
   const [inputState, setInputState] = useState(true);
   const [enterPressed, setEnterPressed] = useState(false);
-  const [lastVisible, setLastVisible] = useState<QueryDocumentSnapshot<DocumentData> | null>(null);
+  const [lastVisible, setLastVisible] =
+    useState<QueryDocumentSnapshot<DocumentData> | null>(null);
   const [loading, setLoading] = useState(false);
   const [totalRows, setTotalRows] = useState(0);
-  const [pageCursors, setPageCursors] = useState<{ [page: number]: QueryDocumentSnapshot<DocumentData> | null }>({});;
+  const [pageCursors, setPageCursors] = useState<{
+    [page: number]: QueryDocumentSnapshot<DocumentData> | null;
+  }>({});
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
 
@@ -92,13 +98,14 @@ const Students = () => {
           >
             <FaEdit />
           </button>
-          <button
+          <DeleteUser id={row.id} getUsers={() => getUsers(1)}></DeleteUser>
+          {/* <button
             className="btn btn-danger"
-            onClick={() => console.log("eliminando...")}
+            onClick={() => deleteUser(row)}
             title="Eliminar"
           >
             <MdDelete />
-          </button>
+          </button> */}
         </div>
       ),
     },
@@ -132,16 +139,20 @@ const Students = () => {
   const getTotalRows = async () => {
     const totalUsers = await getFirebaseDocs("Usuarios");
     setTotalRows(totalUsers.length);
-  }
+  };
 
-  const getUsers = async (targetPage : number) => {
+  const getUsers = async (targetPage: number) => {
     setLoading(true);
     let lastDoc = pageCursors[targetPage];
-    const {dataList, newLastVisible} = await getPaginatedDocs("Usuarios", perPage, lastDoc);
-    if (dataList.length > 0){
+    const { dataList, newLastVisible } = await getPaginatedDocs(
+      "Usuarios",
+      perPage,
+      lastDoc
+    );
+    if (dataList.length > 0) {
       setLastVisible(newLastVisible);
-      setPageCursors(prev => ({ ...prev, [targetPage + 1]: newLastVisible }));
-    }else{
+      setPageCursors((prev) => ({ ...prev, [targetPage + 1]: newLastVisible }));
+    } else {
       setLastVisible(null);
     }
     var formatedData: Student[] = [];
@@ -215,7 +226,7 @@ const Students = () => {
   };
 
   const handleRowsPerPageChange = (newPageSize: number, page: number) => {
-    setPerPage(newPageSize)
+    setPerPage(newPageSize);
     setCurrentPage(page);
   };
 

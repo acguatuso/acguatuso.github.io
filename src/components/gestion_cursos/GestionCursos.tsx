@@ -17,6 +17,8 @@ import {
 import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { updateFirebaseDoc } from "../../api/updateFirebaseDoc/updateFirebaseDoc";
 import DetallesCurso from "./DetallesCurso";
+import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
+import { getFirebaseDocs } from "../../api/getFirebaseDocs/getFirebaseDocs";
 
 enum Visible {
   NoVisible = 0,
@@ -37,6 +39,15 @@ function GestionCursos() {
   const [selectedSearch, setSelectedSearch] = useState("");
   const [inputState, setInputState] = useState(true);
   const [enterPressed, setEnterPressed] = useState(false);
+  const [lastVisible, setLastVisible] =
+    useState<QueryDocumentSnapshot<DocumentData> | null>(null);
+  //const [loading, setLoading] = useState(false);
+  const [totalRows, setTotalRows] = useState(0);
+  const [pageCursors, setPageCursors] = useState<{
+    [page: number]: QueryDocumentSnapshot<DocumentData> | null;
+  }>({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState(5);
 
   useEffect(() => {
     (async () => {
@@ -111,6 +122,20 @@ function GestionCursos() {
       changeCursoVisible({ cursoId: row.id, visible: parseInt(e.target.value) })
     );
   }
+
+  const getTotalRows = async () => {
+    const totalCourses = await getFirebaseDocs("Cursos");
+    setTotalRows(totalCourses.length);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleRowsPerPageChange = (newPageSize: number, page: number) => {
+    setPerPage(newPageSize)
+    setCurrentPage(page);
+  };
 
   const columns = [
     {
@@ -286,7 +311,12 @@ function GestionCursos() {
         </div>
       </div>
       <div>
-        <DataTableBase columns={columns} data={cursos}></DataTableBase>
+        <DataTableBase
+          columns={columns}
+          data={cursos}
+          paginationPerPage={perPage}
+          paginationTotalRows={totalRows}
+        ></DataTableBase>
       </div>
     </>
   );
