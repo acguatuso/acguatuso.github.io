@@ -30,7 +30,7 @@ export const About = () => {
   // Redireccionar si está no logueado, y no hay usuario
   useEffect(() => {
     if (!loggedIn && !user) {
-      navigate("/");
+      navigate("/ucag-admin/");
     }
   }, [loggedIn, user, navigate]);
 

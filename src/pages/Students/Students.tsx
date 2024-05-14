@@ -115,7 +115,7 @@ const Students = () => {
     getUsers(currentPage);
     getTotalRows();
     if (!loggedIn && !user) {
-      navigate("/");
+      navigate("/ucag-admin/");
     }
   }, [loggedIn, user, navigate, currentPage, perPage]);
 

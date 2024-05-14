@@ -12,7 +12,7 @@ function DataTableBase<T>(props: TableProps<T>): JSX.Element {
       progressComponent={<>Cargando...</>}
       striped
       fixedHeader
-      fixedHeaderScrollHeight="80vh"
+      //fixedHeaderScrollHeight="80vh"
       responsive
       {...props}
     />

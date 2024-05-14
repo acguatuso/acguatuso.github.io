@@ -6,7 +6,6 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import '../../CSS/Components/LoginAccStyle.css';
 import ForgotPassword from './ForgotPassword';
-import NotificationModal from '../Modal/NotificationModal';
 
 const LoginAccountForm: React.FC = () => {
   // React-router-dom
@@ -17,7 +16,6 @@ const LoginAccountForm: React.FC = () => {
   const [password, setPassword] = useState<string>('');
   const [showPassword, setShowPassword] = useState(false);
   const [isForgotPasswordModalOpen, setIsForgotPasswordModalOpen] = useState(false);
-  const [showLoginSuccessModal, setShowLoginSuccessModal] = useState(false);
 
   // Redux Hooks & Access
   const dispatch = useDispatch();
@@ -27,9 +25,10 @@ const LoginAccountForm: React.FC = () => {
   const emailVerified = useSelector((state: RootState) => state.auth.emailVerified);
   //const states = useSelector((state: RootState) => state);
   //console.log(states, 'login')
-
+  
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Evita que se envíe la solicitud HTTP predeterminada
+    
     setTimeout(() => {
       dispatch(login(email, password) as any); // Usa dispatch para llamar a la acción login
     }, 1000);
@@ -51,11 +50,10 @@ const LoginAccountForm: React.FC = () => {
   // Redireccionar si está logueado, hay usuario y email verificado
   useEffect(() => {
     if (loggedIn && user && emailVerified) {
+      //console.log(user?.user_type)
       // Mostrar el modal de éxito de inicio de sesión
-      setShowLoginSuccessModal(true);
       const timeoutId = setTimeout(() => {
-        setShowLoginSuccessModal(false); // Ocultar el modal después del tiempo especificado
-        navigate("/home"); // Redirige al usuario a la página de inicio
+        navigate("/ucag-admin/home"); // Redirige al usuario a la página de inicio
       }, 3 * 1000); // Convierte los segundos a milisegundos
 
       // Limpia el temporizador si el componente se desmonta antes de que se complete
@@ -80,7 +78,7 @@ const LoginAccountForm: React.FC = () => {
               {!user && (
                 <form onSubmit={handleLogin}>
                   <div>
-                    <img src="/src/assets/LogoUCAG.png" alt="Bootstrap" width="200" height="150" />
+                    <img src="src\assets\LogoUCAG-E3vVaZ5h.png" alt="Bootstrap" width="200" height="150" />
                     <h3>Bienvenido!</h3>
                     <h3>Inicio de Sesión</h3>
                   </div>
@@ -124,13 +122,6 @@ const LoginAccountForm: React.FC = () => {
           </div>
         </div>
       </div>
-      {/* Componente del modal de éxito de inicio de sesión */}
-      <NotificationModal
-        texto="¡Inicio de sesión exitoso!"
-        mostrar={showLoginSuccessModal}
-        onConfirm={() => setShowLoginSuccessModal(false)}
-        segundos={3} // Duración del modal en segundos
-      />
     </>
   );
 
