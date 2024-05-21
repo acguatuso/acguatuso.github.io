@@ -41,3 +41,7 @@ jobs:
       - name: Deploy to GitHub Pages
         id: deployment
         uses: actions/deploy-pages@v4
+      - name: Handle 404 Error
+        if: failure()
+        run: |
+          echo "<script>window.location.href = window.location.pathname;</script>"
