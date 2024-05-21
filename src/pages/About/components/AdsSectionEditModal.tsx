@@ -64,7 +64,7 @@ export const AdsSectionEditModal = (props: adsSection) => {
 
     return (
     <>
-    <button type="button" className="btn btn-outline-warning mb-1 btn-sm" data-bs-toggle="modal" data-bs-target={`#${props.id}`}>
+    <button type="button" className="btn btn-outline-warning mb-2 btn-sm" data-bs-toggle="modal" data-bs-target={`#${props.id}`}>
         Editar
     </button>     
     <div className="modal fade" id={props.id} data-bs-backdrop="static" data-bs-keyboard="false"  aria-labelledby="staticBackdropLabel" aria-hidden="true">

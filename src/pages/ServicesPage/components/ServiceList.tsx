@@ -24,11 +24,11 @@ export const ServiceList = () => {
             return ( 
                                  
                 element.posicion_id  == 1 ?(
-                    <div key={`${element.id}-div1`} className="row mb-3 border">    
-                        <div className="col">
-                            <img  className='img-thumbnail' src={element.download_url}/>           
+                    <div key={`${element.id}-div1`} className="row mb-3">    
+                        <div className="col mb-3">
+                            <img  className='img-fluid' src={element.download_url}/>           
                         </div>            
-                        <div className="col">                        
+                        <div className="col mb-3">                        
                             <h3>{element.titulo}</h3>
                             <h5>{element.subtitulo}</h5>
                             <p className='lead'>{element.descripcion}</p>
@@ -63,14 +63,16 @@ export const ServiceList = () => {
                             id={element.id}
                             image_url={element.image_url}
                         />
+                    <hr className="border border-secondary border-1 opacity-90"/>
+
                     </div>                 
                 )
                     
                     :
         
                 (    
-                    <div key={`${element.id}-div2`} className="row mb-3 border">
-                    <div className="col">                        
+                    <div key={`${element.id}-div2`} className="row mb-3">
+                    <div className="col mb-3">                        
                         <h3>{element.titulo}</h3>
                         <h5>{element.subtitulo}</h5>
                         <p className='lead'>{element.descripcion}</p>
@@ -92,8 +94,8 @@ export const ServiceList = () => {
 
 
                     </div>
-                    <div className="col">        
-                        <img  className='img-thumbnail' src={element.download_url}/>
+                    <div className="col mb-3">        
+                        <img  className='img-fluid' src={element.download_url}/>
                     </div>
                     
                     <ServiceEditModal                
@@ -113,6 +115,7 @@ export const ServiceList = () => {
                         id={element.id}
                         image_url={element.image_url}
                     /> 
+                    <hr className="border border-secondary border-1 opacity-90"/>
                     </div> 
                 )                                           
             )     

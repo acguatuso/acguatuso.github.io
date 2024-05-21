@@ -26,9 +26,6 @@ const LoginAccountForm: React.FC = () => {
   const error = useSelector((state: RootState) => state.auth.error);
   const emailVerified = useSelector((state: RootState) => state.auth.emailVerified);
 
-  // Ref for logo image
-  const logoImgRef = useRef<HTMLImageElement>(null);
-
   const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // Prevent the default HTTP request
 
@@ -49,27 +46,27 @@ const LoginAccountForm: React.FC = () => {
     setShowPassword(!showPassword);
   };
 
-  useEffect(() => {
-    const loadImage = async () => {
-      try {
-        const imageRef = ref(firebase_storage, 'Empresa/Logo/logo');
-        const url = await getDownloadURL(imageRef);
-        if (logoImgRef.current) {
-          logoImgRef.current.src = url;
-        }
-      } catch (error) {
-        console.error('Error downloading logo:', error);
-      }
-    };
+  const [logoUrl, setLogoUrl] = useState('');
 
-    loadImage();
+  useEffect(() => { 
+      (async () => {
+          const imageRef = ref(firebase_storage, 'Empresa/Logo/logo');
+          getDownloadURL(imageRef)
+              .then((url) => {
+                  setLogoUrl(url);
+              })
+              .catch((error) => {
+                  console.error('Error descargando el logo:', error);
+              });
+
+      })()
   }, []);
 
   // Redirect if logged in, user exists, and email is verified
   useEffect(() => {
     if (loggedIn && user && emailVerified) {
       const timeoutId = setTimeout(() => {
-        navigate("/ucag-admin/home"); // Redirect user to home page
+        navigate("/home"); // Redirect user to home page
       }, 3 * 1000); // Convert seconds to milliseconds
 
       // Clear the timer if the component unmounts before it completes
@@ -92,16 +89,16 @@ const LoginAccountForm: React.FC = () => {
             {!user && (
               <form onSubmit={handleLogin}>
                 <div>
-                  <img ref={logoImgRef} alt="logo" width="200" height="150" />
-                  <h3>Welcome!</h3>
-                  <h3>Login</h3>
+                  <img src={logoUrl} alt="logo" width="200" height="150" />
+                  <h3>Bievenido!</h3>
+                  <h3>Inicio de Sesión</h3>
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="email" className="form-label text-start text-muted" >Email:</label>
+                  <label htmlFor="email" className="form-label text-start text-muted" >Correo:</label>
                   <input type="email" id="email" value={email} onChange={handleEmailChange} className="form-control" placeholder="E.g., email@example.com" />
                 </div>
                 <div className="mb-3">
-                  <label htmlFor="password" className="form-label text-start text-muted">Password:</label>
+                  <label htmlFor="password" className="form-label text-start text-muted">Contraseña:</label>
                   <div className="input-group">
                     <input type={showPassword ? 'text' : 'password'} id="password" value={password} onChange={handlePasswordChange} className="form-control" placeholder="E.g., password123" />
                     <button className="btn btn-outline-secondary" type="button" onClick={togglePasswordVisibility}>
@@ -109,15 +106,15 @@ const LoginAccountForm: React.FC = () => {
                     </button>
                   </div>
                 </div>
-                <button type="submit" className="btn btn-primary">Login</button>
+                <button type="submit" className="btn btn-primary">Iniciar Sesión</button>
                 <div>
                   <br />
-                  <label>Don't have an account?</label>
-                  <Link to="/ucag-admin/crear-cuenta">Create Account</Link>
+                  <label>¿No tiene una cuenta?</label>
+                  <Link to="/crear-cuenta">Crear Cuenta</Link>
                 </div>
                 <div>
-                  <span>Forgot your password? </span>
-                  <span className="link-style" onClick={() => setIsForgotPasswordModalOpen(true)} >Click here</span>
+                  <span>¿Olvidaste tu contraseña? </span>
+                  <span className="link-style" onClick={() => setIsForgotPasswordModalOpen(true)} >Haz clic aquí</span>
                   <ForgotPassword isOpen={isForgotPasswordModalOpen} onClose={() => setIsForgotPasswordModalOpen(false)} />
                 </div>
               </form>
@@ -125,11 +122,11 @@ const LoginAccountForm: React.FC = () => {
             {user && (
               <div>
                 <div>
-                  <img ref={logoImgRef} alt="logo" width="200" height="150" />
-                  <h3>Welcome!</h3>
+                  <img src={logoUrl} alt="logo" width="200" height="150" />
+                  <h3>Bievenido!</h3>
                 </div>
-                <label>Correct Credentials!</label>
-                <label>Hello {user.name}!</label>
+                <label>Credenciales Correctas!</label>
+                <label>Hola {user.nombre}!</label>
               </div>
             )}
           </div>

@@ -22,11 +22,11 @@ export const AdsList = () => {
     {links.map((element: ads)=>{        
             return (                                  
                 element.posicion_id  == 1 ?(
-                    <div key={`${element.id}-div1`} className="row mb-3 border">    
-                        <div className="col">
-                            <img  className='img-thumbnail' src={element.download_url}/>           
+                    <div key={`${element.id}-div1`} className="row mb-3">    
+                        <div className="col mb-3">
+                            <img  className='img-fluid' src={element.download_url}/>           
                         </div>            
-                        <div className="col">                        
+                        <div className="col mb-3">                        
                             <h3>{element.titulo}</h3>
                             <h5>{element.subtitulo}</h5>
                             <p className='lead'>{element.descripcion}</p>
@@ -36,10 +36,10 @@ export const AdsList = () => {
                             </button>
                             <div className="collapse" id={`collapse-${element.id}`}>
                                 <div className="card card-body">
-                                <AdsLinkField
-                                key={`${element.id}-ads-linkfield1`}
-                                link={element.links}                        
-                                />
+                                    <AdsLinkField
+                                    key={`${element.id}-ads-linkfield1`}
+                                    link={element.links}                        
+                                    />
                                 </div>
                             </div>
                         </div>
@@ -61,14 +61,16 @@ export const AdsList = () => {
                             id={element.id}
                             image_url={element.image_url}
                         />
+                    <hr className="border border-secondary border-1 opacity-90"/>
+
                     </div>                 
                 )
                     
                     :
         
                 (    
-                    <div key={`${element.id}-div2`} className="row mb-3 border">
-                    <div className="col">                        
+                    <div key={`${element.id}-div2`} className="row mb-3">
+                    <div className="col mb-3">                        
                         <h3>{element.titulo}</h3>
                         <h5>{element.subtitulo}</h5>
                         <p className='lead'>{element.descripcion}</p>
@@ -90,8 +92,8 @@ export const AdsList = () => {
 
 
                     </div>
-                    <div className="col">        
-                        <img  className='img-thumbnail' src={element.download_url}/>
+                    <div className="col m-3">        
+                        <img  className='img-fluid' src={element.download_url}/>
                     </div>
                     
                     <AdsEditModal                
@@ -111,6 +113,8 @@ export const AdsList = () => {
                         id={element.id}
                         image_url={element.image_url}
                     /> 
+                    
+                    <hr className="border border-secondary border-1 opacity-90"/>
                     </div> 
                 )                                           
             )     
