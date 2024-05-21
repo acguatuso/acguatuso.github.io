@@ -24,7 +24,7 @@ export const AdsSection = () => {
             return ( 
                                  
                     element.posicion_id  == 1 ?(
-                    <div key={`${element.id}-div1`} className="row mb-3">    
+                    <div key={`${element.id}-div1`} className="row mb-3 text-start">    
                         <div className="col">
                             <img  className='img-fluid' src={element.download_url}/>           
                         </div>            
@@ -56,7 +56,7 @@ export const AdsSection = () => {
                         :
             
                     (    
-                    <div key={`${element.id}-div2`} className="row mb-3">
+                    <div key={`${element.id}-div2`} className="row mb-3 text-end">
                         <div className="col">                        
                             <h3>{element.titulo}</h3>
                             <h5>{element.subtitulo}</h5>
