@@ -216,7 +216,7 @@ function GestionCursos() {
   }, [loggedIn, user, navigate]);
 
   const goBack = () => {
-    navigate("/ucag-admin/Cursos");
+    navigate("/Cursos");
   };
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {

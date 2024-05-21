@@ -33,7 +33,7 @@ export const Navbar = () => {
 
     const handleLogOut = () => {
         dispatch(logOut());
-        navigate('/ucag-admin/iniciar-sesion', { replace: true })
+        navigate('/iniciar-sesion', { replace: true })
     }
 
 
@@ -46,7 +46,7 @@ export const Navbar = () => {
                     {user && loggedIn && (
                         <NavLink
                             className="navbar-brand"
-                            to="/ucag-admin/home"
+                            to="/home"
                         >
                             <img src={logoUrl} alt="Logo" width="110" height="80" />
 
@@ -54,7 +54,7 @@ export const Navbar = () => {
                     {!user && !loggedIn && (
                         <NavLink
                             className="navbar-brand"
-                            to="/ucag-admin/"
+                            to="/"
                         >
                             <img src={logoUrl} alt="Bootstrap" width="110" height="80" />
 
@@ -82,47 +82,47 @@ export const Navbar = () => {
 
                                         <NavLink
                                             className={({ isActive }) => `nav-item nav-link ${isActive ? 'active' : ''} navbar-text-white`}
-                                            to="/ucag-admin/home"
+                                            to="/home"
                                         >
                                             Inicio
                                         </NavLink>
                                         <NavLink
                                             className={({ isActive }) => `nav-item nav-link ${isActive ? 'active' : ''} navbar-text-white`}
-                                            to="/ucag-admin/mi-perfil"
+                                            to="/mi-perfil"
                                         >
                                             Mi Perfil
                                         </NavLink>
                                         <NavLink 
                                         className={ ({isActive}) => `nav-item nav-link ${ isActive ? 'active': '' } navbar-text-white`}
-                                        to="/ucag-admin/students"
+                                        to="/students"
                                          >
                                         Usuarios
                                          </NavLink>
 
                                         <NavLink
                                             className={({ isActive }) => `nav-item nav-link ${isActive ? 'active' : ''} navbar-text-white`}
-                                            to="/ucag-admin/Cursos"
+                                            to="/Cursos"
                                         >
                                             Cursos
                                         </NavLink>
 
                                         <NavLink
                                             className={({ isActive }) => `nav-item nav-link ${isActive ? 'active' : ''} navbar-text-white`}
-                                            to="/ucag-admin/servicios"
+                                            to="/servicios"
                                         >
                                             Servicios
                                         </NavLink>
 
                                         <NavLink
                                             className={({ isActive }) => `nav-item nav-link ${isActive ? 'active' : ''} navbar-text-white`}
-                                            to="/ucag-admin/avisos"
+                                            to="/avisos"
                                         >
                                             Avisos
                                         </NavLink>
 
                                         <NavLink
                                             className={({ isActive }) => `nav-item nav-link ${isActive ? 'active' : ''} navbar-text-white`}
-                                            to="/ucag-admin/about"
+                                            to="/about"
                                         >
                                             Acerca
                                         </NavLink>

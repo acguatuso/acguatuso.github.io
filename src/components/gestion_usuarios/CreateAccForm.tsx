@@ -133,7 +133,7 @@ const CreateAccountForm = () => {
     <div>
       <div className="container">
         <div>
-          <img ref={logoImgRef} alt="Bootstrap" width="200" height="150" />
+          <img ref={logoImgRef} alt="logo" width="200" height="150" />
           {!user && !loggedIn && (
             <>
               <h2>Bienvenido!</h2>
@@ -240,7 +240,7 @@ const CreateAccountForm = () => {
         <>
           <div>
             <label>¿Ya tiene cuenta?</label>
-            <Link to="/ucag-admin/iniciar-sesion">Iniciar Sesión</Link>
+            <Link to="/iniciar-sesion">Iniciar Sesión</Link>
           </div>
         </>
       )}
