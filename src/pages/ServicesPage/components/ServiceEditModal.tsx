@@ -80,7 +80,7 @@ export const ServiceEditModal = (props: service) => {
   
     return (
     <>
-    <button type="button" className="btn btn-outline-warning mb-2" data-bs-toggle="modal" data-bs-target={`#edit-service-${props.id}`}>
+    <button type="button" className="btn btn-outline-warning mb-2 btn-sm" data-bs-toggle="modal" data-bs-target={`#edit-service-${props.id}`}>
       Editar
     </button>    
     <div className="modal fade" id={`edit-service-${props.id}`} data-bs-backdrop="static" data-bs-keyboard="false"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
