@@ -51,7 +51,7 @@ export const ListaUsuariosMatriculaPage = ({
     [page: number]: QueryDocumentSnapshot<DocumentData> | null;
   }>({});
   const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(5);
+  const [perPage, setPerPage] = useState(10);
 
   //Columnas a usar dentro de la tabla
   //Columnas de la tabla
@@ -151,6 +151,13 @@ export const ListaUsuariosMatriculaPage = ({
     }
   }, [filterText, users, enterPressed]);
 
+  // const resultPages = (results: number) => {
+  //   switch(usuariosInteresados.length){
+  //     case 
+  //   }
+
+  // }
+
   const fetchData = async (targetPage: number) => {
     setLoading(true);
     let lastDoc = pageCursors[targetPage];
@@ -159,6 +166,7 @@ export const ListaUsuariosMatriculaPage = ({
       perPage,
       lastDoc
     );
+
     if (dataList.length > 0) {
       setLastVisible(newLastVisible);
       setPageCursors((prev) => ({ ...prev, [targetPage + 1]: newLastVisible }));
@@ -168,9 +176,9 @@ export const ListaUsuariosMatriculaPage = ({
     const usuariosFiltrados = dataList.filter((doc) =>
       usuariosInteresados.some((usuario) => usuario.id === doc.id)
     );
-
-    console.log(usuariosInteresados.length);
-    console.log(usuariosFiltrados.length);
+   
+    console.log('Interesados', usuariosInteresados.length);
+    console.log('filtrados',usuariosFiltrados.length);
 
     const userData = usuariosFiltrados.map((doc: any) => ({
       id: doc.id,
@@ -199,7 +207,6 @@ export const ListaUsuariosMatriculaPage = ({
         hour12: true,
       }),
     }));
-
     setUsers(formattedUserData);
     setLoading(false);
     //setUsers(userData);

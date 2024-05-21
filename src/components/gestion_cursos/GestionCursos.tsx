@@ -27,10 +27,10 @@ enum Visible {
 }
 
 function GestionCursos() {
-  const [cursos, setCursos] = useState<Array<Curso>>([]);
+  const [cursosArray, setCursosArray] = useState<Array<Curso>>([]);
 
   // @ts-ignore
-  const [loading, setLoading] = useState<boolean>(false);
+  //const [loading, setLoading] = useState<boolean>(false);
   // @ts-ignore
   const [error, setError] = useState<string | undefined>(undefined);
   const [filterText, setFilterText] = useState("");
@@ -46,20 +46,30 @@ function GestionCursos() {
   const [pageCursors, setPageCursors] = useState<{
     [page: number]: QueryDocumentSnapshot<DocumentData> | null;
   }>({});
-  const [currentPage, setCurrentPage] = useState(1);
-  const [perPage, setPerPage] = useState(5);
+  const { cursos, loading, currentPage, perPage } = useSelector(
+    (state: RootState) => state.cursos
+  );
+  //const [currentPage, setCurrentPage] = useState(1);
+ // const [perPage, setPerPage] = useState(5);
+
+  
+  const getTotalRows = async () => {
+    const totalCourses = await getFirebaseDocs("Cursos");
+    setTotalRows(totalCourses.length);
+  };
 
   useEffect(() => {
-    (async () => {
-      await dispatch(fetchCursos());
-    })();
-  }, [dispatch]);
+    async () => {
+      await dispatch(fetchCursos({ targetPage: currentPage, perPage }));
+      getTotalRows();
+    };
+  }, [getTotalRows, dispatch, currentPage, perPage]);
 
   useEffect(() => {
-    setLoading(selectedCursos.loading);
+    //setLoading(selectedCursos.loading);
     setError(selectedCursos.error);
     if (!selectedCursos.loading && !selectedCursos.error) {
-      setCursos(selectedCursos.cursos);
+      setCursosArray(selectedCursos.cursos);
     }
   }, [selectedCursos]);
 
@@ -88,11 +98,11 @@ function GestionCursos() {
         }
         return false; // Return false for any unhandled types or cases
       });
-      setCursos(filtered);
+      setCursosArray(filtered);
       setEnterPressed(!enterPressed);
     }
     if (filterText.trim() === "") {
-      setCursos(selectedCursos.cursos);
+      setCursosArray(selectedCursos.cursos);
     }
   }, [selectedCursos, filterText, enterPressed]);
 
@@ -123,27 +133,19 @@ function GestionCursos() {
     );
   }
 
-  const getTotalRows = async () => {
-    const totalCourses = await getFirebaseDocs("Cursos");
-    setTotalRows(totalCourses.length);
-  };
-
   const handlePageChange = (page: number) => {
-    setCurrentPage(page);
+    dispatch(fetchCursos({ targetPage: page, perPage }));
   };
 
   const handleRowsPerPageChange = (newPageSize: number, page: number) => {
-    setPerPage(newPageSize)
-    setCurrentPage(page);
+    dispatch(fetchCursos({ targetPage: page, perPage: newPageSize }));
   };
 
   const columns = [
     {
       name: "Nombre",
       selector: (row: any) => row.nombre,
-      cell: (row: any) => (
-        <div>{row.nombre}</div>
-      ),
+      cell: (row: any) => <div>{row.nombre}</div>,
       sortable: true,
     },
     {
@@ -163,9 +165,7 @@ function GestionCursos() {
     {
       name: "Modalidad",
       selector: (row: any) => obtenerNombreModalidad(row.modalidad),
-      cell: (row: any) => (
-        <div>{obtenerNombreModalidad(row.modalidad)}</div>
-      ),
+      cell: (row: any) => <div>{obtenerNombreModalidad(row.modalidad)}</div>,
       sortable: true,
     },
     {
@@ -326,6 +326,9 @@ function GestionCursos() {
           data={cursos}
           paginationPerPage={perPage}
           paginationTotalRows={totalRows}
+          // onChangePage={handlePageChange}
+          // onChangeRowsPerPage={handleRowsPerPageChange}
+          progressPending={loading}
         ></DataTableBase>
       </div>
     </>
