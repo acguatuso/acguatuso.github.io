@@ -5,12 +5,11 @@ import { MdDelete } from "react-icons/md";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../../redux/store";
 import { useSelector } from "react-redux";
-import { getFirebaseDocs, getPaginatedDocs } from "../../api/getFirebaseDocs/getFirebaseDocs";
+import { getPaginatedDocs } from "../../api/getFirebaseDocs/getFirebaseDocs";
 import { Student } from "./Student.interface";
 import CreateAccountModal from "../../components/Modal/CreateAccountModa";
 import MiPerfilModal from "../../components/Modal/EditUserModal";
 import { updateFirebaseDoc } from "../../api/updateFirebaseDoc/updateFirebaseDoc";
-import { set } from "firebase/database";
 
 const Students = () => {
   const [filteredData, setFilteredData] = useState<Student[]>([]);
@@ -196,6 +195,7 @@ const Students = () => {
   }
 
   const handlePageChange = async (page: number) => {
+    console.log(page)
     getUsers(true);
   };
 
