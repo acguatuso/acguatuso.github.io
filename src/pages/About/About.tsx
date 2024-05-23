@@ -36,16 +36,16 @@ export const About = () => {
 
   return (
     <>
-      <div className="p-3 mb-2 bg-white text-dark border" id="about-container">
+      
         <UpdateMainSectionModal/>
         <AddSection />
-
+        <hr className="border border-secondary border-1 opacity-75"/>
         <div className="container-fluid">
           <AdsSection />
         </div>
 
         <EditInformationSection />
-      </div>
+      
     </>
   )
 }

@@ -75,12 +75,11 @@ export const ServiceEditModal = (props: service) => {
       }
       dispatch(editService(data))
       showToast('toast-edit-service')
-      handleReset()
   }
   
     return (
     <>
-    <button type="button" className="btn btn-outline-warning mb-2" data-bs-toggle="modal" data-bs-target={`#edit-service-${props.id}`}>
+    <button type="button" className="btn btn-outline-warning mb-2 btn-sm" data-bs-toggle="modal" data-bs-target={`#edit-service-${props.id}`}>
       Editar
     </button>    
     <div className="modal fade" id={`edit-service-${props.id}`} data-bs-backdrop="static" data-bs-keyboard="false"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -92,7 +91,7 @@ export const ServiceEditModal = (props: service) => {
                       </h1>
                       <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"  onClick={()=>handleReset()}></button>
                   </div>
-                  <div className="modal-body">                                                                                   
+                  <div className="modal-body text-center">                                                                                   
                     <label className='form-label' htmlFor={`title-edit-service-${props.id}`}>Título</label>
                     <textarea className='form-control rounded-0 h-10' id={`title-edit-service-${props.id}`} name="titulo" value={forms.titulo} onChange={(evt) => handleChange(evt)}></textarea>
                     <label className='form-label' htmlFor={`subtitle-edit-service-${props.id}`}>Subtítulo</label>

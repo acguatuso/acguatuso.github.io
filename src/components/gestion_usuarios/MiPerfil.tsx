@@ -81,7 +81,7 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
     // Efecto para inicializar el formulario cuando el usuario cambia
     useEffect(() => {
         if (!loggedIn && !user) {
-            navigate("/ucag-admin/");
+            navigate("/");
         }
 
         // Verifica que user, paisInfo no sea undefined antes de continuar

@@ -24,11 +24,11 @@ export const AdsSection = () => {
             return ( 
                                  
                     element.posicion_id  == 1 ?(
-                        <div key={`${element.id}-div1`} className="row mb-3 border">    
+                    <div key={`${element.id}-div1`} className="row mb-3 text-start">    
                         <div className="col">
-                            <img  className='img-thumbnail' src={element.download_url}/>           
+                            <img  className='img-fluid' src={element.download_url}/>           
                         </div>            
-                        <div className="col">                        
+                        <div className="col mb-5">                        
                             <h3>{element.titulo}</h3>
                             <h5>{element.subtitulo}</h5>
                             <p className='lead'>{element.descripcion}</p>
@@ -49,20 +49,21 @@ export const AdsSection = () => {
                             id={element.id}
                             image_url={element.image_url}
                         />
-                        </div>                 
+                        <hr className="border border-secondary border-1 opacity-90"/>
+                    </div>                 
                     )
                         
                         :
             
                     (    
-                        <div key={`${element.id}-div2`} className="row mb-3 border">
+                    <div key={`${element.id}-div2`} className="row mb-3 text-end">
                         <div className="col">                        
                             <h3>{element.titulo}</h3>
                             <h5>{element.subtitulo}</h5>
                             <p className='lead'>{element.descripcion}</p>
                         </div>
-                        <div className="col">        
-                            <img  className='img-thumbnail' src={element.download_url}/>
+                        <div className="col mb-5">        
+                            <img  className='img-fluid' src={element.download_url}/>
                         </div>
                         <AdsSectionEditModal                
                             key={`${element.id}-adssection2`} 
@@ -80,7 +81,8 @@ export const AdsSection = () => {
                             id={element.id}
                             image_url={element.image_url}
                         /> 
-                        </div> 
+                        <hr className="border border-secondary border-1 opacity-90"/>
+                    </div> 
                     )                                           
             )     
         })

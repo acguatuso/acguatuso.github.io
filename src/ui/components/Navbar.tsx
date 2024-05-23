@@ -3,6 +3,9 @@ import { useDispatch, useSelector } from 'react-redux';
 import { RootState } from '../../redux/store';
 import { logOut } from '../../redux/reducers/authSlice';
 import './Navbar.css';
+import { ref, getDownloadURL }from 'firebase/storage';
+import { firebase_storage } from '../../firebase';
+import { useEffect, useState } from 'react';
 
 export const Navbar = () => {
 
@@ -11,13 +14,29 @@ export const Navbar = () => {
     const user = useSelector((state: RootState) => state.auth.user);
     const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
     const empresaData = useSelector((state: RootState) => state.empresa.dataEmpresa);
+    const [logoUrl, setLogoUrl] = useState('');
 
+    useEffect(() => { 
+        (async () => {
+            const imageRef = ref(firebase_storage, 'Empresa/Logo/logo');
+            getDownloadURL(imageRef)
+                .then((url) => {
+                    setLogoUrl(url);
+                })
+                .catch((error) => {
+                    console.error('Error descargando el logo:', error);
+                });
+
+        })()
+    }, []);
     const navigate = useNavigate();
 
     const handleLogOut = () => {
         dispatch(logOut());
-        navigate('/ucag-admin/iniciar-sesion', { replace: true })
+        navigate('/iniciar-sesion', { replace: true })
     }
+
+
 
     return (
 
@@ -27,17 +46,17 @@ export const Navbar = () => {
                     {user && loggedIn && (
                         <NavLink
                             className="navbar-brand"
-                            to="/ucag-admin/home"
+                            to="/home"
                         >
-                            <img src="src\assets\LogoUCAG-E3vVaZ5h.png" alt="Logo" width="110" height="80" />
+                            <img src={logoUrl} alt="Logo" width="110" height="80" />
 
                         </NavLink>)}
                     {!user && !loggedIn && (
                         <NavLink
                             className="navbar-brand"
-                            to="/ucag-admin/"
+                            to="/"
                         >
-                            <img src="src\assets\LogoUCAG-E3vVaZ5h.png" alt="Bootstrap" width="110" height="80" />
+                            <img src={logoUrl} alt="Bootstrap" width="110" height="80" />
 
                         </NavLink>)}
                         <h4 className="navbar-text-white d-none d-sm-inline-block">
@@ -63,47 +82,47 @@ export const Navbar = () => {
 
                                         <NavLink
                                             className={({ isActive }) => `nav-item nav-link ${isActive ? 'active' : ''} navbar-text-white`}
-                                            to="/ucag-admin/home"
+                                            to="/home"
                                         >
                                             Inicio
                                         </NavLink>
                                         <NavLink
                                             className={({ isActive }) => `nav-item nav-link ${isActive ? 'active' : ''} navbar-text-white`}
-                                            to="/ucag-admin/mi-perfil"
+                                            to="/mi-perfil"
                                         >
                                             Mi Perfil
                                         </NavLink>
                                         <NavLink 
                                         className={ ({isActive}) => `nav-item nav-link ${ isActive ? 'active': '' } navbar-text-white`}
-                                        to="/ucag-admin/students"
+                                        to="/students"
                                          >
                                         Usuarios
                                          </NavLink>
 
                                         <NavLink
                                             className={({ isActive }) => `nav-item nav-link ${isActive ? 'active' : ''} navbar-text-white`}
-                                            to="/ucag-admin/Cursos"
+                                            to="/Cursos"
                                         >
                                             Cursos
                                         </NavLink>
 
                                         <NavLink
                                             className={({ isActive }) => `nav-item nav-link ${isActive ? 'active' : ''} navbar-text-white`}
-                                            to="/ucag-admin/servicios"
+                                            to="/servicios"
                                         >
                                             Servicios
                                         </NavLink>
 
                                         <NavLink
                                             className={({ isActive }) => `nav-item nav-link ${isActive ? 'active' : ''} navbar-text-white`}
-                                            to="/ucag-admin/avisos"
+                                            to="/avisos"
                                         >
                                             Avisos
                                         </NavLink>
 
                                         <NavLink
                                             className={({ isActive }) => `nav-item nav-link ${isActive ? 'active' : ''} navbar-text-white`}
-                                            to="/ucag-admin/about"
+                                            to="/about"
                                         >
                                             Acerca
                                         </NavLink>

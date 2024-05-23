@@ -79,13 +79,12 @@ export const AdsEditModal = (props: ads) => {
       }
       dispatch(editAds(data))
       showToast('toast-edit-ads')
-      handleReset()
   }
 
   
     return (
     <>
-    <button type="button" className="btn btn-outline-warning mb-2" data-bs-toggle="modal" data-bs-target={`#edit-ads-${props.id}`}>
+    <button type="button" className="btn btn-outline-warning btn-sm mb-2" data-bs-toggle="modal" data-bs-target={`#edit-ads-${props.id}`}>
       Editar
     </button>    
     <div className="modal fade" id={`edit-ads-${props.id}`} data-bs-backdrop="static" data-bs-keyboard="false"  aria-labelledby="staticBackdropLabel" aria-hidden="true">
@@ -97,7 +96,7 @@ export const AdsEditModal = (props: ads) => {
                       </h1>
                       <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close"  onClick={()=>handleReset()}></button>
                   </div>
-                  <div className="modal-body">                                                                                   
+                  <div className="modal-body text-center">                                                                                   
                     <label className='form-label' htmlFor={`title-edit-ads-${props.id}`}>Título</label>
                     <textarea className='form-control rounded-0 h-10' id={`title-edit-ads-${props.id}`} name="titulo" value={forms.titulo} onChange={(evt) => handleChange(evt)}></textarea>
                     <label className='form-label' htmlFor={`subtitle-edit-ads`}>Subtítulo</label>

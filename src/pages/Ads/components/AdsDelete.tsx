@@ -17,7 +17,7 @@ export const AdsDelete = (props: idDelete) => {
     
     return (
     <>
-    <button type="button" className="btn btn-outline-danger btn-sm" data-bs-toggle="modal" data-bs-target={`#ad-section-modal-delete${props.id}`}>
+    <button type="button" className="btn btn-outline-danger btn-sm mb-5" data-bs-toggle="modal" data-bs-target={`#ad-section-modal-delete${props.id}`}>
     Eliminar
     </button>
 

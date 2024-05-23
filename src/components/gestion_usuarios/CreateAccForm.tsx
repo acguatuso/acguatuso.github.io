@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
 import { signup, signupFailure } from '../../redux/reducers/authSlice';
 import { RootState } from '../../redux/store';
@@ -6,6 +6,8 @@ import '../../CSS/Components/CreateAccStyle.css';
 import { Link } from 'react-router-dom';
 import { fetchPaisInfoAsync, obtenerNombresCantonesDeProvincia, obtenerNombresDistritosDeCanton, obtenerNombresProvincias } from '../../redux/reducers/paisInfoSlice';
 import { useAppDispatch } from '../../hooks/hooks';
+import { ref, getDownloadURL } from 'firebase/storage';
+import { firebase_storage } from '../../firebase';
 
 interface FormData {
   nombre: string;
@@ -35,7 +37,7 @@ const initialState = {
   genero: ''
 };
 
-const CreateAccountForm: React.FC = () => {
+const CreateAccountForm = () => {
 
   // Estado para almacenar las provincias, cantones y distritos
   const [provincias, setProvincias] = useState<string[]>([]);
@@ -94,6 +96,23 @@ const CreateAccountForm: React.FC = () => {
       });
     }
   };
+  // Ref for logo image
+  const logoImgRef = useRef<HTMLImageElement>(null);
+  useEffect(() => {
+    const loadImage = async () => {
+      try {
+        const imageRef = ref(firebase_storage, 'Empresa/Logo/logo');
+        const url = await getDownloadURL(imageRef);
+        if (logoImgRef.current) {
+          logoImgRef.current.src = url;
+        }
+      } catch (error) {
+        console.error('Error downloading logo:', error);
+      }
+    };
+
+    loadImage();
+  }, []);
 
   const handleSignUp = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -114,7 +133,7 @@ const CreateAccountForm: React.FC = () => {
     <div>
       <div className="container">
         <div>
-          <img src="/src/assets/LogoUCAG.png" alt="Bootstrap" width="200" height="150" />
+          <img ref={logoImgRef} alt="logo" width="200" height="150" />
           {!user && !loggedIn && (
             <>
               <h2>Bienvenido!</h2>

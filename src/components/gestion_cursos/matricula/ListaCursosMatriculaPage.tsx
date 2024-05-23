@@ -277,7 +277,7 @@ export const ListaCursosMatriculaPage = () => {
   }, [filterText, courses, enterPressed, perPage]);
 
   const regresarCursosPage = () => {
-    navigate("/ucag-admin/Cursos");
+    navigate("/Cursos");
   };
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {

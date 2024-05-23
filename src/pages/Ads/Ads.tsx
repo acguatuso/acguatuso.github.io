@@ -14,15 +14,16 @@ export const Ads = () => {
   
   return (
     <>
-      <div className="p-3 mb-2 bg-white text-dark border" id="about-container">        
         <AdsMain/>
         <AdsAdd/>
+        <hr className="border border-secondary border-1 opacity-75"/>
         <div className="container-fluid">
           <AdsList/>
         </div>
 
         
-      </div>
+    
+
     </>
   )
 }

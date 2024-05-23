@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { login } from '../../redux/reducers/authSlice';
 import { RootState } from '../../redux/store';
@@ -6,6 +6,8 @@ import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
 import '../../CSS/Components/LoginAccStyle.css';
 import ForgotPassword from './ForgotPassword';
+import { ref, getDownloadURL } from 'firebase/storage';
+import { firebase_storage } from '../../firebase';
 
 const LoginAccountForm: React.FC = () => {
   // React-router-dom
@@ -23,23 +25,20 @@ const LoginAccountForm: React.FC = () => {
   const user = useSelector((state: RootState) => state.auth.user);
   const error = useSelector((state: RootState) => state.auth.error);
   const emailVerified = useSelector((state: RootState) => state.auth.emailVerified);
-  //const states = useSelector((state: RootState) => state);
-  //console.log(states, 'login')
-  
-  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // Evita que se envíe la solicitud HTTP predeterminada
-    
-    setTimeout(() => {
-      dispatch(login(email, password) as any); // Usa dispatch para llamar a la acción login
-    }, 1000);
 
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // Prevent the default HTTP request
+
+    setTimeout(() => {
+      dispatch(login(email, password) as any); // Dispatch the login action
+    }, 1000);
   };
 
-  const handleEmailChange = (e: any) => {
+  const handleEmailChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setEmail(e.target.value);
   };
 
-  const handlePasswordChange = (e: any) => {
+  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setPassword(e.target.value);
   };
 
@@ -47,84 +46,94 @@ const LoginAccountForm: React.FC = () => {
     setShowPassword(!showPassword);
   };
 
-  // Redireccionar si está logueado, hay usuario y email verificado
+  const [logoUrl, setLogoUrl] = useState('');
+
+  useEffect(() => { 
+      (async () => {
+          const imageRef = ref(firebase_storage, 'Empresa/Logo/logo');
+          getDownloadURL(imageRef)
+              .then((url) => {
+                  setLogoUrl(url);
+              })
+              .catch((error) => {
+                  console.error('Error descargando el logo:', error);
+              });
+
+      })()
+  }, []);
+
+  // Redirect if logged in, user exists, and email is verified
   useEffect(() => {
     if (loggedIn && user && emailVerified) {
-      //console.log(user?.user_type)
-      // Mostrar el modal de éxito de inicio de sesión
       const timeoutId = setTimeout(() => {
-        navigate("/ucag-admin/home"); // Redirige al usuario a la página de inicio
-      }, 3 * 1000); // Convierte los segundos a milisegundos
+        navigate("/home"); // Redirect user to home page
+      }, 3 * 1000); // Convert seconds to milliseconds
 
-      // Limpia el temporizador si el componente se desmonta antes de que se complete
+      // Clear the timer if the component unmounts before it completes
       return () => clearTimeout(timeoutId);
     }
-  }, [loggedIn, user, emailVerified]);
+  }, [loggedIn, user, emailVerified, navigate]);
 
   return (
-    <>
-      <div className="container">
-
-        <div className="row justify-content-center">
-          <div className="col-md-6">
-            <div className='card shadow-lg'>
-              {error && (
-                <div className="alert-popup">
-                  <div className="alert-message alert alert-danger">
-                    <span>{error}</span>
-                  </div>
+    <div className="container">
+      <div className="row justify-content-center">
+        <div className="col-md-6">
+          <div className='card shadow-lg'>
+            {error && (
+              <div className="alert-popup">
+                <div className="alert-message alert alert-danger">
+                  <span>{error}</span>
                 </div>
-              )}
-              {!user && (
-                <form onSubmit={handleLogin}>
-                  <div>
-                    <img src="src\assets\LogoUCAG-E3vVaZ5h.png" alt="Bootstrap" width="200" height="150" />
-                    <h3>Bienvenido!</h3>
-                    <h3>Inicio de Sesión</h3>
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="email" className="form-label text-start text-muted" >Correo:</label>
-                    <input type="email" id="email" value={email} onChange={handleEmailChange} className="form-control" placeholder="Ej: correo@example.com" />
-                  </div>
-                  <div className="mb-3">
-                    <label htmlFor="password" className="form-label text-start text-muted">Contraseña:</label>
-                    <div className="input-group">
-                      <input type={showPassword ? 'text' : 'password'} id="password" value={password} onChange={handlePasswordChange} className="form-control" placeholder="Ej: contraseña123" />
-                      <button className="btn btn-outline-secondary" type="button" onClick={togglePasswordVisibility}>
-                        {showPassword ? <FaEye /> : <FaEyeSlash />} {/* Utiliza los íconos de ojo visible/novisible */}
-                      </button>
-                    </div>
-                  </div>
-                  <button type="submit" className="btn btn-primary">Iniciar Sesión</button>
-                  <div>
-                    <br />
-                    <label>¿No tiene cuenta?</label>
-                    <Link to="/crear-cuenta">Crear Cuenta</Link>
-                  </div>
-                  <div>
-                    <span>¿Olvidaste tu contraseña? </span>
-                    <span className="link-style" onClick={() => setIsForgotPasswordModalOpen(true)} >Haz clic aquí</span>
-                    <ForgotPassword isOpen={isForgotPasswordModalOpen} onClose={() => setIsForgotPasswordModalOpen(false)} />
-                  </div>
-                </form>
-              )}
-              {user && (
+              </div>
+            )}
+            {!user && (
+              <form onSubmit={handleLogin}>
                 <div>
-                  <div>
-                    <img src="/src/assets/LogoUCAG.png" alt="Bootstrap" width="200" height="150" />
-                    <h3>Bienvenido!</h3>
-                  </div>
-                  <label>Credenciales Correctas!</label>
-                  <label>Hola {user.nombre}!</label>
+                  <img src={logoUrl} alt="logo" width="200" height="150" />
+                  <h3>Bievenido!</h3>
+                  <h3>Inicio de Sesión</h3>
                 </div>
-              )}
-            </div>
+                <div className="mb-3">
+                  <label htmlFor="email" className="form-label text-start text-muted" >Correo:</label>
+                  <input type="email" id="email" value={email} onChange={handleEmailChange} className="form-control" placeholder="E.g., email@example.com" />
+                </div>
+                <div className="mb-3">
+                  <label htmlFor="password" className="form-label text-start text-muted">Contraseña:</label>
+                  <div className="input-group">
+                    <input type={showPassword ? 'text' : 'password'} id="password" value={password} onChange={handlePasswordChange} className="form-control" placeholder="E.g., password123" />
+                    <button className="btn btn-outline-secondary" type="button" onClick={togglePasswordVisibility}>
+                      {showPassword ? <FaEye /> : <FaEyeSlash />} {/* Use eye visible/invisible icons */}
+                    </button>
+                  </div>
+                </div>
+                <button type="submit" className="btn btn-primary">Iniciar Sesión</button>
+                <div>
+                  <br />
+                  <label>¿No tiene una cuenta?</label>
+                  <Link to="/crear-cuenta">Crear Cuenta</Link>
+                </div>
+                <div>
+                  <span>¿Olvidaste tu contraseña? </span>
+                  <span className="link-style" onClick={() => setIsForgotPasswordModalOpen(true)} >Haz clic aquí</span>
+                  <ForgotPassword isOpen={isForgotPasswordModalOpen} onClose={() => setIsForgotPasswordModalOpen(false)} />
+                </div>
+              </form>
+            )}
+            {user && (
+              <div>
+                <div>
+                  <img src={logoUrl} alt="logo" width="200" height="150" />
+                  <h3>Bievenido!</h3>
+                </div>
+                <label>Credenciales Correctas!</label>
+                <label>Hola {user.nombre}!</label>
+              </div>
+            )}
           </div>
         </div>
       </div>
-    </>
+    </div>
   );
-
 };
 
 export default LoginAccountForm;
