@@ -90,7 +90,7 @@ const LoginAccountForm: React.FC = () => {
               <form onSubmit={handleLogin}>
                 <div>
                   <img src={logoUrl} alt="logo" width="200" height="150" />
-                  <h3>Bievenido!</h3>
+                  <h3>¡Bienvenido!</h3>
                   <h3>Inicio de Sesión</h3>
                 </div>
                 <div className="mb-3">
@@ -123,10 +123,10 @@ const LoginAccountForm: React.FC = () => {
               <div>
                 <div>
                   <img src={logoUrl} alt="logo" width="200" height="150" />
-                  <h3>Bievenido!</h3>
+                  <h3>¡Bienvenido!</h3>
                 </div>
-                <label>Credenciales Correctas!</label>
-                <label>Hola {user.nombre}!</label>
+                <label>¡Credenciales Correctas!</label>
+                <label>¡Hola {user.nombre}!</label>
               </div>
             )}
           </div>
