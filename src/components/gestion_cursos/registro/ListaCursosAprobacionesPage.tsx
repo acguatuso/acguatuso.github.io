@@ -233,7 +233,7 @@ export const ListaCursosAprobacionesPage = () => {
 
   useEffect(() => {
     if (enterPressed) {
-      const filtered = coursesRedux.filter((course) => {
+      const filtered = cursos.filter((course) => {
         const selectedValue = course[selectedSearch];
         if (typeof selectedValue === "string") {
           return selectedValue.toLowerCase().includes(filterText.toLowerCase());
@@ -260,7 +260,7 @@ export const ListaCursosAprobacionesPage = () => {
       setEnterPressed(!enterPressed);
     }
     if (filterText.trim() === "") {
-      setFilteredCourses(coursesRedux);
+      setFilteredCourses(cursos);
     }
   }, [filterText, coursesRedux, enterPressed]);
 

@@ -246,19 +246,35 @@ export const ListaCursosMatriculaPage = () => {
 
   useEffect(() => {
     if (enterPressed) {
-      const filtered = coursesRedux.filter((course) => {
+      const filtered = courses.filter((course) => {
         const selectedValue = course[selectedSearch];
         if (typeof selectedValue === "string") {
           return selectedValue.toLowerCase().includes(filterText.toLowerCase());
+        } else if (typeof selectedValue == "number") {
+          let modalidadText = "";
+          switch (selectedValue) {
+            case 0:
+              modalidadText = "presencial";
+              break;
+            case 1:
+              modalidadText = "virtual";
+              break;
+            case 2:
+              modalidadText = "mixta";
+              break;
+            default:
+              return false; // This handles unexpected numbers
+          }
+          return modalidadText.includes(filterText.toLowerCase());
         }
       });
       setFilteredCourses(filtered);
       setEnterPressed(!enterPressed);
     }
     if (filterText.trim() === "") {
-      setFilteredCourses(coursesRedux);
+      setFilteredCourses(courses);
     }
-  }, [filterText, coursesRedux, enterPressed]);
+  }, [filterText, courses, enterPressed, perPage]);
 
   const regresarCursosPage = () => {
     navigate("/ucag-admin/Cursos");
