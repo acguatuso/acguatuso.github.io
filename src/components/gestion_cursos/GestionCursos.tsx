@@ -18,7 +18,10 @@ import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
 import { updateFirebaseDoc } from "../../api/updateFirebaseDoc/updateFirebaseDoc";
 import DetallesCurso from "./DetallesCurso";
 import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
-import { getFirebaseDocs } from "../../api/getFirebaseDocs/getFirebaseDocs";
+import {
+  getFirebaseDocs,
+  getPaginatedDocs,
+} from "../../api/getFirebaseDocs/getFirebaseDocs";
 
 enum Visible {
   NoVisible = 0,
@@ -27,55 +30,75 @@ enum Visible {
 }
 
 function GestionCursos() {
-  const [cursosArray, setCursosArray] = useState<Array<Curso>>([]);
-
+  const [cursos, setCursos] = useState<Array<Curso>>([]);
+  const [filteredData, setFilteredData] = useState<Array<Curso>>([]);
   // @ts-ignore
-  //const [loading, setLoading] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
   // @ts-ignore
   const [error, setError] = useState<string | undefined>(undefined);
   const [filterText, setFilterText] = useState("");
-  const selectedCursos = useAppSelector(cursosSelector);
   const dispatch = useAppDispatch();
   const [selectedSearch, setSelectedSearch] = useState("");
   const [inputState, setInputState] = useState(true);
   const [enterPressed, setEnterPressed] = useState(false);
   const [lastVisible, setLastVisible] =
     useState<QueryDocumentSnapshot<DocumentData> | null>(null);
-  //const [loading, setLoading] = useState(false);
   const [totalRows, setTotalRows] = useState(0);
   const [pageCursors, setPageCursors] = useState<{
     [page: number]: QueryDocumentSnapshot<DocumentData> | null;
   }>({});
-  const { cursos, loading, currentPage, perPage } = useSelector(
-    (state: RootState) => state.cursos
-  );
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState(5);
   //const [currentPage, setCurrentPage] = useState(1);
- // const [perPage, setPerPage] = useState(5);
+  // const [perPage, setPerPage] = useState(5);
 
-  
+  const getCursos = async (targetPage: number) => {
+    setLoading(true);
+    let lastDoc = pageCursors[targetPage];
+    const { dataList, newLastVisible } = await getPaginatedDocs(
+      "Cursos",
+      perPage,
+      lastDoc
+    );
+
+    if (dataList.length > 0) {
+      setLastVisible(newLastVisible);
+      setPageCursors((prev) => ({ ...prev, [targetPage + 1]: newLastVisible }));
+    } else {
+      setLastVisible(null);
+    }
+    const data = dataList as Curso[];
+
+    const numSolicitantes: { [idCurso: string]: number } = {};
+    data.forEach((curso) => {
+      if (curso.id) {
+        numSolicitantes[curso.id] = curso.postulados.length;
+      }
+    });
+    const cursosConFechaCreacion = data.filter(
+      (curso) => curso.fechaCreacion !== undefined
+    );
+    const cursosOrdenados = cursosConFechaCreacion.sort((a, b) => {
+      return b.fechaCreacion!.toMillis() - a.fechaCreacion!.toMillis();
+    });
+    setCursos(cursosOrdenados);
+    setFilteredData(cursosOrdenados);
+    setLoading(false);
+  };
+
   const getTotalRows = async () => {
     const totalCourses = await getFirebaseDocs("Cursos");
     setTotalRows(totalCourses.length);
   };
 
   useEffect(() => {
-    async () => {
-      await dispatch(fetchCursos({ targetPage: currentPage, perPage }));
-      getTotalRows();
-    };
-  }, [getTotalRows, dispatch, currentPage, perPage]);
-
-  useEffect(() => {
-    //setLoading(selectedCursos.loading);
-    setError(selectedCursos.error);
-    if (!selectedCursos.loading && !selectedCursos.error) {
-      setCursosArray(selectedCursos.cursos);
-    }
-  }, [selectedCursos]);
+    getCursos(currentPage);
+    getTotalRows();
+  }, [currentPage, perPage]);
 
   useEffect(() => {
     if (enterPressed) {
-      const filtered = cursos.filter((course) => {
+      const filtered = filteredData.filter((course) => {
         const selectedValue = course[selectedSearch];
         if (typeof selectedValue === "string") {
           return selectedValue.toLowerCase().includes(filterText.toLowerCase());
@@ -98,48 +121,13 @@ function GestionCursos() {
         }
         return false; // Return false for any unhandled types or cases
       });
-      setCursosArray(filtered);
+      setFilteredData(filtered);
       setEnterPressed(!enterPressed);
     }
     if (filterText.trim() === "") {
-      setCursosArray(selectedCursos.cursos);
+      setFilteredData(cursos);
     }
-  }, [selectedCursos, filterText, enterPressed]);
-
-  function handleSwitchToggleEstado(row: any): void {
-    // Activar o desactivar el estado
-    const nuevoEstado = row.estado === 0 ? 1 : 0;
-
-    updateFirebaseDoc(`/Cursos/${row.id}`, {
-      estado: nuevoEstado,
-    });
-    dispatch(changeCursoEstado(row.id));
-    const nuevoVisible = nuevoEstado === 0 ? Visible.NoVisible : row.estado;
-    updateFirebaseDoc(`/Cursos/${row.id}`, {
-      visible: parseInt(nuevoVisible),
-    });
-    dispatch(changeCursoVisible({ cursoId: row.id, visible: nuevoVisible }));
-  }
-
-  function handleVisibleChange(
-    e: ChangeEvent<HTMLSelectElement>,
-    row: any
-  ): void {
-    updateFirebaseDoc(`/Cursos/${row.id}`, {
-      visible: parseInt(e.target.value),
-    });
-    dispatch(
-      changeCursoVisible({ cursoId: row.id, visible: parseInt(e.target.value) })
-    );
-  }
-
-  const handlePageChange = (page: number) => {
-    dispatch(fetchCursos({ targetPage: page, perPage }));
-  };
-
-  const handleRowsPerPageChange = (newPageSize: number, page: number) => {
-    dispatch(fetchCursos({ targetPage: page, perPage: newPageSize }));
-  };
+  }, [filterText, enterPressed, selectedSearch]);
 
   const columns = [
     {
@@ -257,6 +245,42 @@ function GestionCursos() {
     }
   }
 
+  function handleSwitchToggleEstado(row: any): void {
+    // Activar o desactivar el estado
+    const nuevoEstado = row.estado === 0 ? 1 : 0;
+
+    updateFirebaseDoc(`/Cursos/${row.id}`, {
+      estado: nuevoEstado,
+    });
+    dispatch(changeCursoEstado(row.id));
+    const nuevoVisible = nuevoEstado === 0 ? Visible.NoVisible : row.estado;
+    updateFirebaseDoc(`/Cursos/${row.id}`, {
+      visible: parseInt(nuevoVisible),
+    });
+    dispatch(changeCursoVisible({ cursoId: row.id, visible: nuevoVisible }));
+  }
+
+  function handleVisibleChange(
+    e: ChangeEvent<HTMLSelectElement>,
+    row: any
+  ): void {
+    updateFirebaseDoc(`/Cursos/${row.id}`, {
+      visible: parseInt(e.target.value),
+    });
+    dispatch(
+      changeCursoVisible({ cursoId: row.id, visible: parseInt(e.target.value) })
+    );
+  }
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleRowsPerPageChange = (newPageSize: number, page: number) => {
+    setPerPage(newPageSize);
+    setCurrentPage(page);
+  };
+
   return (
     <>
       <div className="d-flex align-items-center">
@@ -323,11 +347,11 @@ function GestionCursos() {
       <div>
         <DataTableBase
           columns={columns}
-          data={cursos}
+          data={filteredData}
           paginationPerPage={perPage}
           paginationTotalRows={totalRows}
-          // onChangePage={handlePageChange}
-          // onChangeRowsPerPage={handleRowsPerPageChange}
+          onChangePage={handlePageChange}
+          onChangeRowsPerPage={handleRowsPerPageChange}
           progressPending={loading}
         ></DataTableBase>
       </div>

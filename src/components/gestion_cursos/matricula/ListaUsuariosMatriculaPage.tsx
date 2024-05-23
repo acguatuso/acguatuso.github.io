@@ -133,7 +133,8 @@ export const ListaUsuariosMatriculaPage = ({
     // console.log({matriculados});
     fetchData(currentPage);
     getTotalRows();
-  }, [currentPage]);
+    
+  }, [currentPage, perPage]);
 
   useEffect(() => {
     if (enterPressed) {
@@ -150,13 +151,6 @@ export const ListaUsuariosMatriculaPage = ({
       setFilteredUsers(users);
     }
   }, [filterText, users, enterPressed]);
-
-  // const resultPages = (results: number) => {
-  //   switch(usuariosInteresados.length){
-  //     case 
-  //   }
-
-  // }
 
   const fetchData = async (targetPage: number) => {
     setLoading(true);

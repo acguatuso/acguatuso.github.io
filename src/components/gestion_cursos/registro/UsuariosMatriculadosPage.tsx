@@ -1,10 +1,14 @@
-import { useEffect, useState} from "react";
+import { useEffect, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import DataTableBase from "../../dataTable/DataTableBase";
-import { getFirebaseDocs, getPaginatedDocs } from "../../../api/getFirebaseDocs/getFirebaseDocs";
+import {
+  getFirebaseDocs,
+  getPaginatedDocs,
+} from "../../../api/getFirebaseDocs/getFirebaseDocs";
 import { AprobarReprobarUsuario } from ".";
 import { FaCheck, FaTimes } from "react-icons/fa"; // Importa los íconos necesarios
 import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
+import { data } from "jquery";
 
 //interfaz de un usuario con datos reducido.
 interface Users {
@@ -65,14 +69,14 @@ export const UsuariosMatriculadosPage = ({
       name: "Cédula",
       selector: (row: any) => row.cedula,
       sortable: true,
-      width: "10vw",
+      width: "15vw",
     },
 
     {
       name: "Correo",
       selector: (row: any) => row.correo,
       sortable: true,
-      width: "20vw",
+      width: "25vw",
     },
 
     {
@@ -113,7 +117,7 @@ export const UsuariosMatriculadosPage = ({
           </span>
         );
       },
-      width: "10vw",
+      width: "16vw",
     },
 
     {
@@ -128,42 +132,8 @@ export const UsuariosMatriculadosPage = ({
   ];
 
   useEffect(() => {
-    const fetchData = async (targetPage: number) => {
-      try {
-        setLoading(true)
-        let lastDoc = pageCursors[targetPage];
-        const { dataList, newLastVisible } = await getPaginatedDocs(
-          "Usuarios",
-          perPage,
-          lastDoc
-        );
-        if (dataList.length > 0) {
-          setLastVisible(newLastVisible);
-          setPageCursors((prev) => ({ ...prev, [targetPage + 1]: newLastVisible }));
-        } else {
-          setLastVisible(null);
-        }
-        const usuariosFiltrados = dataList.filter((doc: any) =>
-          matriculados.includes(doc.id)
-        );
-        const userData = usuariosFiltrados.map((doc: any) => ({
-          id: doc.id,
-          nombre: doc.nombre,
-          cedula: doc.cedula,
-          telefono: doc.telefono,
-          correo: doc.correo,
-        }));
-        //console.log('DATOS DE LOS USUARIOS: ', userData);
-        setUsers(userData);
-        setLoading(false);
-        //console.log('Lista de aceptados en curso> ', matriculados);
-      } catch (error) {
-        console.error("Error Al traer los usuarios matriculados:", error);
-      }
-    };
-
     fetchData(currentPage);
-  }, [currentPage]);
+  }, [currentPage, perPage]);
 
   useEffect(() => {
     if (enterPressed) {
@@ -180,6 +150,36 @@ export const UsuariosMatriculadosPage = ({
       setFilteredUsers(users);
     }
   }, [filterText, users, enterPressed]);
+
+  const fetchData = async (targetPage: number) => {
+    setLoading(true);
+    let lastDoc = pageCursors[targetPage];
+    const { dataList, newLastVisible } = await getPaginatedDocs(
+      "Usuarios",
+      perPage,
+      lastDoc
+    );
+    if (dataList.length > 0) {
+      setLastVisible(newLastVisible);
+      setPageCursors((prev) => ({ ...prev, [targetPage + 1]: newLastVisible }));
+    } else {
+      setLastVisible(null);
+    }
+    const data = dataList as Users[];
+    const usuariosFiltrados = data.filter((user) =>
+      matriculados.includes(user.id)
+    );
+
+    const userData = usuariosFiltrados.map((doc: any) => ({
+      id: doc.id,
+      nombre: doc.nombre,
+      cedula: doc.cedula,
+      telefono: doc.telefono,
+      correo: doc.correo,
+    }));
+    setUsers(userData);
+    setLoading(false);
+  };
 
   const closeSeeUserModal = () => {
     setShowDetailsUserModal(false);

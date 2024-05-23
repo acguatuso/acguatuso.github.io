@@ -8,18 +8,17 @@ import { RootState } from "../../../redux/store";
 import { fetchCursos } from "../../../redux/reducers/cursosSlice";
 import { useAppDispatch } from "../../../hooks/hooks";
 import { Curso } from "../curso.interface";
+import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
+import {
+  getFirebaseDocs,
+  getPaginatedDocs,
+} from "../../../api/getFirebaseDocs/getFirebaseDocs";
 
 export const ListaCursosAprobacionesPage = () => {
   //REDUX/////////////////////////////////////////////////////
   // El dispatch lo necesito para lo de Redux con los cursos
   const dispatch = useAppDispatch();
   const coursesRedux = useSelector((state: RootState) => state.cursos.cursos);
-
-  useEffect(() => {
-    (async () => {
-      await dispatch(fetchCursos());
-    })();
-  }, [dispatch]);
 
   //console.log({coursesRedux});
   //REDUX///////////////////////////////////////////////////////
@@ -37,11 +36,26 @@ export const ListaCursosAprobacionesPage = () => {
   const [usuariosReprobados, setUsuariosReprobados] = useState<string[]>([]);
   //const [filteredCourses, setFilteredCourses] = useState<Course[]> ([]);
   const [filteredCourses, setFilteredCourses] = useState<Curso[]>([]);
+  const [cursos, setCursos] = useState<Array<Curso>>([]);
   const [filterText, setFilterText] = useState("");
   const [selectedSearch, setSelectedSearch] = useState("");
   const [inputState, setInputState] = useState(true);
   const [enterPressed, setEnterPressed] = useState(false);
+  const [loading, setLoading] = useState<boolean>(false);
+  const [lastVisible, setLastVisible] =
+    useState<QueryDocumentSnapshot<DocumentData> | null>(null);
+  const [totalRows, setTotalRows] = useState(0);
+  const [pageCursors, setPageCursors] = useState<{
+    [page: number]: QueryDocumentSnapshot<DocumentData> | null;
+  }>({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState(5);
   const navigate = useNavigate();
+
+  useEffect(() => {
+    getCursos(currentPage);
+    getTotalRows();
+  }, [currentPage, perPage]);
 
   //Columnas de la tabla
   const columns = [
@@ -49,20 +63,14 @@ export const ListaCursosAprobacionesPage = () => {
       name: "Alumnos",
       selector: (row: Curso) => row.matriculados?.length || 0,
       cell: (row: Curso) => (
-        <div className="text-start">
-          {row.matriculados?.length || 0}
-        </div>
+        <div className="text-start">{row.matriculados?.length || 0}</div>
       ),
       sortable: true,
     },
     {
       name: "Nombre",
       selector: (row: any) => row.nombre,
-      cell: (row: any) => (
-        <div className="text-start">
-          {row.nombre}
-        </div>
-      ),
+      cell: (row: any) => <div className="text-start">{row.nombre}</div>,
       sortable: true,
     },
     {
@@ -81,7 +89,7 @@ export const ListaCursosAprobacionesPage = () => {
     {
       name: "Fecha Inicio",
       selector: (row: any) => {
-        row.fecha_inicio
+        row.fecha_inicio;
       },
       cell: (row: any) => {
         if (row.fecha_inicio && typeof row.fecha_inicio.toDate === "function") {
@@ -100,10 +108,13 @@ export const ListaCursosAprobacionesPage = () => {
     {
       name: "Fecha Fin",
       selector: (row: any) => {
-        row.fecha_finalizacion
+        row.fecha_finalizacion;
       },
       cell: (row: any) => {
-        if (row.fecha_finalizacion && typeof row.fecha_finalizacion.toDate === "function") {
+        if (
+          row.fecha_finalizacion &&
+          typeof row.fecha_finalizacion.toDate === "function"
+        ) {
           const fecha = row.fecha_finalizacion.toDate();
           const dia = fecha.getDate();
           const mes = fecha.getMonth() + 1; // Los meses en JavaScript van de 0 a 11
@@ -160,6 +171,40 @@ export const ListaCursosAprobacionesPage = () => {
     },
   ];
 
+  const getCursos = async (targetPage: number) => {
+    setLoading(true);
+    let lastDoc = pageCursors[targetPage];
+    const { dataList, newLastVisible } = await getPaginatedDocs(
+      "Cursos",
+      perPage,
+      lastDoc
+    );
+
+    if (dataList.length > 0) {
+      setLastVisible(newLastVisible);
+      setPageCursors((prev) => ({ ...prev, [targetPage + 1]: newLastVisible }));
+    } else {
+      setLastVisible(null);
+    }
+    const data = dataList as Curso[];
+
+    const numSolicitantes: { [idCurso: string]: number } = {};
+    data.forEach((curso) => {
+      if (curso.id) {
+        numSolicitantes[curso.id] = curso.postulados.length;
+      }
+    });
+    const cursosConFechaCreacion = data.filter(
+      (curso) => curso.fechaCreacion !== undefined
+    );
+    const cursosOrdenados = cursosConFechaCreacion.sort((a, b) => {
+      return b.fechaCreacion!.toMillis() - a.fechaCreacion!.toMillis();
+    });
+    setCursos(cursosOrdenados);
+    setFilteredCourses(cursosOrdenados);
+    setLoading(false);
+  };
+
   const handleClickListaUsuarios = (
     idCurso: string,
     nombreCurso: string,
@@ -176,8 +221,13 @@ export const ListaCursosAprobacionesPage = () => {
 
     setShowUsuariosMatriculados(true);
   };
+  const getTotalRows = async () => {
+    const totalCourses = await getFirebaseDocs("Cursos");
+    setTotalRows(totalCourses.length);
+  };
 
   const handleRegresarClick = () => {
+    setFilteredCourses(cursos);
     setShowUsuariosMatriculados(false); // Cambia el estado a true cuando se hace clic en Regresar
   };
 
@@ -211,7 +261,7 @@ export const ListaCursosAprobacionesPage = () => {
     }
     if (filterText.trim() === "") {
       setFilteredCourses(coursesRedux);
-    } 
+    }
   }, [filterText, coursesRedux, enterPressed]);
 
   const regresarCursosPage = () => {
@@ -230,6 +280,15 @@ export const ListaCursosAprobacionesPage = () => {
       setEnterPressed(!enterPressed);
     }
   }
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleRowsPerPageChange = (newPageSize: number, page: number) => {
+    setPerPage(newPageSize);
+    setCurrentPage(page);
+  };
 
   return (
     <div>
@@ -282,7 +341,15 @@ export const ListaCursosAprobacionesPage = () => {
               </div>
             </div>
           </div>
-          <DataTableBase columns={columns} data={filteredCourses} />
+          <DataTableBase
+            columns={columns}
+            data={filteredCourses}
+            paginationPerPage={perPage}
+            paginationTotalRows={totalRows}
+            onChangePage={handlePageChange}
+            onChangeRowsPerPage={handleRowsPerPageChange}
+            progressPending={loading}
+          />
         </>
       )}
     </div>
