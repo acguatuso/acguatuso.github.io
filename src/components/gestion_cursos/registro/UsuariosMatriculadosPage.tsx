@@ -1,10 +1,12 @@
 import { useEffect, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import DataTableBase from "../../dataTable/DataTableBase";
+
 import {getPaginatedDocs,} from "../../../api/getFirebaseDocs/getFirebaseDocs";
 import { AprobarReprobarUsuario } from ".";
 import { FaCheck, FaTimes } from "react-icons/fa"; // Importa los íconos necesarios
 import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
+
 
 //interfaz de un usuario con datos reducido.
 interface Users {
@@ -42,6 +44,7 @@ export const UsuariosMatriculadosPage = ({
   const [selectedSearch, setSelectedSearch] = useState("");
   const [inputState, setInputState] = useState(true);
   const [enterPressed, setEnterPressed] = useState(false);
+
   // @ts-ignore
   const [lastVisible, setLastVisible] =
     useState<QueryDocumentSnapshot<DocumentData> | null>(null);
@@ -53,6 +56,7 @@ export const UsuariosMatriculadosPage = ({
   }>({});
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
+
 
   //Columnas a usar dentro de la tabla
   const columns = [
@@ -67,14 +71,18 @@ export const UsuariosMatriculadosPage = ({
       name: "Cédula",
       selector: (row: any) => row.cedula,
       sortable: true,
+
       width: "15vw",
+
     },
 
     {
       name: "Correo",
       selector: (row: any) => row.correo,
       sortable: true,
+
       width: "25vw",
+
     },
 
     {
@@ -115,7 +123,9 @@ export const UsuariosMatriculadosPage = ({
           </span>
         );
       },
+
       width: "16vw",
+
     },
 
     {
@@ -130,6 +140,7 @@ export const UsuariosMatriculadosPage = ({
   ];
 
   useEffect(() => {
+
     fetchData(currentPage);
   }, [currentPage, perPage]);
 
@@ -179,6 +190,7 @@ export const UsuariosMatriculadosPage = ({
     setLoading(false);
   };
 
+
   const closeSeeUserModal = () => {
     setShowDetailsUserModal(false);
   };
@@ -217,6 +229,7 @@ export const UsuariosMatriculadosPage = ({
     }
   }
 
+
   // const getTotalRows = async () => {
   //   const totalUsers = await getFirebaseDocs("Usuarios");
   //   const usuariosFiltrados = totalUsers.filter((doc) =>
@@ -233,6 +246,7 @@ export const UsuariosMatriculadosPage = ({
     setPerPage(newPageSize);
     setCurrentPage(page);
   };
+
 
   return (
     <>
@@ -285,6 +299,7 @@ export const UsuariosMatriculadosPage = ({
           paginationPerPage={perPage}
           progressPending={loading}
         />
+
       </div>
       <AprobarReprobarUsuario
         mostrar={showDetailsUserModal}

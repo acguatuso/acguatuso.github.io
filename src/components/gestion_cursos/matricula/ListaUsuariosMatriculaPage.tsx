@@ -1,13 +1,17 @@
 import { useEffect, useState } from "react";
+
 import {
   getFirebaseDocs,
   getPaginatedDocs,
 } from "../../../api/getFirebaseDocs/getFirebaseDocs";
+
 import DataTableBase from "../../dataTable/DataTableBase";
 import { AceptarRechazarUsuario } from "./AceptarRechazarUsuario";
 import { FaArrowLeft } from "react-icons/fa6";
 import { FaCheck, FaTimes } from "react-icons/fa";
+
 import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
+
 
 //interfaz de un usuario con datos reducido.
 interface Users {
@@ -43,6 +47,7 @@ export const ListaUsuariosMatriculaPage = ({
   const [selectedSearch, setSelectedSearch] = useState("");
   const [inputState, setInputState] = useState(true);
   const [enterPressed, setEnterPressed] = useState(false);
+
   // @ts-ignore
   const [lastVisible, setLastVisible] =
     useState<QueryDocumentSnapshot<DocumentData> | null>(null);
@@ -53,6 +58,7 @@ export const ListaUsuariosMatriculaPage = ({
   }>({});
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(10);
+
 
   //Columnas a usar dentro de la tabla
   //Columnas de la tabla
@@ -132,10 +138,12 @@ export const ListaUsuariosMatriculaPage = ({
   useEffect(() => {
     // console.log({ usuariosInteresados })
     // console.log({matriculados});
+
     fetchData(currentPage);
     getTotalRows();
     
   }, [currentPage, perPage]);
+
 
   useEffect(() => {
     if (enterPressed) {
@@ -147,6 +155,7 @@ export const ListaUsuariosMatriculaPage = ({
       });
       setFilteredUsers(filtered);
       setEnterPressed(!enterPressed);
+
     }
     if (filterText.trim() === "") {
       setFilteredUsers(users);
@@ -208,6 +217,7 @@ export const ListaUsuariosMatriculaPage = ({
     //console.log('Lista de aceptados en curso> ', matriculados);
   };
 
+
   const closeSeeUserModal = () => {
     setShowDetailsUserModal(false);
   };
@@ -243,6 +253,7 @@ export const ListaUsuariosMatriculaPage = ({
     }
   }
 
+
   const getTotalRows = async () => {
     const totalUsers = await getFirebaseDocs("Usuarios");
     const usuariosFiltrados = totalUsers.filter((doc) =>
@@ -259,6 +270,7 @@ export const ListaUsuariosMatriculaPage = ({
     setPerPage(newPageSize);
     setCurrentPage(page);
   };
+
 
   //console.log(`ESTE ES EL NOMBRE DEL CURSO ${nombreCurso}`, 'Y este el id de sus usuarios interesados: ', usuariosInteresados);
   // console.log({ filteredUsers })
@@ -311,6 +323,7 @@ export const ListaUsuariosMatriculaPage = ({
           paginationPerPage={perPage}
           progressPending={loading}
         />
+
       </div>
       <AceptarRechazarUsuario
         mostrar={showDetailsUserModal}

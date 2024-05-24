@@ -3,13 +3,16 @@ import DataTableBase from "../../dataTable/DataTableBase";
 import { ListaUsuariosMatriculaPage } from ".";
 import { FaArrowLeft } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
+
 import { Curso } from "../curso.interface";
 import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
 import { getFirebaseDocs, getPaginatedDocs } from "../../../api/getFirebaseDocs/getFirebaseDocs";
 
+
 export const ListaCursosMatriculaPage = () => {
   //REDUX/////////////////////////////////////////////////////
   // El dispatch lo necesito para lo de Redux con los cursos
+
 
   // console.log({coursesRedux});
   //REDUX///////////////////////////////////////////////////////
@@ -301,6 +304,7 @@ export const ListaCursosMatriculaPage = () => {
     setPerPage(newPageSize);
     setCurrentPage(page);
   };
+
   return (
     <div>
       {showUsuariosMatricula ? (
@@ -357,6 +361,7 @@ export const ListaCursosMatriculaPage = () => {
             paginationPerPage={perPage}
             progressPending={loading}
           />
+
         </>
       )}
     </div>

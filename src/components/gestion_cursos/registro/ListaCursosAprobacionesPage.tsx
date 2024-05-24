@@ -5,6 +5,7 @@ import { UsuariosMatriculadosPage } from ".";
 import { FaArrowLeft } from "react-icons/fa6";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
+
 import { Curso } from "../curso.interface";
 import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
 import {
@@ -12,9 +13,11 @@ import {
   getPaginatedDocs,
 } from "../../../api/getFirebaseDocs/getFirebaseDocs";
 
+
 export const ListaCursosAprobacionesPage = () => {
   //REDUX/////////////////////////////////////////////////////
   // El dispatch lo necesito para lo de Redux con los cursos
+
   const coursesRedux = useSelector((state: RootState) => state.cursos.cursos);
 
   //console.log({coursesRedux});
@@ -288,6 +291,7 @@ export const ListaCursosAprobacionesPage = () => {
     setCurrentPage(page);
   };
 
+
   return (
     <div>
       {showUsuariosMatriculados ? (
@@ -339,6 +343,7 @@ export const ListaCursosAprobacionesPage = () => {
               </div>
             </div>
           </div>
+
           <DataTableBase
             columns={columns}
             data={filteredCourses}
@@ -348,6 +353,7 @@ export const ListaCursosAprobacionesPage = () => {
             onChangeRowsPerPage={handleRowsPerPageChange}
             progressPending={loading}
           />
+
         </>
       )}
     </div>

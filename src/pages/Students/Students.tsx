@@ -4,10 +4,12 @@ import { FaAddressCard, FaEdit } from "react-icons/fa";
 import { useNavigate } from "react-router-dom";
 import { RootState } from "../../redux/store";
 import { useSelector } from "react-redux";
+
 import {
   getFirebaseDocs,
   getPaginatedDocs,
 } from "../../api/getFirebaseDocs/getFirebaseDocs";
+
 import { Student } from "./Student.interface";
 import CreateAccountModal from "../../components/Modal/CreateAccountModa";
 import MiPerfilModal from "../../components/Modal/EditUserModal";
@@ -25,6 +27,7 @@ const Students = () => {
   const [selectedSearch, setSelectedSearch] = useState("");
   const [inputState, setInputState] = useState(true);
   const [enterPressed, setEnterPressed] = useState(false);
+
   // @ts-ignore
   const [lastVisible, setLastVisible] =
     useState<QueryDocumentSnapshot<DocumentData> | null>(null);
@@ -35,6 +38,7 @@ const Students = () => {
   }>({});
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
+
 
   // React-router-dom
   const navigate = useNavigate();
@@ -98,6 +102,7 @@ const Students = () => {
           >
             <FaEdit />
           </button>
+
           <DeleteUser id={row.id} getUsers={() => getUsers(1)}></DeleteUser>
           {/* <button
             className="btn btn-danger"
@@ -106,6 +111,7 @@ const Students = () => {
           >
             <MdDelete />
           </button> */}
+
         </div>
       ),
     },
@@ -130,6 +136,7 @@ const Students = () => {
       });
       setFilteredData(filtered);
       setEnterPressed(!enterPressed);
+
     }
     if (filterText == "") {
       setFilteredData(baseData);
@@ -155,6 +162,7 @@ const Students = () => {
     } else {
       setLastVisible(null);
     }
+
     var formatedData: Student[] = [];
     formatedData = dataList.map((student: any) => ({
       nombre: student.nombre,
@@ -176,7 +184,9 @@ const Students = () => {
     );
     setBaseData(formatedData);
     setFilteredData(formatedData);
+
     setLoading(false);
+
   };
 
   const openCreateAccountModal = () => {
@@ -221,6 +231,7 @@ const Students = () => {
     }
   }
 
+
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -228,6 +239,7 @@ const Students = () => {
   const handleRowsPerPageChange = (newPageSize: number, page: number) => {
     setPerPage(newPageSize);
     setCurrentPage(page);
+
   };
 
   return (
@@ -280,8 +292,10 @@ const Students = () => {
           data={filteredData}
           onChangePage={handlePageChange}
           onChangeRowsPerPage={handleRowsPerPageChange}
+
           paginationTotalRows={totalRows}
           paginationPerPage={perPage}
+
           progressPending={loading}
         />
       </div>

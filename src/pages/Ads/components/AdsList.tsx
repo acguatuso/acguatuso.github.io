@@ -22,8 +22,10 @@ export const AdsList = () => {
     {links.map((element: ads)=>{        
             return (                                  
                 element.posicion_id  == 1 ?(
+
                     <div key={`${element.id}-div1-ads`} className="row mb-3 text-start">    
                     
+
                         <div className="col mb-3">
                             <img  className='img-fluid' src={element.download_url}/>           
                         </div>            
@@ -62,7 +64,9 @@ export const AdsList = () => {
                             id={element.id}
                             image_url={element.image_url}
                         />
+
                         {/* </div> */}
+
 
                     <hr className="border border-secondary border-1 opacity-90"/>
 
@@ -72,7 +76,9 @@ export const AdsList = () => {
                     :
         
                 (    
+
                     <div key={`${element.id}-div2-ads`} className="row mb-3 text-end">
+
                     <div className="col mb-3">                        
                         <h3>{element.titulo}</h3>
                         <p className='lead'><strong>{element.subtitulo}</strong></p>

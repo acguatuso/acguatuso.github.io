@@ -244,10 +244,12 @@ const CreateAccountForm = () => {
           <div>
             <label>¿Ya tiene cuenta?</label>
             <Link to="/iniciar-sesion">Iniciar Sesión</Link>
+
           </div>
           <div>
             <label>¿Desea crear otra cuenta?</label>
             <Link to="/crear-cuenta" onClick={handleNuevCuenta}>Crear Cuenta</Link>
+
           </div>
         </>
       )}

@@ -13,20 +13,21 @@ import { ServicePage } from '../pages/ServicesPage/ServicePage';
 
 export const AppRouter = () => {
   return (
-      <Routes>
-        <Route path="/" element={<LoginAccountForm />} />
-        <Route path="/iniciar-sesion" element={<LoginAccountForm />} />
-        <Route path="/home" element={<HomePageApp />} />
-        <Route path="/crear-cuenta" element={<CreateAccountForm />} />
-        <Route path='/Cursos' element={<CursosMain />} />
-        <Route path='/gestionar-cursos' element={<GestionCursos />} />
-        <Route path='/About' element={<About />} />
-        <Route path='/Students' element={<Students />} />
-        <Route path='/mi-perfil' element={<MiPerfil />} />
-        <Route path='/matriculaAdmin' element={<MatriculaPage />}></Route>
-        <Route path='/evaluacionEstudiantes' element={<EvaluacionPage />}></Route>
-        <Route path='/avisos' element={<Ads/>}></Route>
-        <Route path='/servicios' element={<ServicePage />}></Route>
-      </Routes>
+
+    <Routes>
+      <Route path="/" element={<LoginAccountForm />} />
+      <Route path="/iniciar-sesion" element={<LoginAccountForm />} />
+      <Route path="/home" element={<HomePageApp />} />
+      <Route path="/crear-cuenta" element={<CreateAccountForm />} />
+      <Route path='/Cursos' element={<CursosMain />} />
+      <Route path='/gestionar-cursos' element={<GestionCursos />} />
+      <Route path='/about' element={<About />} />
+      <Route path='/Students' element={<Students />} />
+      <Route path='/mi-perfil' element={<MiPerfil />} />
+      <Route path='/matriculaAdmin' element={<MatriculaPage />}></Route>
+      <Route path='/evaluacionEstudiantes' element={<EvaluacionPage />}></Route>
+      <Route path='/avisos' element={<Ads />}></Route>
+      <Route path='/servicios' element={<ServicePage />}></Route>
+    </Routes>
   )
 }

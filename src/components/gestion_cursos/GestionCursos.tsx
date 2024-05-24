@@ -10,6 +10,7 @@ import { useNavigate } from "react-router-dom";
 import {
   changeCursoEstado,
   changeCursoVisible,
+
   obtenerNombreModalidad,
 } from "../../redux/reducers/cursosSlice";
 import { useAppDispatch } from "../../hooks/hooks";
@@ -20,6 +21,7 @@ import {
   getFirebaseDocs,
   getPaginatedDocs,
 } from "../../api/getFirebaseDocs/getFirebaseDocs";
+
 
 enum Visible {
   NoVisible = 0,
@@ -39,6 +41,7 @@ function GestionCursos() {
   const [selectedSearch, setSelectedSearch] = useState("");
   const [inputState, setInputState] = useState(true);
   const [enterPressed, setEnterPressed] = useState(false);
+
   // @ts-ignore
   const [lastVisible, setLastVisible] =
     useState<QueryDocumentSnapshot<DocumentData> | null>(null);
@@ -128,11 +131,14 @@ function GestionCursos() {
     }
   }, [filterText, enterPressed, selectedSearch]);
 
+
   const columns = [
     {
       name: "Nombre",
       selector: (row: any) => row.nombre,
+
       cell: (row: any) => <div>{row.nombre}</div>,
+
       sortable: true,
     },
     {
@@ -152,7 +158,9 @@ function GestionCursos() {
     {
       name: "Modalidad",
       selector: (row: any) => obtenerNombreModalidad(row.modalidad),
+
       cell: (row: any) => <div>{obtenerNombreModalidad(row.modalidad)}</div>,
+
       sortable: true,
     },
     {
@@ -229,6 +237,7 @@ function GestionCursos() {
 
   const goBack = () => {
     navigate("/Cursos");
+
   };
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -238,11 +247,13 @@ function GestionCursos() {
     }
   };
 
+
   function handleKeyDown(event: React.KeyboardEvent): void {
     if (event.key === "Enter") {
       setEnterPressed(!enterPressed);
     }
   }
+
 
   function handleSwitchToggleEstado(row: any): void {
     // Activar o desactivar el estado
@@ -279,6 +290,7 @@ function GestionCursos() {
     setPerPage(newPageSize);
     setCurrentPage(page);
   };
+
 
   return (
     <>
@@ -353,6 +365,7 @@ function GestionCursos() {
           onChangeRowsPerPage={handleRowsPerPageChange}
           progressPending={loading}
         ></DataTableBase>
+
       </div>
     </>
   );

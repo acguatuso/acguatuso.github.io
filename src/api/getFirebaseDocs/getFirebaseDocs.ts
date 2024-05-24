@@ -1,3 +1,4 @@
+
 import {
   collection,
   getDocs,
@@ -5,6 +6,7 @@ import {
   query,
   startAfter,
 } from "firebase/firestore";
+
 import { data_base } from "../../firebase";
 
 export const getFirebaseDocs = async (path: string) => {
@@ -33,4 +35,5 @@ export const getPaginatedDocs = async (
   const newLastVisible = data.docs[data.docs.length - 1]; // Snapshot of the last document
 
   return { dataList, newLastVisible };
+
 };
