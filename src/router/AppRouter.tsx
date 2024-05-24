@@ -13,6 +13,7 @@ import { ServicePage } from '../pages/ServicesPage/ServicePage';
 
 export const AppRouter = () => {
   return (
+
     <Routes>
       <Route path="/" element={<LoginAccountForm />} />
       <Route path="/iniciar-sesion" element={<LoginAccountForm />} />

@@ -1,9 +1,17 @@
 import { useEffect, useState } from "react";
-import { getFirebaseDocs } from "../../../api/getFirebaseDocs/getFirebaseDocs";
+
+import {
+  getFirebaseDocs,
+  getPaginatedDocs,
+} from "../../../api/getFirebaseDocs/getFirebaseDocs";
+
 import DataTableBase from "../../dataTable/DataTableBase";
 import { AceptarRechazarUsuario } from "./AceptarRechazarUsuario";
 import { FaArrowLeft } from "react-icons/fa6";
 import { FaCheck, FaTimes } from "react-icons/fa";
+
+import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
+
 
 //interfaz de un usuario con datos reducido.
 interface Users {
@@ -39,6 +47,18 @@ export const ListaUsuariosMatriculaPage = ({
   const [selectedSearch, setSelectedSearch] = useState("");
   const [inputState, setInputState] = useState(true);
   const [enterPressed, setEnterPressed] = useState(false);
+
+  // @ts-ignore
+  const [lastVisible, setLastVisible] =
+    useState<QueryDocumentSnapshot<DocumentData> | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [totalRows, setTotalRows] = useState(0);
+  const [pageCursors, setPageCursors] = useState<{
+    [page: number]: QueryDocumentSnapshot<DocumentData> | null;
+  }>({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState(10);
+
 
   //Columnas a usar dentro de la tabla
   //Columnas de la tabla
@@ -119,55 +139,11 @@ export const ListaUsuariosMatriculaPage = ({
     // console.log({ usuariosInteresados })
     // console.log({matriculados});
 
-    const fetchData = async () => {
-      try {
-        const docSnap = await getFirebaseDocs("Usuarios");
-        // const usuariosFiltrados = docSnap.filter((doc: any) =>
-        //     usuariosInteresados.includes(doc.id)
-        // );
+    fetchData(currentPage);
+    getTotalRows();
+    
+  }, [currentPage, perPage]);
 
-        const usuariosFiltrados = docSnap.filter((doc) =>
-          usuariosInteresados.some((usuario) => usuario.id === doc.id)
-        );
-
-        const userData = usuariosFiltrados.map((doc: any) => ({
-          id: doc.id,
-          nombre: doc.nombre,
-          cedula: doc.cedula,
-          telefono: doc.telefono,
-          correo: doc.correo,
-          //descripcion: doc.descripcion,
-          //usuariosInteresados: doc.usuarios_interesados,
-          hora_solicitud:
-            usuariosInteresados
-              .find((usuario) => usuario.id === doc.id)
-              ?.hora_solicitud.toDate() || new Date(),
-        }));
-        // console.log('DATOS DE LOS USUARIOS: ', userData);
-
-        // Formatear la fecha en userData utilizando toLocaleDateString con las opciones adecuadas
-        const formattedUserData = userData.map((user) => ({
-          ...user,
-          hora_solicitud: user.hora_solicitud.toLocaleDateString("es-ES", {
-            day: "numeric",
-            month: "numeric",
-            year: "numeric",
-            hour: "2-digit",
-            minute: "2-digit",
-            hour12: true,
-          }),
-        }));
-
-        setUsers(formattedUserData);
-        //setUsers(userData);
-        //console.log('Lista de aceptados en curso> ', matriculados);
-      } catch (error) {
-        console.error("Error Al traer los usuarios:", error);
-      }
-    };
-
-    fetchData();
-  }, []);
 
   useEffect(() => {
     if (enterPressed) {
@@ -179,11 +155,68 @@ export const ListaUsuariosMatriculaPage = ({
       });
       setFilteredUsers(filtered);
       setEnterPressed(!enterPressed);
+
     }
     if (filterText.trim() === "") {
       setFilteredUsers(users);
     }
   }, [filterText, users, enterPressed]);
+
+  const fetchData = async (targetPage: number) => {
+    setLoading(true);
+    let lastDoc = pageCursors[targetPage];
+    const { dataList, newLastVisible } = await getPaginatedDocs(
+      "Usuarios",
+      perPage,
+      lastDoc
+    );
+
+    if (dataList.length > 0) {
+      setLastVisible(newLastVisible);
+      setPageCursors((prev) => ({ ...prev, [targetPage + 1]: newLastVisible }));
+    } else {
+      setLastVisible(null);
+    }
+    const usuariosFiltrados = dataList.filter((doc) =>
+      usuariosInteresados.some((usuario) => usuario.id === doc.id)
+    );
+   
+    console.log('Interesados', usuariosInteresados.length);
+    console.log('filtrados',usuariosFiltrados.length);
+
+    const userData = usuariosFiltrados.map((doc: any) => ({
+      id: doc.id,
+      nombre: doc.nombre,
+      cedula: doc.cedula,
+      telefono: doc.telefono,
+      correo: doc.correo,
+      //descripcion: doc.descripcion,
+      //usuariosInteresados: doc.usuarios_interesados,
+      hora_solicitud:
+        usuariosInteresados
+          .find((usuario) => usuario.id === doc.id)
+          ?.hora_solicitud.toDate() || new Date(),
+    }));
+    // console.log('DATOS DE LOS USUARIOS: ', userData);
+
+    // Formatear la fecha en userData utilizando toLocaleDateString con las opciones adecuadas
+    const formattedUserData = userData.map((user) => ({
+      ...user,
+      hora_solicitud: user.hora_solicitud.toLocaleDateString("es-ES", {
+        day: "numeric",
+        month: "numeric",
+        year: "numeric",
+        hour: "2-digit",
+        minute: "2-digit",
+        hour12: true,
+      }),
+    }));
+    setUsers(formattedUserData);
+    setLoading(false);
+    //setUsers(userData);
+    //console.log('Lista de aceptados en curso> ', matriculados);
+  };
+
 
   const closeSeeUserModal = () => {
     setShowDetailsUserModal(false);
@@ -219,6 +252,25 @@ export const ListaUsuariosMatriculaPage = ({
       setEnterPressed(!enterPressed);
     }
   }
+
+
+  const getTotalRows = async () => {
+    const totalUsers = await getFirebaseDocs("Usuarios");
+    const usuariosFiltrados = totalUsers.filter((doc) =>
+      usuariosInteresados.some((usuario) => usuario.id === doc.id)
+    );
+    setTotalRows(usuariosFiltrados.length);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleRowsPerPageChange = (newPageSize: number, page: number) => {
+    setPerPage(newPageSize);
+    setCurrentPage(page);
+  };
+
 
   //console.log(`ESTE ES EL NOMBRE DEL CURSO ${nombreCurso}`, 'Y este el id de sus usuarios interesados: ', usuariosInteresados);
   // console.log({ filteredUsers })
@@ -262,7 +314,16 @@ export const ListaUsuariosMatriculaPage = ({
             </div>
           </div>
         </div>
-        <DataTableBase columns={columns} data={filteredUsers} />
+        <DataTableBase
+          columns={columns}
+          data={filteredUsers}
+          onChangePage={handlePageChange}
+          onChangeRowsPerPage={handleRowsPerPageChange}
+          paginationTotalRows={totalRows}
+          paginationPerPage={perPage}
+          progressPending={loading}
+        />
+
       </div>
       <AceptarRechazarUsuario
         mostrar={showDetailsUserModal}

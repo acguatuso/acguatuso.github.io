@@ -3,23 +3,16 @@ import DataTableBase from "../../dataTable/DataTableBase";
 import { ListaUsuariosMatriculaPage } from ".";
 import { FaArrowLeft } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch } from "../../../hooks/hooks";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
-import { fetchCursos } from "../../../redux/reducers/cursosSlice";
+
 import { Curso } from "../curso.interface";
+import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
+import { getFirebaseDocs, getPaginatedDocs } from "../../../api/getFirebaseDocs/getFirebaseDocs";
+
 
 export const ListaCursosMatriculaPage = () => {
   //REDUX/////////////////////////////////////////////////////
   // El dispatch lo necesito para lo de Redux con los cursos
-  const dispatch = useAppDispatch();
-  const coursesRedux = useSelector((state: RootState) => state.cursos.cursos);
 
-  useEffect(() => {
-    (async () => {
-      await dispatch(fetchCursos());
-    })();
-  }, [dispatch]);
 
   // console.log({coursesRedux});
   //REDUX///////////////////////////////////////////////////////
@@ -34,11 +27,22 @@ export const ListaCursosMatriculaPage = () => {
   const [usuariosMatriculados, setUsuariosMatriculados] = useState<string[]>(
     []
   );
+  const [courses, setCourses] = useState<Array<Curso>>([]);
   const [filteredCourses, setFilteredCourses] = useState<Curso[]>([]);
   const [filterText, setFilterText] = useState("");
   const [selectedSearch, setSelectedSearch] = useState("");
   const [inputState, setInputState] = useState(true);
   const [enterPressed, setEnterPressed] = useState(false);
+  // @ts-ignore
+  const [lastVisible, setLastVisible] =
+    useState<QueryDocumentSnapshot<DocumentData> | null>(null);
+  const [totalRows, setTotalRows] = useState(0);
+  const [pageCursors, setPageCursors] = useState<{
+    [page: number]: QueryDocumentSnapshot<DocumentData> | null;
+  }>({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState(5);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
   //Columnas de la tabla
@@ -47,21 +51,15 @@ export const ListaCursosMatriculaPage = () => {
       name: "Postulados",
       selector: (row: any) => row.postulados!.length,
       cell: (row: any) => (
-        <div className="text-start">
-          {row.postulados!.length}
-        </div>
+        <div className="text-start">{row.postulados!.length}</div>
       ),
-      sortable: true,     
+      sortable: true,
     },
     {
       name: "Nombre",
       selector: (row: any) => row.nombre,
-      cell: (row: any) => (
-        <div className="text-start">
-          {row.nombre}
-        </div>
-      ),
-      sortable: true,      
+      cell: (row: any) => <div className="text-start">{row.nombre}</div>,
+      sortable: true,
     },
 
     // {
@@ -97,7 +95,7 @@ export const ListaCursosMatriculaPage = () => {
       // },
 
       selector: (row: any) => {
-        row.fecha_inicio
+        row.fecha_inicio;
       },
       cell: (row: any) => {
         if (row.fecha_inicio && typeof row.fecha_inicio.toDate === "function") {
@@ -123,10 +121,13 @@ export const ListaCursosMatriculaPage = () => {
       //     }
       // },
       selector: (row: any) => {
-        row.fecha_finalizacion
+        row.fecha_finalizacion;
       },
       cell: (row: any) => {
-        if (row.fecha_finalizacion && typeof row.fecha_finalizacion.toDate === "function") {
+        if (
+          row.fecha_finalizacion &&
+          typeof row.fecha_finalizacion.toDate === "function"
+        ) {
           const fecha = row.fecha_finalizacion.toDate();
           const dia = fecha.getDate();
           const mes = fecha.getMonth() + 1; // Los meses en JavaScript van de 0 a 11
@@ -182,6 +183,45 @@ export const ListaCursosMatriculaPage = () => {
     },
   ];
 
+  useEffect(() => {
+    getCursos(currentPage);
+    getTotalRows();
+  }, [currentPage, perPage]);
+
+  const getCursos = async (targetPage: number) => {
+    setLoading(true);
+    let lastDoc = pageCursors[targetPage];
+    const { dataList, newLastVisible } = await getPaginatedDocs(
+      "Cursos",
+      perPage,
+      lastDoc
+    );
+
+    if (dataList.length > 0) {
+      setLastVisible(newLastVisible);
+      setPageCursors((prev) => ({ ...prev, [targetPage + 1]: newLastVisible }));
+    } else {
+      setLastVisible(null);
+    }
+    const data = dataList as Curso[];
+
+    const numSolicitantes: { [idCurso: string]: number } = {};
+    data.forEach((curso) => {
+      if (curso.id) {
+        numSolicitantes[curso.id] = curso.postulados.length;
+      }
+    });
+    const cursosConFechaCreacion = data.filter(
+      (curso) => curso.fechaCreacion !== undefined
+    );
+    const cursosOrdenados = cursosConFechaCreacion.sort((a, b) => {
+      return b.fechaCreacion!.toMillis() - a.fechaCreacion!.toMillis();
+    });
+    setCourses(cursosOrdenados);
+    setFilteredCourses(cursosOrdenados);
+    setLoading(false);
+  };
+
   const handleClickListaUsuarios = (
     idCurso: string,
     nombreCurso: string,
@@ -198,24 +238,41 @@ export const ListaCursosMatriculaPage = () => {
   };
 
   const handleRegresarClick = () => {
+    setFilteredCourses(courses);
     setShowUsuariosMatricula(false); // Cambia el estado a true cuando se hace clic en Regresar
   };
 
   useEffect(() => {
     if (enterPressed) {
-      const filtered = coursesRedux.filter((course) => {
+      const filtered = courses.filter((course) => {
         const selectedValue = course[selectedSearch];
         if (typeof selectedValue === "string") {
           return selectedValue.toLowerCase().includes(filterText.toLowerCase());
+        } else if (typeof selectedValue == "number") {
+          let modalidadText = "";
+          switch (selectedValue) {
+            case 0:
+              modalidadText = "presencial";
+              break;
+            case 1:
+              modalidadText = "virtual";
+              break;
+            case 2:
+              modalidadText = "mixta";
+              break;
+            default:
+              return false; // This handles unexpected numbers
+          }
+          return modalidadText.includes(filterText.toLowerCase());
         }
       });
       setFilteredCourses(filtered);
       setEnterPressed(!enterPressed);
     }
     if (filterText.trim() === "") {
-      setFilteredCourses(coursesRedux);
+      setFilteredCourses(courses);
     }
-  }, [filterText, coursesRedux, enterPressed]);
+  }, [filterText, courses, enterPressed, perPage]);
 
   const regresarCursosPage = () => {
     navigate("/Cursos");
@@ -233,6 +290,21 @@ export const ListaCursosMatriculaPage = () => {
       setEnterPressed(!enterPressed);
     }
   }
+
+  const getTotalRows = async () => {
+    const totalCourses = await getFirebaseDocs("Cursos");
+    setTotalRows(totalCourses.length);
+  };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleRowsPerPageChange = (newPageSize: number, page: number) => {
+    setPerPage(newPageSize);
+    setCurrentPage(page);
+  };
+
   return (
     <div>
       {showUsuariosMatricula ? (
@@ -280,7 +352,16 @@ export const ListaCursosMatriculaPage = () => {
               </div>
             </div>
           </div>
-          <DataTableBase columns={columns} data={filteredCourses} />
+          <DataTableBase
+            columns={columns}
+            data={filteredCourses}
+            onChangePage={handlePageChange}
+            onChangeRowsPerPage={handleRowsPerPageChange}
+            paginationTotalRows={totalRows}
+            paginationPerPage={perPage}
+            progressPending={loading}
+          />
+
         </>
       )}
     </div>

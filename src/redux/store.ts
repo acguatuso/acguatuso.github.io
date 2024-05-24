@@ -8,9 +8,6 @@ import paisInfoReducer from './reducers/paisInfoSlice';
 import cursosReducer from './reducers/cursosSlice';
 import avisosReducer from './reducers/adsSlice'
 import serviciosReducer from './reducers/servicesSlice'
-export type AppDispatch = typeof store.dispatch;
-export type RootState = ReturnType<typeof store.getState>;
-export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, RootState, unknown, Action<string>>;
 
 // Configuración de Redux Persist
 const persistConfig = {
@@ -47,4 +44,8 @@ const store = configureStore({
 });
 
 export const persistor = persistStore(store);
+export type AppDispatch = typeof store.dispatch;
+export type RootState = ReturnType<typeof store.getState>;
+export type AppThunk<ReturnType = void> = ThunkAction<ReturnType, RootState, unknown, Action<string>>;
+
 export default store;

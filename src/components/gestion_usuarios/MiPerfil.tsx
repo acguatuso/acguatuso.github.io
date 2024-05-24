@@ -53,7 +53,7 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
         canton: user?.canton! as string | null,
         distrito: user?.distrito! as string | null,
         direccion: user?.direccion! as string,
-        fechaNacimiento: user?.fechaNacimiento! as string | null,
+        fechaNacimiento: user?.fechaNacimiento! as string | null | Timestamp,
         genero: user?.genero! as string,
         user_type: user!.user_type as number,
     };
@@ -243,13 +243,14 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
                     const label = labels[key] || key; // Usar el texto personalizado o el nombre del campo si no se encuentra en el objeto labels
                     if (key === 'fechaNacimiento') {
                         // Convertir fechaNacimiento a objeto Date si es un Timestamp
-                        const fechaNacimiento: string = value instanceof Timestamp ? value.toDate().toDateString() : value.toString();
-                        //console.log(value);
+                        const fechaNacimiento: string = value instanceof Timestamp? value.toDate().toDateString() : value.toString();
+                        console.log(value);
                         // Divide la fecha en partes (año, mes, día)
                         const parts = fechaNacimiento!.split('-');
                         // Reformatea la fecha en el formato deseado (día/mes/año)
                         const formattedDate = `${parts[2]}/${parts[1]}/${parts[0]}`;
                         // Renderizar el selector de fecha para fecha de nacimiento
+                        console.log(formattedDate)
                         return (
                             <div key={key} className="col-md-3 mb-3">
                                 <label className="form-label">{label}</label>

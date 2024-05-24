@@ -24,13 +24,15 @@ export const ServiceList = () => {
             return ( 
                                  
                 element.posicion_id  == 1 ?(
-                    <div key={`${element.id}-div1`} className="row mb-3">    
+
+                    <div key={`${element.id}-div1-service`} className="row mb-3 text-start">    
+
                         <div className="col mb-3">
                             <img  className='img-fluid' src={element.download_url}/>           
                         </div>            
                         <div className="col mb-3">                        
                             <h3>{element.titulo}</h3>
-                            <h5>{element.subtitulo}</h5>
+                            <p className='lead'><strong>{element.subtitulo}</strong></p>
                             <p className='lead'>{element.descripcion}</p>
                             
                             <button className="btn btn-primary btn-sm mb-2" type="button" data-bs-toggle="collapse" data-bs-target={`#collapse-${element.id}`} aria-expanded="false" aria-controls={`collapse-${element.id}`}>
@@ -59,7 +61,7 @@ export const ServiceList = () => {
                             links={element.links}                 
                         />     
                         <ServiceDelete
-                            key={`${element.id}-delete1`}
+                            key={`${element.id}-delete1-service`}
                             id={element.id}
                             image_url={element.image_url}
                         />
@@ -71,10 +73,12 @@ export const ServiceList = () => {
                     :
         
                 (    
-                    <div key={`${element.id}-div2`} className="row mb-3">
+
+                    <div key={`${element.id}-div2-service`} className="row mb-3 text-end">
+
                     <div className="col mb-3">                        
                         <h3>{element.titulo}</h3>
-                        <h5>{element.subtitulo}</h5>
+                        <p className='lead'><strong>{element.subtitulo}</strong></p>
                         <p className='lead'>{element.descripcion}</p>
 
                         <button className="
@@ -111,7 +115,7 @@ export const ServiceList = () => {
                         links={element.links}
                     />
                     <ServiceDelete
-                        key={`${element.id}-delete2`}
+                        key={`${element.id}-delete2-service`}
                         id={element.id}
                         image_url={element.image_url}
                     /> 

@@ -1,9 +1,12 @@
 import { useEffect, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import DataTableBase from "../../dataTable/DataTableBase";
-import { getFirebaseDocs } from "../../../api/getFirebaseDocs/getFirebaseDocs";
+
+import {getPaginatedDocs,} from "../../../api/getFirebaseDocs/getFirebaseDocs";
 import { AprobarReprobarUsuario } from ".";
 import { FaCheck, FaTimes } from "react-icons/fa"; // Importa los íconos necesarios
+import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
+
 
 //interfaz de un usuario con datos reducido.
 interface Users {
@@ -42,6 +45,19 @@ export const UsuariosMatriculadosPage = ({
   const [inputState, setInputState] = useState(true);
   const [enterPressed, setEnterPressed] = useState(false);
 
+  // @ts-ignore
+  const [lastVisible, setLastVisible] =
+    useState<QueryDocumentSnapshot<DocumentData> | null>(null);
+  const [loading, setLoading] = useState(false);
+  // @ts-ignore
+  const [totalRows, setTotalRows] = useState(0);
+  const [pageCursors, setPageCursors] = useState<{
+    [page: number]: QueryDocumentSnapshot<DocumentData> | null;
+  }>({});
+  const [currentPage, setCurrentPage] = useState(1);
+  const [perPage, setPerPage] = useState(5);
+
+
   //Columnas a usar dentro de la tabla
   const columns = [
     {
@@ -55,14 +71,18 @@ export const UsuariosMatriculadosPage = ({
       name: "Cédula",
       selector: (row: any) => row.cedula,
       sortable: true,
-      width: "10vw",
+
+      width: "15vw",
+
     },
 
     {
       name: "Correo",
       selector: (row: any) => row.correo,
       sortable: true,
-      width: "20vw",
+
+      width: "25vw",
+
     },
 
     {
@@ -103,7 +123,9 @@ export const UsuariosMatriculadosPage = ({
           </span>
         );
       },
-      width: "10vw",
+
+      width: "16vw",
+
     },
 
     {
@@ -118,29 +140,9 @@ export const UsuariosMatriculadosPage = ({
   ];
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const docSnap = await getFirebaseDocs("Usuarios");
-        const usuariosFiltrados = docSnap.filter((doc: any) =>
-          matriculados.includes(doc.id)
-        );
-        const userData = usuariosFiltrados.map((doc: any) => ({
-          id: doc.id,
-          nombre: doc.nombre,
-          cedula: doc.cedula,
-          telefono: doc.telefono,
-          correo: doc.correo,
-        }));
-        //console.log('DATOS DE LOS USUARIOS: ', userData);
-        setUsers(userData);
-        //console.log('Lista de aceptados en curso> ', matriculados);
-      } catch (error) {
-        console.error("Error Al traer los usuarios matriculados:", error);
-      }
-    };
 
-    fetchData();
-  }, []);
+    fetchData(currentPage);
+  }, [currentPage, perPage]);
 
   useEffect(() => {
     if (enterPressed) {
@@ -157,6 +159,37 @@ export const UsuariosMatriculadosPage = ({
       setFilteredUsers(users);
     }
   }, [filterText, users, enterPressed]);
+
+  const fetchData = async (targetPage: number) => {
+    setLoading(true);
+    let lastDoc = pageCursors[targetPage];
+    const { dataList, newLastVisible } = await getPaginatedDocs(
+      "Usuarios",
+      perPage,
+      lastDoc
+    );
+    if (dataList.length > 0) {
+      setLastVisible(newLastVisible);
+      setPageCursors((prev) => ({ ...prev, [targetPage + 1]: newLastVisible }));
+    } else {
+      setLastVisible(null);
+    }
+    const data = dataList as Users[];
+    const usuariosFiltrados = data.filter((user) =>
+      matriculados.includes(user.id)
+    );
+
+    const userData = usuariosFiltrados.map((doc: any) => ({
+      id: doc.id,
+      nombre: doc.nombre,
+      cedula: doc.cedula,
+      telefono: doc.telefono,
+      correo: doc.correo,
+    }));
+    setUsers(userData);
+    setLoading(false);
+  };
+
 
   const closeSeeUserModal = () => {
     setShowDetailsUserModal(false);
@@ -195,6 +228,25 @@ export const UsuariosMatriculadosPage = ({
       setEnterPressed(!enterPressed);
     }
   }
+
+
+  // const getTotalRows = async () => {
+  //   const totalUsers = await getFirebaseDocs("Usuarios");
+  //   const usuariosFiltrados = totalUsers.filter((doc) =>
+  //     usuariosFiltrados.some((usuario: { id: string; }) => usuario.id === doc.id)
+  //   );
+  //   setTotalRows(usuariosFiltrados.length);
+  // };
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const handleRowsPerPageChange = (newPageSize: number, page: number) => {
+    setPerPage(newPageSize);
+    setCurrentPage(page);
+  };
+
 
   return (
     <>
@@ -238,7 +290,16 @@ export const UsuariosMatriculadosPage = ({
             </div>
           </div>
         </div>
-        <DataTableBase columns={columns} data={filteredUsers}></DataTableBase>
+        <DataTableBase
+          columns={columns}
+          data={filteredUsers}
+          onChangePage={handlePageChange}
+          onChangeRowsPerPage={handleRowsPerPageChange}
+          paginationTotalRows={totalRows}
+          paginationPerPage={perPage}
+          progressPending={loading}
+        />
+
       </div>
       <AprobarReprobarUsuario
         mostrar={showDetailsUserModal}

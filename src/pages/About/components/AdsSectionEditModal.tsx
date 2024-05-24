@@ -76,7 +76,7 @@ export const AdsSectionEditModal = (props: adsSection) => {
                     </h1>
                     <button type="button" className="btn-close" data-bs-dismiss="modal" aria-label="Close" onClick={()=>handleReset()}></button>
                 </div>
-                <div className="modal-body">
+                <div className="modal-body text-center">
                 <div className='form-row text-black'>                      
                     <label className='form-label' htmlFor={`title-about-adsSection`}>Título</label>
                     <textarea className='form-control rounded-0 h-10' id={`title-about-${props.id}`} name="titulo" value={forms.titulo} onChange={(evt) => handleChange(evt)}/>
