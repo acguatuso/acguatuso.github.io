@@ -43,6 +43,7 @@ export const ListaUsuariosMatriculaPage = ({
   const [selectedSearch, setSelectedSearch] = useState("");
   const [inputState, setInputState] = useState(true);
   const [enterPressed, setEnterPressed] = useState(false);
+  // @ts-ignore
   const [lastVisible, setLastVisible] =
     useState<QueryDocumentSnapshot<DocumentData> | null>(null);
   const [loading, setLoading] = useState(false);

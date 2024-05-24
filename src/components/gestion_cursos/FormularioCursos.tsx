@@ -204,6 +204,7 @@ export const FormularioCursos = (props: formProps) => {
         }
         if (props.curso !== null) {
             // Llamar a la función para actualizar el curso en Firebase
+            // @ts-ignore
             let data: Curso = {
               nombre: nombreCurso,
               descripcion: descripcionCurso,

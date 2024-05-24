@@ -3,10 +3,6 @@ import DataTableBase from "../../dataTable/DataTableBase";
 import { ListaUsuariosMatriculaPage } from ".";
 import { FaArrowLeft } from "react-icons/fa6";
 import { useNavigate } from "react-router-dom";
-import { useAppDispatch } from "../../../hooks/hooks";
-import { useSelector } from "react-redux";
-import { RootState } from "../../../redux/store";
-import { fetchCursos } from "../../../redux/reducers/cursosSlice";
 import { Curso } from "../curso.interface";
 import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
 import { getFirebaseDocs, getPaginatedDocs } from "../../../api/getFirebaseDocs/getFirebaseDocs";
@@ -14,8 +10,6 @@ import { getFirebaseDocs, getPaginatedDocs } from "../../../api/getFirebaseDocs/
 export const ListaCursosMatriculaPage = () => {
   //REDUX/////////////////////////////////////////////////////
   // El dispatch lo necesito para lo de Redux con los cursos
-  const dispatch = useAppDispatch();
-  const coursesRedux = useSelector((state: RootState) => state.cursos.cursos);
 
   // console.log({coursesRedux});
   //REDUX///////////////////////////////////////////////////////
@@ -36,6 +30,7 @@ export const ListaCursosMatriculaPage = () => {
   const [selectedSearch, setSelectedSearch] = useState("");
   const [inputState, setInputState] = useState(true);
   const [enterPressed, setEnterPressed] = useState(false);
+  // @ts-ignore
   const [lastVisible, setLastVisible] =
     useState<QueryDocumentSnapshot<DocumentData> | null>(null);
   const [totalRows, setTotalRows] = useState(0);

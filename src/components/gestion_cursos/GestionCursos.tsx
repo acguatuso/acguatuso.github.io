@@ -10,11 +10,9 @@ import { useNavigate } from "react-router-dom";
 import {
   changeCursoEstado,
   changeCursoVisible,
-  cursosSelector,
-  fetchCursos,
   obtenerNombreModalidad,
 } from "../../redux/reducers/cursosSlice";
-import { useAppDispatch, useAppSelector } from "../../hooks/hooks";
+import { useAppDispatch } from "../../hooks/hooks";
 import { updateFirebaseDoc } from "../../api/updateFirebaseDoc/updateFirebaseDoc";
 import DetallesCurso from "./DetallesCurso";
 import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
@@ -41,6 +39,7 @@ function GestionCursos() {
   const [selectedSearch, setSelectedSearch] = useState("");
   const [inputState, setInputState] = useState(true);
   const [enterPressed, setEnterPressed] = useState(false);
+  // @ts-ignore
   const [lastVisible, setLastVisible] =
     useState<QueryDocumentSnapshot<DocumentData> | null>(null);
   const [totalRows, setTotalRows] = useState(0);

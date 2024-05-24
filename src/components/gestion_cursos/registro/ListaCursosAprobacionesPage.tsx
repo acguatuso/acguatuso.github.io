@@ -5,8 +5,6 @@ import { UsuariosMatriculadosPage } from ".";
 import { FaArrowLeft } from "react-icons/fa6";
 import { useSelector } from "react-redux";
 import { RootState } from "../../../redux/store";
-import { fetchCursos } from "../../../redux/reducers/cursosSlice";
-import { useAppDispatch } from "../../../hooks/hooks";
 import { Curso } from "../curso.interface";
 import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
 import {
@@ -17,7 +15,6 @@ import {
 export const ListaCursosAprobacionesPage = () => {
   //REDUX/////////////////////////////////////////////////////
   // El dispatch lo necesito para lo de Redux con los cursos
-  const dispatch = useAppDispatch();
   const coursesRedux = useSelector((state: RootState) => state.cursos.cursos);
 
   //console.log({coursesRedux});
@@ -42,6 +39,7 @@ export const ListaCursosAprobacionesPage = () => {
   const [inputState, setInputState] = useState(true);
   const [enterPressed, setEnterPressed] = useState(false);
   const [loading, setLoading] = useState<boolean>(false);
+  // @ts-ignore
   const [lastVisible, setLastVisible] =
     useState<QueryDocumentSnapshot<DocumentData> | null>(null);
   const [totalRows, setTotalRows] = useState(0);

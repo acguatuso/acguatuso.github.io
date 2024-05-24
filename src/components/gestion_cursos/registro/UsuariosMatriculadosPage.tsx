@@ -1,14 +1,10 @@
 import { useEffect, useState } from "react";
 import { FaArrowLeft } from "react-icons/fa";
 import DataTableBase from "../../dataTable/DataTableBase";
-import {
-  getFirebaseDocs,
-  getPaginatedDocs,
-} from "../../../api/getFirebaseDocs/getFirebaseDocs";
+import {getPaginatedDocs,} from "../../../api/getFirebaseDocs/getFirebaseDocs";
 import { AprobarReprobarUsuario } from ".";
 import { FaCheck, FaTimes } from "react-icons/fa"; // Importa los íconos necesarios
 import { DocumentData, QueryDocumentSnapshot } from "firebase/firestore";
-import { data } from "jquery";
 
 //interfaz de un usuario con datos reducido.
 interface Users {
@@ -46,9 +42,11 @@ export const UsuariosMatriculadosPage = ({
   const [selectedSearch, setSelectedSearch] = useState("");
   const [inputState, setInputState] = useState(true);
   const [enterPressed, setEnterPressed] = useState(false);
+  // @ts-ignore
   const [lastVisible, setLastVisible] =
     useState<QueryDocumentSnapshot<DocumentData> | null>(null);
   const [loading, setLoading] = useState(false);
+  // @ts-ignore
   const [totalRows, setTotalRows] = useState(0);
   const [pageCursors, setPageCursors] = useState<{
     [page: number]: QueryDocumentSnapshot<DocumentData> | null;
