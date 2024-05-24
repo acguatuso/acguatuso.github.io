@@ -59,6 +59,8 @@ const authSlice = createSlice({
     },
     signupFailure: (state, action: PayloadAction<string>) => {
       state.error = action.payload;
+      state.notification = null;
+      state.emailVerified = false;
     },
     logOut: (state) => {
       state.loggedIn = false;
@@ -195,7 +197,7 @@ const agregarDoc = async (formData: any) => {
     fechaNacimiento: Timestamp.fromDate(new Date(formData.fechaNacimiento)),
     genero: formData.genero,
     user_type: 0, // toda cuenta se crea con tipo ->   (0 : Comuún),
-    estado: 0  // toda cuenta se crea con estado ->   (0 : Inactivo)
+    estado: 1  // toda cuenta se crea con estado ->   (1 : Activo)
   };
 
   // Referencia a la coleccion de 'Usuarios'

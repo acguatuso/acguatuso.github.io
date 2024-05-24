@@ -95,12 +95,12 @@ const LoginAccountForm: React.FC = () => {
                 </div>
                 <div className="mb-3">
                   <label htmlFor="email" className="form-label text-start text-muted" >Correo:</label>
-                  <input type="email" id="email" value={email} onChange={handleEmailChange} className="form-control" placeholder="E.g., email@example.com" />
+                  <input type="email" id="email" value={email} onChange={handleEmailChange} className="form-control" placeholder="Ej... correo@ejemplo.com" />
                 </div>
                 <div className="mb-3">
                   <label htmlFor="password" className="form-label text-start text-muted">Contraseña:</label>
                   <div className="input-group">
-                    <input type={showPassword ? 'text' : 'password'} id="password" value={password} onChange={handlePasswordChange} className="form-control" placeholder="E.g., password123" />
+                    <input type={showPassword ? 'text' : 'password'} id="password" value={password} onChange={handlePasswordChange} className="form-control" placeholder="Ej... contraseña123" />
                     <button className="btn btn-outline-secondary" type="button" onClick={togglePasswordVisibility}>
                       {showPassword ? <FaEye /> : <FaEyeSlash />} {/* Use eye visible/invisible icons */}
                     </button>
