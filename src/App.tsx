@@ -1,4 +1,4 @@
-import { HashRouter  as Router } from 'react-router-dom';
+import { HashRouter as Router } from 'react-router-dom';
 import { AppRouter } from './router/AppRouter.tsx';
 import Layout from './ui/layout.tsx';
 import './App.css'

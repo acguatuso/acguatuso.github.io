@@ -27,9 +27,10 @@ const labels: { [key: string]: string } = {
 
 interface Props {
     pUsuario?: UserData | null;
+    pEditMode?: boolean | null;
 }
 
-const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
+const MiPerfil: React.FC<Props> = ({ pUsuario, pEditMode }) => {
     // Redux Hooks & Access
     const dispatch = useAppDispatch()
     const loggedIn = useSelector((state: RootState) => state.auth.loggedIn);
@@ -174,30 +175,30 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
             if (key === 'correo' || key === 'estado' || key === 'user_type') return false;
             return initialState[key as keyof UserData] !== formData[key as keyof UserData];
         });
-    
+
         if (!changesDetected) {
             // No hay cambios, no se necesita mostrar el modal de que faltan datos
             setMostrarModal(true); // Mostrar el modal de confirmación directamente
             return;
         }
-    
+
         // Verificar si algún campo obligatorio está vacío
         if (!formData?.cedula || !formData?.nombre || !formData?.canton || distrito === '') {
             setFaltanDatosModal(true);
             return;
         }
-    
+
         // Validar formato de número de teléfono
         const numberPattern = /^[0-9]+$/;
         if ((formData.telefono && !numberPattern.test(formData.telefono)) || (formData.cedula && !numberPattern.test(formData.cedula))) {
             setFaltanDatosModal(true);
             return;
         }
-    
+
         // Abre el modal de confirmación
         setMostrarModal(true);
     };
-    
+
     const handleAceptar = () => {
         setFaltanDatosModal(false);
     }
@@ -243,7 +244,7 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
                     const label = labels[key] || key; // Usar el texto personalizado o el nombre del campo si no se encuentra en el objeto labels
                     if (key === 'fechaNacimiento') {
                         // Convertir fechaNacimiento a objeto Date si es un Timestamp
-                        const fechaNacimiento: string = value instanceof Timestamp? value.toDate().toDateString() : value.toString();
+                        const fechaNacimiento: string = value instanceof Timestamp ? value.toDate().toDateString() : value.toString();
                         console.log(value);
                         // Divide la fecha en partes (año, mes, día)
                         const parts = fechaNacimiento!.split('-');
@@ -363,7 +364,9 @@ const MiPerfil: React.FC<Props> = ({ pUsuario }) => {
 
             <div className="button-container">
                 {!editMode ? (
-                    <button onClick={handleEditClick} className="btn btn-primary me-2">Editar</button>
+                    pEditMode && (
+                        <button onClick={handleEditClick} className="btn btn-primary me-2">Editar</button>
+                    )
                 ) : (
                     <>
                         <button onClick={handleCancelClick} className="btn btn-secondary me-2">Cancelar</button>
