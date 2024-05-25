@@ -10,7 +10,6 @@ import { useNavigate } from "react-router-dom";
 import {
   changeCursoEstado,
   changeCursoVisible,
-
   obtenerNombreModalidad,
 } from "../../redux/reducers/cursosSlice";
 import { useAppDispatch } from "../../hooks/hooks";
@@ -21,7 +20,6 @@ import {
   getFirebaseDocs,
   getPaginatedDocs,
 } from "../../api/getFirebaseDocs/getFirebaseDocs";
-
 
 enum Visible {
   NoVisible = 0,
@@ -51,8 +49,6 @@ function GestionCursos() {
   }>({});
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
-  //const [currentPage, setCurrentPage] = useState(1);
-  // const [perPage, setPerPage] = useState(5);
 
   const getCursos = async (targetPage: number) => {
     setLoading(true);
@@ -130,7 +126,6 @@ function GestionCursos() {
       setFilteredData(cursos);
     }
   }, [filterText, enterPressed, selectedSearch]);
-
 
   const columns = [
     {
@@ -237,7 +232,6 @@ function GestionCursos() {
 
   const goBack = () => {
     navigate("/Cursos");
-
   };
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -247,39 +241,43 @@ function GestionCursos() {
     }
   };
 
-
   function handleKeyDown(event: React.KeyboardEvent): void {
     if (event.key === "Enter") {
       setEnterPressed(!enterPressed);
     }
   }
 
-
   function handleSwitchToggleEstado(row: any): void {
-    // Activar o desactivar el estado
     const nuevoEstado = row.estado === 0 ? 1 : 0;
+    const updatedRow = { ...row, estado: nuevoEstado };
 
-    updateFirebaseDoc(`/Cursos/${row.id}`, {
-      estado: nuevoEstado,
-    });
-    dispatch(changeCursoEstado(row.id));
-    const nuevoVisible = nuevoEstado === 0 ? Visible.NoVisible : row.estado;
-    updateFirebaseDoc(`/Cursos/${row.id}`, {
-      visible: parseInt(nuevoVisible),
-    });
-    dispatch(changeCursoVisible({ cursoId: row.id, visible: nuevoVisible }));
+    updateFirebaseDoc(`/Cursos/${row.id}`, { estado: nuevoEstado });
+
+    let newVisibleValue = row.visible;
+    if (nuevoEstado === 0) {
+      newVisibleValue = Visible.NoVisible;
+      updateFirebaseDoc(`/Cursos/${row.id}`, { visible: newVisibleValue });
+    }
+
+    const updatedData = filteredData.map((item) =>
+      item.id === row.id ? updatedRow : item
+    );
+    setFilteredData(updatedData);
   }
 
   function handleVisibleChange(
     e: ChangeEvent<HTMLSelectElement>,
     row: any
   ): void {
-    updateFirebaseDoc(`/Cursos/${row.id}`, {
-      visible: parseInt(e.target.value),
-    });
-    dispatch(
-      changeCursoVisible({ cursoId: row.id, visible: parseInt(e.target.value) })
+    const newVisibleValue = parseInt(e.target.value);
+    console.log(newVisibleValue);
+
+    updateFirebaseDoc(`/Cursos/${row.id}`, { visible: newVisibleValue });
+
+    const updatedData = filteredData.map((item) =>
+      item.id === row.id ? { ...item, visible: newVisibleValue } : item
     );
+    setFilteredData(updatedData);
   }
 
   const handlePageChange = (page: number) => {
@@ -290,7 +288,6 @@ function GestionCursos() {
     setPerPage(newPageSize);
     setCurrentPage(page);
   };
-
 
   return (
     <>
@@ -365,7 +362,6 @@ function GestionCursos() {
           onChangeRowsPerPage={handleRowsPerPageChange}
           progressPending={loading}
         ></DataTableBase>
-
       </div>
     </>
   );
