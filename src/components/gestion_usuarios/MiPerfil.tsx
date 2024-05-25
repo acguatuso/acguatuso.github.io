@@ -364,7 +364,7 @@ const MiPerfil: React.FC<Props> = ({ pUsuario, pEditMode }) => {
 
             <div className="button-container">
                 {!editMode ? (
-                    pEditMode && (
+                    (pEditMode || !pUsuario) && (
                         <button onClick={handleEditClick} className="btn btn-primary me-2">Editar</button>
                     )
                 ) : (
