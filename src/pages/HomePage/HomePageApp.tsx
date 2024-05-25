@@ -76,11 +76,12 @@ export const HomePageApp = () => {
                         </div>
 
                         {/* Contenido del lado derecho */}
-                        <div className="col-sm-7" ref={editRef}>
+                        <div className="col-sm-7 d-flex align-items-center justify-content-center"  ref={editRef}>
                             <img
                                 src={image_url}
                                 alt="Imagen de página de inicio,"
                                 className='img-fluid rounded'
+                                style={{ width: '500px', height: '300px' }}
                             />
                         </div>
                         {showEditPage && (
