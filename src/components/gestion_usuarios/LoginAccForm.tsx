@@ -1,7 +1,7 @@
 
-import React, { useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { login } from '../../redux/reducers/authSlice';
+import { clearError, login } from '../../redux/reducers/authSlice';
 import { RootState } from '../../redux/store';
 import { FaEye, FaEyeSlash } from 'react-icons/fa';
 import { Link, useNavigate } from 'react-router-dom';
@@ -49,19 +49,28 @@ const LoginAccountForm: React.FC = () => {
 
   const [logoUrl, setLogoUrl] = useState('');
 
-  useEffect(() => { 
-      (async () => {
-          const imageRef = ref(firebase_storage, 'Empresa/Logo/logo');
-          getDownloadURL(imageRef)
-              .then((url) => {
-                  setLogoUrl(url);
-              })
-              .catch((error) => {
-                  console.error('Error descargando el logo:', error);
-              });
-
-      })()
+  useEffect(() => {
+    (async () => {
+      const imageRef = ref(firebase_storage, 'Empresa/Logo/logo');
+      getDownloadURL(imageRef)
+        .then((url) => {
+          setLogoUrl(url);
+        })
+        .catch((error) => {
+          console.error('Error descargando el logo:', error);
+        });
+    })()
   }, []);
+
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        dispatch(clearError());
+      }, 5000); // Clear the error after 5 seconds
+
+      return () => clearTimeout(timer); // Cleanup the timer if the component unmounts
+    }
+  }, [error, dispatch]);
 
   // Redirect if logged in, user exists, and email is verified
   useEffect(() => {

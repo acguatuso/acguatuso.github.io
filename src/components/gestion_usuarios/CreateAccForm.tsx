@@ -1,6 +1,6 @@
 import React, { useEffect, useRef, useState } from 'react';
 import { useSelector } from 'react-redux';
-import { signup, signupFailure } from '../../redux/reducers/authSlice';
+import { clearError, signup, signupFailure } from '../../redux/reducers/authSlice';
 import { RootState } from '../../redux/store';
 import '../../CSS/Components/CreateAccStyle.css';
 import { Link } from 'react-router-dom';
@@ -114,6 +114,17 @@ const CreateAccountForm = () => {
     loadImage();
   }, []);
 
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => {
+        dispatch(clearError());
+      }, 5000); // Clear the error after 5 seconds
+
+      return () => clearTimeout(timer); // Cleanup the timer if the component unmounts
+    }
+  }, [error, dispatch]);
+
+
   const handleSignUp = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -121,7 +132,7 @@ const CreateAccountForm = () => {
     const isFormFilled = Object.values(formData).every(value => value.trim() !== '');
 
     if (!isFormFilled) {
-      dispatch(signupFailure('Porfavor llene todos los campos.'));
+      dispatch(signupFailure('Por favor llene todos los campos.'));
       //console.log(formData);
       return;
     }

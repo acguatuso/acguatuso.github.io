@@ -68,12 +68,15 @@ const authSlice = createSlice({
     },
     editInfo: (state, action: PayloadAction<UserData>) => {
       state.user = action.payload;
+    },
+    clearError(state) {
+      state.error = null;
     }
   }
 });
 
 
-export const { loginSuccess, loginFailure, signupSuccess, signupFailure, logOut, editInfo } = authSlice.actions;
+export const { loginSuccess, loginFailure, signupSuccess, signupFailure, logOut, editInfo, clearError } = authSlice.actions;
 export default authSlice.reducer;
 
 export const login = (email: string, password: string): AppThunk => async dispatch => {
@@ -100,10 +103,13 @@ export const login = (email: string, password: string): AppThunk => async dispat
         dispatch(loginSuccess(usuarioObtenido!));
       }
     } 
-
   } catch (error: any) {
-    const msg = error.message.replace('Firebase: ', '');
-    dispatch(loginFailure(msg));
+    if (error.message === 'Firebase: Error (auth/invalid-credential).') { // si las credenciales son incorrectas
+      dispatch(signupFailure('Las credenciales ingresadas son incorrectas, inténtelo de nuevo por favor.'));
+    } else { // default msg no capturado aún
+      const msg = error.message.replace('Firebase: ', '');
+      dispatch(loginFailure(msg));
+    }
   }
 };
 
@@ -174,10 +180,10 @@ export const signup = (formData: any): AppThunk => async dispatch => {
   } catch (error: any) {
     //console.log(error.message)
     if (error.message === 'Firebase: Error (auth/email-already-in-use).') {
-      dispatch(signupFailure('El correo electrónico ya se encuentra en uso, inténte con otro porfavor.'));
+      dispatch(signupFailure('El correo electrónico ya se encuentra en uso, inténte con otro por favor.'));
     }
     else{
-      dispatch(signupFailure('El correo electrónico está en un formato no permitido, revíselo porfavor.'));
+      dispatch(signupFailure('El correo electrónico está en un formato no permitido, revíselo por favor.'));
     }
 
   }

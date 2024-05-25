@@ -27,7 +27,7 @@ const Students = () => {
   const [selectedSearch, setSelectedSearch] = useState("");
   const [inputState, setInputState] = useState(true);
   const [enterPressed, setEnterPressed] = useState(false);
-
+  const [isEditMode, setIsEditMode] = useState(false);
   // @ts-ignore
   const [lastVisible, setLastVisible] =
     useState<QueryDocumentSnapshot<DocumentData> | null>(null);
@@ -90,14 +90,14 @@ const Students = () => {
         <div className="d-flex">
           <button
             className="btn btn-primary"
-            onClick={() => handleButtonClick(row)}
+            onClick={() => handleSeeModeClick(row)}
             title="Ver"
           >
             <FaAddressCard />
           </button>
           <button
             className="btn btn-warning mx-3"
-            onClick={() => handleButtonClick(row)}
+            onClick={() => handleEditModeClick(row)}
             title="Editar"
           >
             <FaEdit />
@@ -205,8 +205,16 @@ const Students = () => {
     setShowEditAccountModal(false); // Función para cerrar el modal
   };
 
-  const handleButtonClick = (usuario: Student): void => {
-    console.log("Button clicked for:", usuario);
+  const handleEditModeClick = (usuario: Student): void => {
+    //console.log("Button clicked for:", usuario);
+    setIsEditMode(true);
+    openEditAccountModal();
+    setSelectedUser(usuario);
+  };
+
+  const handleSeeModeClick = (usuario: Student): void => {
+    //console.log("Button clicked for:", usuario);
+    setIsEditMode(false);
     openEditAccountModal();
     setSelectedUser(usuario);
   };
@@ -307,6 +315,7 @@ const Students = () => {
       <MiPerfilModal
         mostrar={showEditAccountModal}
         onClose={closeEditAccountModal}
+        editMode={isEditMode}
         // @ts-ignore
         usuario={selectedUser}
       />
