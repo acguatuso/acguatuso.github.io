@@ -97,8 +97,10 @@ export const login = (email: string, password: string): AppThunk => async dispat
       
       if (usuarioObtenido.user_type == 0) {// Lanza un error si el tipo de usuario es '0'
         dispatch(loginFailure('No tienes permiso para iniciar sesión.'));
+      } else if (usuarioObtenido.estado == 0) {// Lanza un error si el estado de usuario es '0'
+        dispatch(loginFailure('No tienes tu cuenta activa para iniciar sesión, por favor habla con nuestras oficinas para más información.'));
       } else {
-        console.log(usuarioObtenido.user_type)
+        //console.log(usuarioObtenido.user_type)
         // Emitir orden de logueo de usuario satisfactorio
         dispatch(loginSuccess(usuarioObtenido!));
       }
