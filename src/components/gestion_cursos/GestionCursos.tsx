@@ -262,7 +262,7 @@ function GestionCursos() {
     updateFirebaseDoc(`/Cursos/${row.id}`, {
       estado: nuevoEstado,
     });
-    dispatch(changeCursoEstado(row.id));
+    dispatch(changeCursoEstado({ cursoId: row.id, estado: nuevoEstado }));
     const nuevoVisible = nuevoEstado === 0 ? Visible.NoVisible : row.estado;
     updateFirebaseDoc(`/Cursos/${row.id}`, {
       visible: parseInt(nuevoVisible),

@@ -102,11 +102,11 @@ const cursosSlice = createSlice({
         //console.log(action.payload.id,'deletesection')
         state.cursos = data
       },
-      changeCursoEstado: (state, action: PayloadAction<string>) => {
-        const cursoId = action.payload;
+      changeCursoEstado: (state, action: PayloadAction<{ cursoId: string; estado: number }>) => {
+        const { cursoId, estado} = action.payload;
         const curso = state.cursos.find(curso => curso.id === cursoId);
         if (curso) {
-          curso.estado = curso.estado === 0 ? 1 : 0;
+          curso.estado = estado;
         }
       },
       changeCursoVisible: (state, action: PayloadAction<{ cursoId: string; visible: number }>) => {
