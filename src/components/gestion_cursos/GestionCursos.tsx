@@ -260,7 +260,7 @@ function GestionCursos() {
     }
 
     const updatedData = filteredData.map((item) =>
-      item.id === row.id ? updatedRow : item
+      item.id === row.id ? { ...updatedRow, visible: newVisibleValue } : item
     );
     setFilteredData(updatedData);
   }
@@ -270,7 +270,6 @@ function GestionCursos() {
     row: any
   ): void {
     const newVisibleValue = parseInt(e.target.value);
-    console.log(newVisibleValue);
 
     updateFirebaseDoc(`/Cursos/${row.id}`, { visible: newVisibleValue });
 
