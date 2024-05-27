@@ -39,7 +39,6 @@ const Students = () => {
   const [currentPage, setCurrentPage] = useState(1);
   const [perPage, setPerPage] = useState(5);
 
-
   // React-router-dom
   const navigate = useNavigate();
   // Redux Hooks & Access
@@ -111,7 +110,6 @@ const Students = () => {
           >
             <MdDelete />
           </button> */}
-
         </div>
       ),
     },
@@ -136,7 +134,6 @@ const Students = () => {
       });
       setFilteredData(filtered);
       setEnterPressed(!enterPressed);
-
     }
     if (filterText == "") {
       setFilteredData(baseData);
@@ -186,7 +183,6 @@ const Students = () => {
     setFilteredData(formatedData);
 
     setLoading(false);
-
   };
 
   const openCreateAccountModal = () => {
@@ -220,10 +216,15 @@ const Students = () => {
   };
 
   function handleSwitchToggle(row: any): void {
-    updateFirebaseDoc(`/Usuarios/${row.id}`, {
-      estado: row.estado === 0 ? 1 : 0,
-    });
-    getUsers(1);
+    const nuevoEstado = row.estado === 0 ? 1 : 0;
+    const updatedRow = { ...row, estado: nuevoEstado };
+
+    updateFirebaseDoc(`/Usuarios/${row.id}`, { estado: nuevoEstado });
+
+    const updatedData = filteredData.map((item) =>
+      item.id === row.id ? updatedRow : item
+    );
+    setFilteredData(updatedData);
   }
 
   const handleSelectChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
@@ -239,7 +240,6 @@ const Students = () => {
     }
   }
 
-
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
   };
@@ -247,7 +247,6 @@ const Students = () => {
   const handleRowsPerPageChange = (newPageSize: number, page: number) => {
     setPerPage(newPageSize);
     setCurrentPage(page);
-
   };
 
   return (
@@ -300,10 +299,8 @@ const Students = () => {
           data={filteredData}
           onChangePage={handlePageChange}
           onChangeRowsPerPage={handleRowsPerPageChange}
-
           paginationTotalRows={totalRows}
           paginationPerPage={perPage}
-
           progressPending={loading}
         />
       </div>
