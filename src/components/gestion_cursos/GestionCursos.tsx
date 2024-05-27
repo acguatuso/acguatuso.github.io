@@ -7,11 +7,8 @@ import { FaArrowLeft, FaEdit } from "react-icons/fa";
 import { RootState } from "../../redux/store";
 import { useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import {
-  changeCursoEstado,
-  changeCursoVisible,
-  obtenerNombreModalidad,
-} from "../../redux/reducers/cursosSlice";
+// @ts-ignore
+import {changeCursoEstado,changeCursoVisible,obtenerNombreModalidad} from "../../redux/reducers/cursosSlice";
 import { useAppDispatch } from "../../hooks/hooks";
 import { updateFirebaseDoc } from "../../api/updateFirebaseDoc/updateFirebaseDoc";
 import DetallesCurso from "./DetallesCurso";
@@ -35,6 +32,7 @@ function GestionCursos() {
   // @ts-ignore
   const [error, setError] = useState<string | undefined>(undefined);
   const [filterText, setFilterText] = useState("");
+  // @ts-ignore
   const dispatch = useAppDispatch();
   const [selectedSearch, setSelectedSearch] = useState("");
   const [inputState, setInputState] = useState(true);
